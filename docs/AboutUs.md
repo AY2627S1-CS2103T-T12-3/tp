@@ -9,6 +9,17 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
+
+### Henry Lee
+
+<img src="images/henrlly.png" width="200px">
+
+[[github](https://github.com/henrlly)]
+
+* Role: Developer
+* Responsibilities: Develop features, perform quality assurance and testing,
+  and fix bugs
+
 ### John Doe
 
 <img src="images/johndoe.png" width="200px">
@@ -67,11 +78,23 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 - Role: Developer
 - Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
 
+
 ### Mao Yinbo
 
 <img src="images/mao455.png" width="200px">
 
 [[github](http://github.com/mao455)]
+
+- Role: Developer
+- Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
+
+
+### Vincent Lim
+
+<img src="images/viincentlim.png" width="200px">
+
+[[github](https://github.com/ViincentLim)]
+
 
 - Role: Developer
 - Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
