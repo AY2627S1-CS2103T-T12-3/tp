@@ -9,6 +9,17 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
+
+### Henry Lee
+
+<img src="images/henrlly.png" width="200px">
+
+[[github](https://github.com/henrlly)]
+
+* Role: Developer
+* Responsibilities: Develop features, perform quality assurance and testing,
+  and fix bugs
+
 ### John Doe
 
 <img src="images/johndoe.png" width="200px">
