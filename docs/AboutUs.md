@@ -40,14 +40,15 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 - Role: Team Lead
 - Responsibilities: UI
 
-### Johnny Doe
+### Alexander Seah
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/bedminer1.png" width="200px">
 
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[homepage](https://robotsbybed.properrobotics.org)]
+[[github](https://github.com/bedminer1)]
 
 - Role: Developer
-- Responsibilities: Data
+- Responsibilities: Backend Engineer
 
 ### Jean Doe
 
