@@ -66,3 +66,12 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 - Role: Developer
 - Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
+
+### Mao Yinbo
+
+<img src="images/mao455.png" width="200px">
+
+[[github](http://github.com/mao455)]
+
+- Role: Developer
+- Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
