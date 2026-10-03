@@ -1,15 +1,15 @@
-title: "AB-3"
+title: "InternTrack"
 theme: minima
 
 header_pages:
-  - UserGuide.md
-  - DeveloperGuide.md
-  - AboutUs.md
+    - UserGuide.md
+    - DeveloperGuide.md
+    - AboutUs.md
 
 markdown: kramdown
 
-repository: "se-edu/addressbook-level3"
+repository: "AY2627S1-CS2103T-T12-3/tp"
 github_icon: "images/github-icon.png"
 
 plugins:
-  - jemoji
+    - jemoji
