@@ -274,58 +274,96 @@ _{Explain here how the data archiving feature will be implemented}_
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
-
-*{More to be added}*
+| Priority | As a …​  | I want to …​                                      | So that I can…​                                      |
+| -------- | -------- | ------------------------------------------------- | ---------------------------------------------------- |
+| `* * *`  | new user | see usage instructions                            | learn or recall how to use InternTrack               |
+| `* * *`  | student  | add a professional contact                        | keep details of people relevant to my job search     |
+| `* * *`  | student  | list my professional contacts                     | review my professional connections                   |
+| `* * *`  | student  | add an internship or graduate role application    | track each opportunity I apply for                    |
+| `* * *`  | student  | list my internship and graduate role applications | review the opportunities I am pursuing               |
+| `* *`    | student  | edit a professional contact                       | keep the contact's details accurate                   |
+| `* *`    | student  | edit an application                               | keep its details current as my application progresses |
+| `* *`    | student  | delete a professional contact or application      | remove a record that I no longer need                 |
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is `InternTrack` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: Delete a person**
+**Use case: Add an internship or graduate role application**
 
 **MSS**
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1.  User requests to list applications.
+2.  InternTrack shows the current list of applications.
+3.  User requests to add an application, providing its role, company, description, and application date.
+4.  InternTrack validates the supplied application details.
+5.  InternTrack adds the application.
+6.  InternTrack confirms that the application was added.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+* 2a. The application list is empty.
+
+    * 2a1. InternTrack informs the user that there are no applications.
+
+      Use case resumes at step 3.
+
+* 4a. Any required application detail is missing or invalid.
+
+    * 4a1. InternTrack shows an error message.
+
+      Use case resumes at step 3.
+
+**Use case: Edit a professional contact**
+
+**MSS**
+
+1.  User requests to list professional contacts.
+2.  InternTrack shows the current list of professional contacts.
+3.  User requests to edit a contact in the list, providing the details to update.
+4.  InternTrack validates the updated contact details.
+5.  InternTrack updates the professional contact.
+6.  InternTrack confirms that the contact was updated.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The contact list is empty.
 
   Use case ends.
 
-* 3a. The given index is invalid.
+* 3a. The given contact index is invalid.
 
-    * 3a1. AddressBook shows an error message.
+    * 3a1. InternTrack shows an error message.
 
       Use case resumes at step 2.
 
-*{More to be added}*
+* 4a. An updated contact detail is invalid.
+
+    * 4a1. InternTrack shows an error message.
+
+      Use case resumes at step 3.
 
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2.  Should be able to hold up to 1000 persons without noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
+2.  Should be able to hold up to 1000 professional contacts and application records without noticeable sluggishness
+    during typical usage.
+3.  A user with above average typing speed for regular English text should be able to add, edit, delete, and list
+    records faster using commands than using the mouse.
 
 ### Glossary
 
 * **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Application record**: A record of an internship or graduate role application, including its role, company,
+  description, and application date
+* **Professional contact**: A person relevant to the user's internship or graduate-job search, such as a recruiter,
+  interviewer, alumnus, or referrer
+* **CLI**: Command Line Interface, a text-based interface through which users interact with InternTrack by typing
+  commands
 
 --------------------------------------------------------------------------------------------------------------------
 
