@@ -261,13 +261,13 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
-* prefers desktop apps over other types of applications
-* can type fast
-* prefers typing to mouse interactions
-* is reasonably comfortable using CLI apps
+* is a university Computing student actively applying for multiple internships or graduate roles
+* needs to manage internship applications and related professional contacts in one place
+* prefers a desktop app and keyboard-driven workflows
+* can type fast and is comfortable using CLI apps
 
-**Value proposition**: Manage contacts faster than with a typical mouse-driven GUI application.
+**Value proposition**: Track internship applications and related professional contacts quickly in one place using
+keyboard-driven commands.
 
 
 ### User stories
