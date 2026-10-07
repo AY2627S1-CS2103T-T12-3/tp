@@ -1,0 +1,17 @@
+{
+  "persons": [],
+  "applications": [
+    {
+      "name": "Software Engineer Intern",
+      "company": "Tech Corp",
+      "description": "Applied through the company careers page.",
+      "date": "2026-10-07"
+    },
+    {
+      "name": "software engineer intern",
+      "company": "tech corp",
+      "description": "Interview scheduled.",
+      "date": "2026-10-08"
+    }
+  ]
+}
