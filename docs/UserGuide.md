@@ -90,6 +90,23 @@ Examples:
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 * `add n/Alice Tan p/98765432 e/alice.tan@google.com c/Google a/70 Pasir Panjang Rd`
 
+### Adding an application: `addapp`
+
+Adds an internship or graduate-role application to InternTrack.
+
+Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD`
+
+* All four fields are required.
+* `NAME` is the role or position title. It must not be blank, contain control characters, or exceed 100 characters.
+* `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
+* `DESCRIPTION` records relevant application details. It must not be blank or exceed 500 characters.
+* `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
+* Two applications with the same `NAME` and `COMPANY` are considered duplicates, ignoring letter case. Their descriptions and dates do not affect duplicate detection.
+
+Examples:
+* `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
+* `addapp c/Example Pte Ltd d/Referred by a university alumnus. dt/2026-11-15 n/Product Manager Intern`
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -194,6 +211,7 @@ _Details coming soon ..._
 Action | Format, Examples
 --------|------------------
 **Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL [c/COMPANY] a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add application** | `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
