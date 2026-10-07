@@ -3,6 +3,7 @@ package seedu.address.storage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
@@ -28,6 +30,7 @@ class JsonAdaptedPerson {
     private final String name;
     private final String phone;
     private final String email;
+    private final String company;
     private final String address;
     private final String remark;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
@@ -37,11 +40,13 @@ class JsonAdaptedPerson {
      */
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
-            @JsonProperty("email") String email, @JsonProperty("address") String address,
-            @JsonProperty("remark") String remark, @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+            @JsonProperty("email") String email, @JsonProperty("company") String company,
+            @JsonProperty("address") String address, @JsonProperty("remark") String remark,
+            @JsonProperty("tags") List<JsonAdaptedTag> tags) {
         this.name = name;
         this.phone = phone;
         this.email = email;
+        this.company = company;
         this.address = address;
         this.remark = remark == null ? "" : remark;
         if (tags != null) {
@@ -50,10 +55,10 @@ class JsonAdaptedPerson {
     }
 
     /**
-     * Constructs a {@code JsonAdaptedPerson} without a remark for compatibility with older callers.
+     * Constructs a {@code JsonAdaptedPerson} without a company or remark for compatibility with older callers.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, address, "", tags);
+        this(name, phone, email, null, address, "", tags);
     }
 
     /**
@@ -63,6 +68,7 @@ class JsonAdaptedPerson {
         name = source.getName().fullName;
         phone = source.getPhone().value;
         email = source.getEmail().value;
+        company = source.getCompany().map(c -> c.value).orElse(null);
         address = source.getAddress().value;
         remark = source.getRemark().value;
         tags.addAll(source.getTags().stream()
@@ -105,6 +111,11 @@ class JsonAdaptedPerson {
         }
         final Email modelEmail = new Email(email);
 
+        if (company != null && !Company.isValidCompany(company)) {
+            throw new IllegalValueException(Company.MESSAGE_CONSTRAINTS);
+        }
+        final Optional<Company> modelCompany = Optional.ofNullable(company).map(Company::new);
+
         if (address == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
         }
@@ -115,7 +126,7 @@ class JsonAdaptedPerson {
         final Remark modelRemark = new Remark(remark);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelRemark, modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelAddress, modelRemark, modelTags);
     }
 
 }
