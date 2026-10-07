@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.application.Application;
 import seedu.address.model.person.Person;
 
 /**
@@ -20,15 +21,21 @@ import seedu.address.model.person.Person;
 class JsonSerializableAddressBook {
 
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
+    public static final String MESSAGE_DUPLICATE_APPLICATION = "Applications list contains duplicate application(s).";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
+    private final List<JsonAdaptedApplication> applications = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonSerializableAddressBook} with the given persons.
+     * Constructs a {@code JsonSerializableAddressBook} with the given persons and applications.
      */
     @JsonCreator
-    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons) {
+    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
+            @JsonProperty("applications") List<JsonAdaptedApplication> applications) {
         this.persons.addAll(persons);
+        if (applications != null) {
+            this.applications.addAll(applications);
+        }
     }
 
     /**
@@ -38,6 +45,9 @@ class JsonSerializableAddressBook {
      */
     public JsonSerializableAddressBook(ReadOnlyAddressBook source) {
         persons.addAll(source.getPersonList().stream().map(JsonAdaptedPerson::new).collect(Collectors.toList()));
+        applications.addAll(source.getApplicationList().stream()
+                .map(JsonAdaptedApplication::new)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -53,6 +63,13 @@ class JsonSerializableAddressBook {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_PERSON);
             }
             addressBook.addPerson(person);
+        }
+        for (JsonAdaptedApplication jsonAdaptedApplication : applications) {
+            Application application = jsonAdaptedApplication.toModelType();
+            if (addressBook.hasApplication(application)) {
+                throw new IllegalValueException(MESSAGE_DUPLICATE_APPLICATION);
+            }
+            addressBook.addApplication(application);
         }
         return addressBook;
     }
