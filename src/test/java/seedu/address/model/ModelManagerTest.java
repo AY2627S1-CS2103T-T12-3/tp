@@ -13,10 +13,19 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.application.Application;
+import seedu.address.model.application.ApplicationDate;
+import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.Description;
+import seedu.address.model.person.Company;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.testutil.AddressBookBuilder;
 
 public class ModelManagerTest {
+
+    private static final Application SOFTWARE_ENGINEER_INTERN = new Application(
+            new ApplicationName("Software Engineer Intern"), new Company("Tech Corp"),
+            new Description("Applied through the company careers page."), new ApplicationDate("2026-10-07"));
 
     private ModelManager modelManager = new ModelManager();
 
@@ -66,6 +75,22 @@ public class ModelManagerTest {
     public void hasPerson_personInAddressBook_returnsTrue() {
         modelManager.addPerson(ALICE);
         assertTrue(modelManager.hasPerson(ALICE));
+    }
+
+    @Test
+    public void hasApplication_nullApplication_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasApplication(null));
+    }
+
+    @Test
+    public void hasApplication_applicationNotInAddressBook_returnsFalse() {
+        assertFalse(modelManager.hasApplication(SOFTWARE_ENGINEER_INTERN));
+    }
+
+    @Test
+    public void hasApplication_applicationInAddressBook_returnsTrue() {
+        modelManager.addApplication(SOFTWARE_ENGINEER_INTERN);
+        assertTrue(modelManager.hasApplication(SOFTWARE_ENGINEER_INTERN));
     }
 
     @Test

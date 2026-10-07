@@ -18,6 +18,11 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.application.Application;
+import seedu.address.model.application.ApplicationDate;
+import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.Description;
+import seedu.address.model.person.Company;
 import seedu.address.testutil.PersonBuilder;
 
 public class JsonAddressBookStorageTest {
@@ -92,6 +97,22 @@ public class JsonAddressBookStorageTest {
         Path filePath = testFolder.resolve("RemarkAddressBook.json");
         AddressBook original = new AddressBook();
         original.addPerson(new PersonBuilder(ALICE).withRemark("Likes baseball").build());
+        JsonAddressBookStorage jsonAddressBookStorage = new JsonAddressBookStorage(filePath);
+
+        jsonAddressBookStorage.saveAddressBook(original, filePath);
+        ReadOnlyAddressBook readBack = jsonAddressBookStorage.readAddressBook(filePath).get();
+
+        assertEquals(original, new AddressBook(readBack));
+    }
+
+    @Test
+    public void readAndSaveAddressBook_withApplication_preservesApplication() throws Exception {
+        Path filePath = testFolder.resolve("ApplicationAddressBook.json");
+        AddressBook original = new AddressBook();
+        Application application = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"));
+        original.addApplication(application);
         JsonAddressBookStorage jsonAddressBookStorage = new JsonAddressBookStorage(filePath);
 
         jsonAddressBookStorage.saveAddressBook(original, filePath);

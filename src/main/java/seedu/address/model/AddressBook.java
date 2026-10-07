@@ -6,6 +6,8 @@ import java.util.List;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.application.Application;
+import seedu.address.model.application.UniqueApplicationList;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniquePersonList;
 
@@ -16,6 +18,7 @@ import seedu.address.model.person.UniquePersonList;
 public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniquePersonList persons = new UniquePersonList();
+    private final UniqueApplicationList applications = new UniqueApplicationList();
 
     public AddressBook() {}
 
@@ -38,12 +41,21 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
+     * Replaces the contents of the application list with {@code applications}.
+     * {@code applications} must not contain duplicate applications.
+     */
+    public void setApplications(List<Application> applications) {
+        this.applications.setApplications(applications);
+    }
+
+    /**
      * Resets the existing data of this {@code AddressBook} with {@code newData}.
      */
     public void resetData(ReadOnlyAddressBook newData) {
         requireNonNull(newData);
 
         setPersons(newData.getPersonList());
+        setApplications(newData.getApplicationList());
     }
 
     //// person-level operations
@@ -62,6 +74,22 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void addPerson(Person p) {
         persons.add(p);
+    }
+
+    /**
+     * Returns true if an application with the same identity as {@code application} exists in the address book.
+     */
+    public boolean hasApplication(Application application) {
+        requireNonNull(application);
+        return applications.contains(application);
+    }
+
+    /**
+     * Adds an application to the address book.
+     * The application must not already exist in the address book.
+     */
+    public void addApplication(Application application) {
+        applications.add(application);
     }
 
     /**
@@ -89,12 +117,18 @@ public class AddressBook implements ReadOnlyAddressBook {
     public String toString() {
         return new ToStringBuilder(this)
                 .add("persons", persons)
+                .add("applications", applications)
                 .toString();
     }
 
     @Override
     public ObservableList<Person> getPersonList() {
         return persons.asUnmodifiableObservableList();
+    }
+
+    @Override
+    public ObservableList<Application> getApplicationList() {
+        return applications.asUnmodifiableObservableList();
     }
 
     @Override
@@ -108,11 +142,12 @@ public class AddressBook implements ReadOnlyAddressBook {
             return false;
         }
 
-        return persons.equals(otherAddressBook.persons);
+        return persons.equals(otherAddressBook.persons)
+                && applications.equals(otherAddressBook.applications);
     }
 
     @Override
     public int hashCode() {
-        return persons.hashCode();
+        return java.util.Objects.hash(persons, applications);
     }
 }
