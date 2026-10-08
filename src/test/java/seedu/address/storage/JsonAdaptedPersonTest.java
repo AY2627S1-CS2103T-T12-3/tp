@@ -18,6 +18,7 @@ import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Role;
 import seedu.address.model.person.WhereMet;
 import seedu.address.testutil.PersonBuilder;
 
@@ -25,6 +26,7 @@ public class JsonAdaptedPersonTest {
     private static final String INVALID_NAME = "R@chel";
     private static final String INVALID_PHONE = "+651234";
     private static final String INVALID_COMPANY = "Acme*";
+    private static final String INVALID_ROLE = "Engineer*";
     private static final String INVALID_WHERE_MET = "Career fair*";
     private static final String INVALID_ADDRESS = " ";
     private static final String INVALID_EMAIL = "example.com";
@@ -51,6 +53,12 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
+    public void toModelType_validPersonDetailsWithoutRole_returnsPerson() throws Exception {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(BENSON);
+        assertEquals(BENSON, person.toModelType());
+    }
+
+    @Test
     public void toModelType_validPersonDetailsWithWhereMet_returnsPerson() throws Exception {
         JsonAdaptedPerson person = new JsonAdaptedPerson(new PersonBuilder(BENSON).withWhereMet("Career fair 2026")
                 .build());
@@ -59,7 +67,7 @@ public class JsonAdaptedPersonTest {
 
     @Test
     public void toModelType_invalidWhereMet_throwsIllegalValueException() {
-        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null,
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null, null,
                 INVALID_WHERE_MET, VALID_ADDRESS, "", VALID_TAGS);
         assertThrows(IllegalValueException.class, WhereMet.MESSAGE_CONSTRAINTS, person::toModelType);
     }
@@ -70,6 +78,13 @@ public class JsonAdaptedPersonTest {
                 VALID_ADDRESS, "", VALID_TAGS);
         String expectedMessage = Company.MESSAGE_CONSTRAINTS;
         assertThrows(IllegalValueException.class, expectedMessage, person::toModelType);
+    }
+
+    @Test
+    public void toModelType_invalidRole_throwsIllegalValueException() {
+        JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null, INVALID_ROLE,
+                null, VALID_ADDRESS, "", VALID_TAGS);
+        assertThrows(IllegalValueException.class, Role.MESSAGE_CONSTRAINTS, person::toModelType);
     }
 
     @Test

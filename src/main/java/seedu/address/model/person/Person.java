@@ -24,6 +24,7 @@ public class Person {
 
     // Data fields
     private final Optional<Company> company;
+    private final Optional<Role> role;
     private final Optional<WhereMet> whereMet;
     private final Address address;
     private final Remark remark;
@@ -31,15 +32,16 @@ public class Person {
 
     /**
      * Every field must be present and not null.
-     * {@code company} and {@code whereMet} may be empty if not specified.
+     * {@code company}, {@code role}, and {@code whereMet} may be empty if not specified.
      */
-    public Person(Name name, Phone phone, Email email, Optional<Company> company, Optional<WhereMet> whereMet,
-            Address address, Remark remark, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, company, whereMet, address, remark, tags);
+    public Person(Name name, Phone phone, Email email, Optional<Company> company, Optional<Role> role,
+            Optional<WhereMet> whereMet, Address address, Remark remark, Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, company, role, whereMet, address, remark, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.company = company;
+        this.role = role;
         this.whereMet = whereMet;
         this.address = address;
         this.remark = remark;
@@ -60,6 +62,10 @@ public class Person {
 
     public Optional<Company> getCompany() {
         return company;
+    }
+
+    public Optional<Role> getRole() {
+        return role;
     }
 
     public Optional<WhereMet> getWhereMet() {
@@ -114,6 +120,7 @@ public class Person {
                 && phone.equals(otherPerson.phone)
                 && email.equals(otherPerson.email)
                 && company.equals(otherPerson.company)
+                && role.equals(otherPerson.role)
                 && whereMet.equals(otherPerson.whereMet)
                 && address.equals(otherPerson.address)
                 && remark.equals(otherPerson.remark)
@@ -123,7 +130,7 @@ public class Person {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, company, whereMet, address, remark, tags);
+        return Objects.hash(name, phone, email, company, role, whereMet, address, remark, tags);
     }
 
     @Override
@@ -133,6 +140,7 @@ public class Person {
                 .add("phone", phone)
                 .add("email", email)
                 .add("company", company.orElse(null))
+                .add("role", role.orElse(null))
                 .add("whereMet", whereMet.orElse(null))
                 .add("address", address)
                 .add("remark", remark)

@@ -18,6 +18,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Remark;
+import seedu.address.model.person.Role;
 import seedu.address.model.person.WhereMet;
 import seedu.address.model.tag.Tag;
 
@@ -32,6 +33,7 @@ class JsonAdaptedPerson {
     private final String phone;
     private final String email;
     private final String company;
+    private final String role;
     private final String whereMet;
     private final String address;
     private final String remark;
@@ -43,6 +45,7 @@ class JsonAdaptedPerson {
     @JsonCreator
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("company") String company,
+            @JsonProperty("role") String role,
             @JsonProperty("whereMet") String whereMet,
             @JsonProperty("address") String address, @JsonProperty("remark") String remark,
             @JsonProperty("tags") List<JsonAdaptedTag> tags) {
@@ -50,6 +53,7 @@ class JsonAdaptedPerson {
         this.phone = phone;
         this.email = email;
         this.company = company;
+        this.role = role;
         this.whereMet = whereMet;
         this.address = address;
         this.remark = remark == null ? "" : remark;
@@ -58,10 +62,10 @@ class JsonAdaptedPerson {
         }
     }
 
-    /** Constructs a person adapter without WhereMet for compatibility with older callers. */
+    /** Constructs a person adapter without Role or WhereMet for compatibility with older callers. */
     public JsonAdaptedPerson(String name, String phone, String email, String company, String address, String remark,
             List<JsonAdaptedTag> tags) {
-        this(name, phone, email, company, null, address, remark, tags);
+        this(name, phone, email, company, null, null, address, remark, tags);
     }
 
     /**
@@ -69,7 +73,7 @@ class JsonAdaptedPerson {
      * callers and data.
      */
     public JsonAdaptedPerson(String name, String phone, String email, String address, List<JsonAdaptedTag> tags) {
-        this(name, phone, email, null, null, address, "", tags);
+        this(name, phone, email, null, null, null, address, "", tags);
     }
 
     /**
@@ -80,6 +84,7 @@ class JsonAdaptedPerson {
         phone = source.getPhone().value;
         email = source.getEmail().value;
         company = source.getCompany().map(c -> c.value).orElse(null);
+        role = source.getRole().map(r -> r.value).orElse(null);
         whereMet = source.getWhereMet().map(w -> w.value).orElse(null);
         address = source.getAddress().value;
         remark = source.getRemark().value;
@@ -128,6 +133,11 @@ class JsonAdaptedPerson {
         }
         final Optional<Company> modelCompany = Optional.ofNullable(company).map(Company::new);
 
+        if (role != null && !Role.isValidRole(role)) {
+            throw new IllegalValueException(Role.MESSAGE_CONSTRAINTS);
+        }
+        final Optional<Role> modelRole = Optional.ofNullable(role).map(Role::new);
+
         if (whereMet != null && !WhereMet.isValidWhereMet(whereMet)) {
             throw new IllegalValueException(WhereMet.MESSAGE_CONSTRAINTS);
         }
@@ -143,8 +153,8 @@ class JsonAdaptedPerson {
         final Remark modelRemark = new Remark(remark);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelWhereMet, modelAddress, modelRemark,
-                modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelRole, modelWhereMet, modelAddress,
+                modelRemark, modelTags);
     }
 
 }
