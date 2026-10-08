@@ -82,6 +82,8 @@ Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [c/COMPANY] [r/ROLE] a/ADDRESS [w/WHE
 * `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 * `ROLE` is the role the person holds, such as `SWE Recruiter`. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 * `WHERE_MET` describes how or where you met the person. It is optional and may contain letters, digits, spaces and `& . , ' -`, up to 200 characters.
+* `NAME` may contain Unicode letters, digits, spaces, hyphens, and apostrophes. It must contain at least one letter or digit and be no longer than 100 characters. Leading and trailing whitespace is removed, and internal whitespace is reduced to one space.
+* `PHONE_NUMBER` must contain 7 to 15 digits, with an optional leading `+`. Spaces and hyphens can separate digits; they are removed when the phone number is stored.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 A person can have any number of tags, including zero.
