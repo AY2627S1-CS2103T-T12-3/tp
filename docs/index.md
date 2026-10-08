@@ -1,19 +1,19 @@
 ---
 layout: page
-title: AddressBook Level 3
+title: InternTrack
 ---
 
-[![CI Status](https://github.com/se-edu/addressbook-level3/workflows/Java%20CI/badge.svg)](https://github.com/se-edu/addressbook-level3/actions)
-[![codecov](https://codecov.io/gh/se-edu/addressbook-level3/branch/master/graph/badge.svg)](https://codecov.io/gh/se-edu/addressbook-level3)
+[![CI Status](https://github.com/AY2627S1-CS2103T-T12-3/tp/actions/workflows/gradle.yml/badge.svg)](https://github.com/AY2627S1-CS2103T-T12-3/tp/actions/workflows/gradle.yml)
 
 ![Ui](images/Ui.png)
 
-**AddressBook is a desktop application for managing your contact details.** While it has a GUI, most of the user interactions happen using a CLI (Command Line Interface).
+**InternTrack helps university Computing students keep internship applications and professional contacts in one place.** It combines a desktop interface with a command line interface (CLI) for users who prefer keyboard-driven workflows.
 
-* If you are interested in using AddressBook, head over to the [_Quick Start_ section of the **User Guide**](UserGuide.html#quick-start).
-* If you are interested in developing AddressBook, the [**Developer Guide**](DeveloperGuide.html) is a good place to start.
+* To learn how to use InternTrack, start with the [_Quick Start_ section of the **User Guide**](UserGuide.html#quick-start).
+* To learn how the project is structured, see the [**Developer Guide**](DeveloperGuide.html).
 
+InternTrack stores contact records and internship or graduate role application details locally. It does not search for vacancies or submit applications on a user's behalf.
 
 **Acknowledgements**
 
-* Libraries used: [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), [JUnit5](https://github.com/junit-team/junit5)
+This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org). It uses [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), and [JUnit 5](https://junit.org/junit5/).
