@@ -261,13 +261,13 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* is a university Computing student actively applying for multiple internships or graduate roles
-* needs to manage internship applications and related professional contacts in one place
-* prefers a desktop app and keyboard-driven workflows
-* can type fast and is comfortable using CLI apps
+* is a university Computing student applying for multiple internships or graduate roles
+* needs to keep application details and job-search contacts, such as recruiters, alumni, and referrers, together
+* wants to find and update these records quickly while preparing applications and interviews
+* prefers a desktop app and is comfortable using keyboard-driven CLI commands
 
-**Value proposition**: Track internship applications and related professional contacts quickly in one place using
-keyboard-driven commands.
+**Value proposition**: InternTrack provides one keyboard-driven desktop workspace for recording internship and
+graduate role applications alongside the professional contacts who can support a student's job search.
 
 
 ### User stories
@@ -279,11 +279,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | new user | see usage instructions                            | learn or recall how to use InternTrack               |
 | `* * *`  | student  | add a professional contact                        | keep details of people relevant to my job search     |
 | `* * *`  | student  | list my professional contacts                     | review my professional connections                   |
+| `* * *`  | student  | find a professional contact by name               | retrieve relevant contact details quickly             |
 | `* * *`  | student  | add an internship or graduate role application    | track each opportunity I apply for                    |
 | `* * *`  | student  | list my internship and graduate role applications | review the opportunities I am pursuing               |
 | `* *`    | student  | edit a professional contact                       | keep the contact's details accurate                   |
 | `* *`    | student  | edit an application                               | keep its details current as my application progresses |
 | `* *`    | student  | delete a professional contact or application      | remove a record that I no longer need                 |
+| `* *`    | student  | record where I met a contact                       | remember how the contact is connected to my search   |
 
 ### Use cases
 
@@ -293,28 +295,27 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User requests to list applications.
-2.  InternTrack shows the current list of applications.
-3.  User requests to add an application, providing its role, company, description, and application date.
-4.  InternTrack validates the supplied application details.
-5.  InternTrack adds the application.
-6.  InternTrack confirms that the application was added.
+1.  User enters the `addapp` command with the role, company, description, and application date.
+2.  InternTrack checks that all required details are present and valid.
+3.  InternTrack checks that an application with the same role and company does not already exist.
+4.  InternTrack stores the application record.
+5.  InternTrack confirms that the application was added.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The application list is empty.
+* 2a. A required application detail is missing or invalid.
 
-    * 2a1. InternTrack informs the user that there are no applications.
+    * 2a1. InternTrack shows an error message and does not save the application.
 
-      Use case resumes at step 3.
+      Use case resumes at step 1.
 
-* 4a. Any required application detail is missing or invalid.
+* 3a. An application with the same role and company already exists.
 
-    * 4a1. InternTrack shows an error message.
+    * 3a1. InternTrack informs the user that the application is a duplicate and does not save it.
 
-      Use case resumes at step 3.
+      Use case ends.
 
 **Use case: Edit a professional contact**
 
@@ -347,6 +348,30 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 3.
 
+**Use case: Find a professional contact**
+
+**MSS**
+
+1.  User enters the `find` command with one or more name keywords.
+2.  InternTrack searches contact names without regard to case.
+3.  InternTrack shows the contacts whose names contain any of the keywords.
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. No contact matches the supplied keywords.
+
+    * 2a1. InternTrack shows that there are no matching contacts.
+
+      Use case ends.
+
+* 1a. The user does not supply any search keywords.
+
+    * 1a1. InternTrack shows the command format.
+
+      Use case ends.
+
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
@@ -354,6 +379,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     during typical usage.
 3.  A user with above average typing speed for regular English text should be able to add, edit, delete, and list
     records faster using commands than using the mouse.
+4.  Contact and application records should remain available after the application is closed and reopened.
+5.  The app should not require an internet connection for users to create, find, edit, or remove their local records.
 
 ### Glossary
 
@@ -362,6 +389,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
   description, and application date
 * **Professional contact**: A person relevant to the user's internship or graduate-job search, such as a recruiter,
   interviewer, alumnus, or referrer
+* **Application date**: The calendar date on which the user submitted an application, stored in `YYYY-MM-DD` format
+* **Where met**: A short note describing how or where the user first met a professional contact
 * **CLI**: Command Line Interface, a text-based interface through which users interact with InternTrack by typing
   commands
 
