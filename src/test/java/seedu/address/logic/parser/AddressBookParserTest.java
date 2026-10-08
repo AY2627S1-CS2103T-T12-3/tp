@@ -115,6 +115,17 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_roleAndRemarkUseSamePrefixInDifferentCommands() throws Exception {
+        Person personWithRole = new PersonBuilder().withRole("SWE Recruiter").build();
+        AddCommand addCommand = (AddCommand) parser.parseCommand(PersonUtil.getAddCommand(personWithRole));
+        assertEquals(new AddCommand(personWithRole), addCommand);
+
+        RemarkCommand remarkCommand = (RemarkCommand) parser.parseCommand(
+                RemarkCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased() + " r/Likes baseball");
+        assertEquals(new RemarkCommand(INDEX_FIRST_PERSON, new Remark("Likes baseball")), remarkCommand);
+    }
+
+    @Test
     public void parseCommand_unrecognisedInput_throwsParseException() {
         assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), ()
             -> parser.parseCommand(""));

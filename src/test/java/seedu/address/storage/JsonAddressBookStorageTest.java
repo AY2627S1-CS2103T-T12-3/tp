@@ -119,6 +119,19 @@ public class JsonAddressBookStorageTest {
     }
 
     @Test
+    public void readAndSaveAddressBook_withRole_preservesRole() throws Exception {
+        Path filePath = testFolder.resolve("RoleAddressBook.json");
+        AddressBook original = new AddressBook();
+        original.addPerson(new PersonBuilder(ALICE).withRole("Software Engineer").build());
+        JsonAddressBookStorage jsonAddressBookStorage = new JsonAddressBookStorage(filePath);
+
+        jsonAddressBookStorage.saveAddressBook(original, filePath);
+        ReadOnlyAddressBook readBack = jsonAddressBookStorage.readAddressBook(filePath).get();
+
+        assertEquals(original, new AddressBook(readBack));
+    }
+
+    @Test
     public void readAndSaveAddressBook_withApplication_preservesApplication() throws Exception {
         Path filePath = testFolder.resolve("ApplicationAddressBook.json");
         AddressBook original = new AddressBook();

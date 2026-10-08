@@ -41,6 +41,8 @@ public class PersonCard extends UiPart<Region> {
     @FXML
     private Label company;
     @FXML
+    private Label role;
+    @FXML
     private Label whereMet;
     @FXML
     private Label remark;
@@ -61,6 +63,10 @@ public class PersonCard extends UiPart<Region> {
         person.getCompany().ifPresentOrElse(c -> company.setText(c.value), () -> {
             company.setVisible(false);
             company.setManaged(false);
+        });
+        person.getRole().ifPresentOrElse(r -> role.setText(r.value), () -> {
+            role.setVisible(false);
+            role.setManaged(false);
         });
         person.getWhereMet().ifPresentOrElse(w -> whereMet.setText(w.value), () -> {
             whereMet.setVisible(false);

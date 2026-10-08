@@ -6,6 +6,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_COMPANY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WHERE_MET;
 
@@ -22,6 +23,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Remark;
+import seedu.address.model.person.Role;
 import seedu.address.model.person.WhereMet;
 import seedu.address.model.tag.Tag;
 
@@ -37,7 +39,7 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public AddCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_COMPANY,
+                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_COMPANY, PREFIX_ROLE,
                         PREFIX_WHERE_MET, PREFIX_ADDRESS, PREFIX_TAG);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_ADDRESS, PREFIX_PHONE, PREFIX_EMAIL)
@@ -45,7 +47,7 @@ public class AddCommandParser implements Parser<AddCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
 
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_COMPANY,
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_COMPANY, PREFIX_ROLE,
                 PREFIX_WHERE_MET, PREFIX_ADDRESS);
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
@@ -53,13 +55,16 @@ public class AddCommandParser implements Parser<AddCommand> {
         Optional<Company> company = argMultimap.getValue(PREFIX_COMPANY).isPresent()
                 ? Optional.of(ParserUtil.parseCompany(argMultimap.getValue(PREFIX_COMPANY).get()))
                 : Optional.empty();
+        Optional<Role> role = argMultimap.getValue(PREFIX_ROLE).isPresent()
+                ? Optional.of(ParserUtil.parseRole(argMultimap.getValue(PREFIX_ROLE).get()))
+                : Optional.empty();
         Optional<WhereMet> whereMet = argMultimap.getValue(PREFIX_WHERE_MET).isPresent()
                 ? Optional.of(ParserUtil.parseWhereMet(argMultimap.getValue(PREFIX_WHERE_MET).get()))
                 : Optional.empty();
         Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
         Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
-        Person person = new Person(name, phone, email, company, whereMet, address, new Remark(""), tagList);
+        Person person = new Person(name, phone, email, company, role, whereMet, address, new Remark(""), tagList);
 
         return new AddCommand(person);
     }
