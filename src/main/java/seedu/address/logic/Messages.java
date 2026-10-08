@@ -43,6 +43,7 @@ public class Messages {
                 .append("; Email: ")
                 .append(person.getEmail());
         person.getCompany().ifPresent(company -> builder.append("; Company: ").append(company));
+        person.getWhereMet().ifPresent(whereMet -> builder.append("; Where met: ").append(whereMet));
         builder.append("; Address: ")
                 .append(person.getAddress())
                 .append("; Tags: ");
