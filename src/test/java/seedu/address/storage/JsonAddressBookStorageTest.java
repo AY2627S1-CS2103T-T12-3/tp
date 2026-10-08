@@ -106,6 +106,19 @@ public class JsonAddressBookStorageTest {
     }
 
     @Test
+    public void readAndSaveAddressBook_withWhereMet_preservesWhereMet() throws Exception {
+        Path filePath = testFolder.resolve("WhereMetAddressBook.json");
+        AddressBook original = new AddressBook();
+        original.addPerson(new PersonBuilder(ALICE).withWhereMet("Career fair 2026").build());
+        JsonAddressBookStorage jsonAddressBookStorage = new JsonAddressBookStorage(filePath);
+
+        jsonAddressBookStorage.saveAddressBook(original, filePath);
+        ReadOnlyAddressBook readBack = jsonAddressBookStorage.readAddressBook(filePath).get();
+
+        assertEquals(original, new AddressBook(readBack));
+    }
+
+    @Test
     public void readAndSaveAddressBook_withApplication_preservesApplication() throws Exception {
         Path filePath = testFolder.resolve("ApplicationAddressBook.json");
         AddressBook original = new AddressBook();

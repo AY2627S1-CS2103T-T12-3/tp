@@ -77,9 +77,10 @@ Format: `help`
 
 Adds a person to the address book.
 
-Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [c/COMPANY] a/ADDRESS [t/TAG]…​`
+Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [c/COMPANY] a/ADDRESS [w/WHERE_MET] [t/TAG]…​`
 
 * `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
+* `WHERE_MET` describes how or where you met the person. It is optional and may contain letters, digits, spaces and `& . , ' -`, up to 200 characters.
 
 <div markdown="span" class="alert alert-primary">:bulb: **Tip:**
 A person can have any number of tags, including zero.
@@ -89,6 +90,7 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 * `add n/Alice Tan p/98765432 e/alice.tan@google.com c/Google a/70 Pasir Panjang Rd`
+* `add n/John Doe p/98765432 e/john@example.com a/1 NUS Road w/Career fair 2026`
 
 ### Listing all persons: `list`
 
@@ -100,7 +102,7 @@ Format: `list`
 
 Edits an existing person in the address book.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [c/COMPANY] [a/ADDRESS] [t/TAG]…​`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [c/COMPANY] [a/ADDRESS] [w/WHERE_MET] [t/TAG]…​`
 
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
@@ -112,6 +114,7 @@ Examples:
 *  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 *  `edit 3 c/Meta, Inc.` Edits the company of the 3rd person to be `Meta, Inc.`.
+*  `edit 3 w/LinkedIn` Edits where the 3rd person was met to be `LinkedIn`.
 
 ### Locating persons by name: `find`
 

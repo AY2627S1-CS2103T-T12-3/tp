@@ -11,6 +11,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.WhereMet;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -37,6 +38,7 @@ public class EditPersonDescriptorBuilder {
         descriptor.setPhone(person.getPhone());
         descriptor.setEmail(person.getEmail());
         person.getCompany().ifPresent(descriptor::setCompany);
+        person.getWhereMet().ifPresent(descriptor::setWhereMet);
         descriptor.setAddress(person.getAddress());
         descriptor.setTags(person.getTags());
     }
@@ -70,6 +72,12 @@ public class EditPersonDescriptorBuilder {
      */
     public EditPersonDescriptorBuilder withCompany(String company) {
         descriptor.setCompany(new Company(company));
+        return this;
+    }
+
+    /** Sets the {@code WhereMet} value of the descriptor being built. */
+    public EditPersonDescriptorBuilder withWhereMet(String whereMet) {
+        descriptor.setWhereMet(new WhereMet(whereMet));
         return this;
     }
 

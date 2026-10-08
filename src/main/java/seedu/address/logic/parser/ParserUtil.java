@@ -14,6 +14,7 @@ import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.WhereMet;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -94,6 +95,21 @@ public class ParserUtil {
             throw new ParseException(Company.MESSAGE_CONSTRAINTS);
         }
         return new Company(trimmedCompany);
+    }
+
+    /**
+     * Parses a {@code String whereMet} into a {@code WhereMet}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given value is invalid.
+     */
+    public static WhereMet parseWhereMet(String whereMet) throws ParseException {
+        requireNonNull(whereMet);
+        String trimmedWhereMet = whereMet.trim();
+        if (!WhereMet.isValidWhereMet(trimmedWhereMet)) {
+            throw new ParseException(WhereMet.MESSAGE_CONSTRAINTS);
+        }
+        return new WhereMet(trimmedWhereMet);
     }
 
     /**

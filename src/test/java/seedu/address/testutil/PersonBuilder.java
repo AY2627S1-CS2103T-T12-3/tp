@@ -11,6 +11,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Remark;
+import seedu.address.model.person.WhereMet;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -30,6 +31,7 @@ public class PersonBuilder {
     private Optional<Company> company;
     private Address address;
     private Remark remark;
+    private Optional<WhereMet> whereMet;
     private Set<Tag> tags;
 
     /**
@@ -42,6 +44,7 @@ public class PersonBuilder {
         company = Optional.empty();
         address = new Address(DEFAULT_ADDRESS);
         remark = new Remark("");
+        whereMet = Optional.empty();
         tags = new HashSet<>();
     }
 
@@ -55,6 +58,7 @@ public class PersonBuilder {
         company = personToCopy.getCompany();
         address = personToCopy.getAddress();
         remark = personToCopy.getRemark();
+        whereMet = personToCopy.getWhereMet();
         tags = new HashSet<>(personToCopy.getTags());
     }
 
@@ -114,8 +118,14 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets the {@code WhereMet} value of the person being built. */
+    public PersonBuilder withWhereMet(String whereMet) {
+        this.whereMet = Optional.of(new WhereMet(whereMet));
+        return this;
+    }
+
     public Person build() {
-        return new Person(name, phone, email, company, address, remark, tags);
+        return new Person(name, phone, email, company, whereMet, address, remark, tags);
     }
 
 }
