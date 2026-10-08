@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
@@ -23,6 +24,11 @@ import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.RemarkCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.application.Application;
+import seedu.address.model.application.ApplicationDate;
+import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.Description;
+import seedu.address.model.person.Company;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Remark;
@@ -39,6 +45,18 @@ public class AddressBookParserTest {
         Person person = new PersonBuilder().build();
         AddCommand command = (AddCommand) parser.parseCommand(PersonUtil.getAddCommand(person));
         assertEquals(new AddCommand(person), command);
+    }
+
+    @Test
+    public void parseCommand_addApplication() throws Exception {
+        Application application = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"));
+        AddApplicationCommand command = (AddApplicationCommand) parser.parseCommand(
+                "addapp n/Software Engineer Intern c/Tech Corp "
+                        + "d/Applied through the company careers page. dt/2026-10-07");
+
+        assertEquals(new AddApplicationCommand(application), command);
     }
 
     @Test

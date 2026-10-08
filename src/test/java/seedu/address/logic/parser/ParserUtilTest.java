@@ -12,6 +12,9 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.application.ApplicationDate;
+import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.Description;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
@@ -34,6 +37,13 @@ public class ParserUtilTest {
     private static final String VALID_EMAIL = "rachel@example.com";
     private static final String VALID_TAG_1 = "friend";
     private static final String VALID_TAG_2 = "neighbour";
+
+    private static final String INVALID_APPLICATION_NAME = " ";
+    private static final String INVALID_DESCRIPTION = " ";
+    private static final String INVALID_APPLICATION_DATE = "2026-02-30";
+    private static final String VALID_APPLICATION_NAME = "Software Engineer Intern";
+    private static final String VALID_DESCRIPTION = "Applied through the company careers page.";
+    private static final String VALID_APPLICATION_DATE = "2026-10-07";
 
     private static final String WHITESPACE = " \t\r\n";
 
@@ -78,6 +88,61 @@ public class ParserUtilTest {
         String nameWithWhitespace = WHITESPACE + VALID_NAME + WHITESPACE;
         Name expectedName = new Name(VALID_NAME);
         assertEquals(expectedName, ParserUtil.parseName(nameWithWhitespace));
+    }
+
+    @Test
+    public void parseApplicationName_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseApplicationName(null));
+    }
+
+    @Test
+    public void parseApplicationName_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseApplicationName(INVALID_APPLICATION_NAME));
+    }
+
+    @Test
+    public void parseApplicationName_validValueWithWhitespace_returnsTrimmedApplicationName() throws Exception {
+        String nameWithWhitespace = WHITESPACE + VALID_APPLICATION_NAME + WHITESPACE;
+        ApplicationName expectedName = new ApplicationName(VALID_APPLICATION_NAME);
+
+        assertEquals(expectedName, ParserUtil.parseApplicationName(nameWithWhitespace));
+    }
+
+    @Test
+    public void parseDescription_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseDescription(null));
+    }
+
+    @Test
+    public void parseDescription_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseDescription(INVALID_DESCRIPTION));
+    }
+
+    @Test
+    public void parseDescription_validValueWithWhitespace_returnsTrimmedDescription() throws Exception {
+        String descriptionWithWhitespace = WHITESPACE + VALID_DESCRIPTION + WHITESPACE;
+        Description expectedDescription = new Description(VALID_DESCRIPTION);
+
+        assertEquals(expectedDescription, ParserUtil.parseDescription(descriptionWithWhitespace));
+    }
+
+    @Test
+    public void parseApplicationDate_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseApplicationDate(null));
+    }
+
+    @Test
+    public void parseApplicationDate_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, ApplicationDate.MESSAGE_CONSTRAINTS, () ->
+                ParserUtil.parseApplicationDate(INVALID_APPLICATION_DATE));
+    }
+
+    @Test
+    public void parseApplicationDate_validValueWithWhitespace_returnsTrimmedApplicationDate() throws Exception {
+        String dateWithWhitespace = WHITESPACE + VALID_APPLICATION_DATE + WHITESPACE;
+        ApplicationDate expectedDate = new ApplicationDate(VALID_APPLICATION_DATE);
+
+        assertEquals(expectedDate, ParserUtil.parseApplicationDate(dateWithWhitespace));
     }
 
     @Test

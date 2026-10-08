@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
@@ -27,6 +28,11 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.application.Application;
+import seedu.address.model.application.ApplicationDate;
+import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.Description;
+import seedu.address.model.person.Company;
 import seedu.address.model.person.Person;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -68,6 +74,28 @@ public class LogicManagerTest {
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand, ListCommand.MESSAGE_SUCCESS, model);
+    }
+
+    @Test
+    public void execute_addApplicationCommand_success() throws Exception {
+        Application application = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"));
+        Model expectedModel = new ModelManager();
+        expectedModel.addApplication(application);
+        String command = AddApplicationCommand.COMMAND_WORD + " n/Software Engineer Intern c/Tech Corp "
+                + "d/Applied through the company careers page. dt/2026-10-07";
+        String expectedMessage = String.format(AddApplicationCommand.MESSAGE_SUCCESS, Messages.format(application));
+
+        assertCommandSuccess(command, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_addApplicationCommandWithInvalidDate_throwsParseException() {
+        String command = AddApplicationCommand.COMMAND_WORD + " n/Software Engineer Intern c/Tech Corp "
+                + "d/Applied through the company careers page. dt/2026-02-30";
+
+        assertParseException(command, ApplicationDate.MESSAGE_CONSTRAINTS);
     }
 
     @Test
