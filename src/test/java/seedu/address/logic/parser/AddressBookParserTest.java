@@ -38,11 +38,14 @@ import seedu.address.testutil.PersonUtil;
 
 public class AddressBookParserTest {
 
+    private static final String LEGACY_DEFAULT_ADDRESS = "Not provided";
+
     private final AddressBookParser parser = new AddressBookParser();
 
     @Test
     public void parseCommand_add() throws Exception {
-        Person person = new PersonBuilder().build();
+        Person person = new PersonBuilder().withCompany("Tech Corp").withRole("Recruiter")
+                .withWhereMet("Career fair").withAddress(LEGACY_DEFAULT_ADDRESS).withTags().build();
         AddCommand command = (AddCommand) parser.parseCommand(PersonUtil.getAddCommand(person));
         assertEquals(new AddCommand(person), command);
     }
@@ -116,7 +119,8 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_roleAndRemarkUseSamePrefixInDifferentCommands() throws Exception {
-        Person personWithRole = new PersonBuilder().withRole("SWE Recruiter").build();
+        Person personWithRole = new PersonBuilder().withCompany("Tech Corp").withRole("SWE Recruiter")
+                .withWhereMet("Career fair").withAddress(LEGACY_DEFAULT_ADDRESS).withTags().build();
         AddCommand addCommand = (AddCommand) parser.parseCommand(PersonUtil.getAddCommand(personWithRole));
         assertEquals(new AddCommand(personWithRole), addCommand);
 

@@ -28,7 +28,8 @@ public class AddCommandIntegrationTest {
 
     @Test
     public void execute_newPerson_success() {
-        Person validPerson = new PersonBuilder().build();
+        Person validPerson = new PersonBuilder().withCompany("Tech Corp").withRole("Recruiter")
+                .withWhereMet("Career fair").withAddress("Not provided").withTags().build();
 
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.addPerson(validPerson);
