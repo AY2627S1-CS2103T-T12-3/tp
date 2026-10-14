@@ -113,11 +113,21 @@ Examples:
 * `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
 * `addapp c/Example Pte Ltd d/Referred by a university alumnus. dt/2026-11-15 n/Product Manager Intern`
 
-### Listing all persons: `list`
+### Listing all contacts: `list`
 
-Shows a list of all persons in the address book.
+Shows all contacts in InternTrack, clearing any filter applied by a previous `find`.
 
 Format: `list`
+
+* Each contact card shows the contact's name, company, role, email, phone number and where you met them, followed by their address, remark and tags.
+* Optional fields that have not been filled in, such as company, role or where met, are hidden from the card.
+* The result box shows how many contacts are listed.
+* If you have no contacts, InternTrack tells you so and suggests using `add` to add one.
+
+Examples:
+* `list` shows all 6 sample contacts when you first launch InternTrack.
+
+![result for 'list'](images/listContactsResult.png)
 
 ### Editing a person: `edit`
 
