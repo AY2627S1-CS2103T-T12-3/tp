@@ -41,7 +41,7 @@ public class ContactContainsKeywordsPredicateTest {
     }
 
     @Test
-    public void test_nameContainsKeywords_returnsTrue() {
+    public void test_contactContainsKeywords_returnsTrue() {
         // One keyword
         ContactContainsKeywordsPredicate predicate = new ContactContainsKeywordsPredicate(List.of("Alice"));
         assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
@@ -57,10 +57,22 @@ public class ContactContainsKeywordsPredicateTest {
         // Mixed-case keywords
         predicate = new ContactContainsKeywordsPredicate(List.of("aLIce", "bOB"));
         assertTrue(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
+
+        // Company keyword
+        predicate = new ContactContainsKeywordsPredicate(List.of("gOOgle"));
+        assertTrue(predicate.test(new PersonBuilder().withCompany("Google").build()));
+
+        // Role keyword
+        predicate = new ContactContainsKeywordsPredicate(List.of("reCRuiter"));
+        assertTrue(predicate.test(new PersonBuilder().withRole("SWE Recruiter").build()));
+
+        // A keyword can match a different contact field from the other keywords
+        predicate = new ContactContainsKeywordsPredicate(List.of("Google", "Recruiter"));
+        assertTrue(predicate.test(new PersonBuilder().withCompany("Google").withRole("SWE Recruiter").build()));
     }
 
     @Test
-    public void test_nameDoesNotContainKeywords_returnsFalse() {
+    public void test_contactDoesNotContainKeywords_returnsFalse() {
         // Zero keywords
         ContactContainsKeywordsPredicate predicate = new ContactContainsKeywordsPredicate(List.of());
         assertFalse(predicate.test(new PersonBuilder().withName("Alice").build()));
@@ -69,10 +81,14 @@ public class ContactContainsKeywordsPredicateTest {
         predicate = new ContactContainsKeywordsPredicate(List.of("Carol"));
         assertFalse(predicate.test(new PersonBuilder().withName("Alice Bob").build()));
 
-        // Keywords match phone, email and address, but do not match name
+        // Keywords match phone, email and address, but do not match searchable contact fields
         predicate = new ContactContainsKeywordsPredicate(List.of("12345", "alice@email.com", "Main", "Street"));
         assertFalse(predicate.test(new PersonBuilder().withName("Alice").withPhone("1234567")
                 .withEmail("alice@email.com").withAddress("Main Street").build()));
+
+        // A contact without company and role is handled safely
+        predicate = new ContactContainsKeywordsPredicate(List.of("Google", "Recruiter"));
+        assertFalse(predicate.test(new PersonBuilder().withName("Alice").build()));
     }
 
     @Test
