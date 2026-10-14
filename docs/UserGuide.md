@@ -28,7 +28,7 @@ AddressBook Level 3 (AB3) is a **desktop application for managing contacts, opti
 
    * `list` : Lists all contacts.
 
-   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to the Address Book.
+   * `add n/John Doe c/Google r/SWE Recruiter e/johnd@example.com p/98765432 w/Career fair` : Adds a contact named `John Doe`.
 
    * `delete 3` : Deletes the 3rd contact shown in the current list.
 
@@ -73,28 +73,23 @@ Shows a message explaining how to access the help page.
 Format: `help`
 
 
-### Adding a person: `add`
+### Adding a contact: `add`
 
-Adds a person to the address book.
+Adds a professional contact to InternTrack.
 
-Format: `add n/NAME p/PHONE_NUMBER e/EMAIL [c/COMPANY] [r/ROLE] a/ADDRESS [w/WHERE_MET] [t/TAG]…​`
+Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER w/WHERE_MET`
 
+* All six fields are required.
 * `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 * `ROLE` is the role the person holds, such as `SWE Recruiter`. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
-* `WHERE_MET` describes how or where you met the person. It is optional and may contain letters, digits, spaces and `& . , ' -`, up to 200 characters.
+* `WHERE_MET` describes how or where you met the person. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 200 characters.
 * `NAME` may contain Unicode letters, digits, spaces, hyphens, and apostrophes. It must contain at least one letter or digit and be no longer than 100 characters. Leading and trailing whitespace is removed, and internal whitespace is reduced to one space.
 * `PHONE_NUMBER` must contain 7 to 15 digits, with an optional leading `+`. Spaces and hyphens can separate digits; they are removed when the phone number is stored.
-
-<div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-A person can have any number of tags, including zero.
-</div>
+* Two contacts with the same name and email address are considered duplicates, ignoring letter case.
 
 Examples:
-* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
-* `add n/Alice Tan p/98765432 e/alice.tan@google.com c/Google a/70 Pasir Panjang Rd`
-* `add n/Jane Lim p/91234567 e/jane@meta.com c/Meta r/SWE Recruiter a/1 Marina Boulevard`
-* `add n/John Doe p/98765432 e/john@example.com a/1 NUS Road w/Career fair 2026`
+* `add n/John Doe c/Google r/SWE Recruiter e/john@example.com p/98765432 w/Career fair 2026`
+* `add c/Meta r/Software Engineer e/jane@meta.com n/Jane Lim w/LinkedIn p/91234567`
 
 ### Adding an application: `addapp`
 
@@ -218,7 +213,7 @@ _Details coming soon ..._
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL [c/COMPANY] [r/ROLE] a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com r/SWE Recruiter a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add contact** | `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER w/WHERE_MET` <br> e.g., `add n/James Ho c/Google r/SWE Recruiter e/jamesho@example.com p/22224444 w/Career fair`
 **Add application** | `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
