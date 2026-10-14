@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
@@ -11,9 +12,11 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
 
 /**
- * Panel containing the list of persons.
+ * Panel containing the list of contacts.
  */
 public class PersonListPanel extends UiPart<Region> {
+    public static final String EMPTY_LIST_MESSAGE = "No contacts to show. Use the add command to add a contact.";
+
     private static final String FXML = "PersonListPanel.fxml";
     private final Logger logger = LogsCenter.getLogger(PersonListPanel.class);
 
@@ -27,6 +30,13 @@ public class PersonListPanel extends UiPart<Region> {
         super(FXML);
         personListView.setItems(personList);
         personListView.setCellFactory(listView -> new PersonListViewCell());
+        personListView.setPlaceholder(createPlaceholder());
+    }
+
+    private static Label createPlaceholder() {
+        Label placeholder = new Label(EMPTY_LIST_MESSAGE);
+        placeholder.getStyleClass().add("empty-list-placeholder");
+        return placeholder;
     }
 
     /**
