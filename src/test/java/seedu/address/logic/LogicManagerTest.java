@@ -21,6 +21,7 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.ListApplicationCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -48,11 +49,13 @@ public class LogicManagerTest {
 
     private Model model = new ModelManager();
     private Logic logic;
+    private Path addressBookFilePath;
 
     @BeforeEach
     public void setUp() {
+        addressBookFilePath = temporaryFolder.resolve("addressBook.json");
         JsonAddressBookStorage addressBookStorage =
-                new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+                new JsonAddressBookStorage(addressBookFilePath);
         JsonUserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(temporaryFolder.resolve("userPrefs.json"));
         StorageManager storage = new StorageManager(addressBookStorage, userPrefsStorage);
         logic = new LogicManager(model, storage);
@@ -91,6 +94,38 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_listApplicationCommand_success() throws Exception {
+        Application application = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"));
+        model.addApplication(application);
+
+        String expectedMessage = String.format(ListApplicationCommand.MESSAGE_SUCCESS, 1);
+        assertCommandSuccess(ListApplicationCommand.COMMAND_WORD, expectedMessage, model);
+    }
+
+    @Test
+    public void execute_addApplicationThenReloadAndList_applicationPreserved() throws Exception {
+        Application application = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"));
+        String addCommand = AddApplicationCommand.COMMAND_WORD + " n/Software Engineer Intern c/Tech Corp "
+                + "d/Applied through the company careers page. dt/2026-10-07";
+        logic.execute(addCommand);
+
+        JsonAddressBookStorage reloadedAddressBookStorage = new JsonAddressBookStorage(addressBookFilePath);
+        ReadOnlyAddressBook reloadedAddressBook = reloadedAddressBookStorage.readAddressBook().orElseThrow();
+        Model reloadedModel = new ModelManager(reloadedAddressBook, new UserPrefs());
+        StorageManager reloadedStorage = new StorageManager(reloadedAddressBookStorage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("reloadedUserPrefs.json")));
+        Logic reloadedLogic = new LogicManager(reloadedModel, reloadedStorage);
+
+        assertEquals(application, reloadedLogic.getApplicationList().get(0));
+        assertEquals(String.format(ListApplicationCommand.MESSAGE_SUCCESS, 1),
+                reloadedLogic.execute(ListApplicationCommand.COMMAND_WORD).getFeedbackToUser());
+    }
+
+    @Test
     public void execute_addApplicationCommandWithInvalidDate_throwsParseException() {
         String command = AddApplicationCommand.COMMAND_WORD + " n/Software Engineer Intern c/Tech Corp "
                 + "d/Applied through the company careers page. dt/2026-02-30";
@@ -113,6 +148,11 @@ public class LogicManagerTest {
     @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> logic.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void getApplicationList_modifyList_throwsUnsupportedOperationException() {
+        assertThrows(UnsupportedOperationException.class, () -> logic.getApplicationList().add(null));
     }
 
     /**

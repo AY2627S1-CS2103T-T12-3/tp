@@ -11,6 +11,13 @@ import seedu.address.commons.util.ToStringBuilder;
  */
 public class CommandResult {
 
+    /** The list that the main window should display after a command completes. */
+    public enum DisplayedList {
+        NONE,
+        CONTACTS,
+        APPLICATIONS
+    }
+
     private final String feedbackToUser;
 
     /** Help information should be shown to the user. */
@@ -19,13 +26,24 @@ public class CommandResult {
     /** The application should exit. */
     private final boolean exit;
 
+    /** The list to display, or {@link DisplayedList#NONE} to keep the current list. */
+    private final DisplayedList displayedList;
+
     /**
      * Constructs a {@code CommandResult} with the specified fields.
      */
     public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
+        this(feedbackToUser, showHelp, exit, DisplayedList.NONE);
+    }
+
+    /**
+     * Constructs a {@code CommandResult} with the specified fields.
+     */
+    public CommandResult(String feedbackToUser, boolean showHelp, boolean exit, DisplayedList displayedList) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
+        this.displayedList = requireNonNull(displayedList);
     }
 
     /**
@@ -34,6 +52,13 @@ public class CommandResult {
      */
     public CommandResult(String feedbackToUser) {
         this(feedbackToUser, false, false);
+    }
+
+    /**
+     * Constructs a {@code CommandResult} that asks the main window to show {@code displayedList}.
+     */
+    public CommandResult(String feedbackToUser, DisplayedList displayedList) {
+        this(feedbackToUser, false, false, displayedList);
     }
 
     public String getFeedbackToUser() {
@@ -46,6 +71,10 @@ public class CommandResult {
 
     public boolean isExit() {
         return exit;
+    }
+
+    public DisplayedList getDisplayedList() {
+        return displayedList;
     }
 
     @Override
@@ -61,12 +90,13 @@ public class CommandResult {
 
         return feedbackToUser.equals(otherCommandResult.feedbackToUser)
                 && showHelp == otherCommandResult.showHelp
-                && exit == otherCommandResult.exit;
+                && exit == otherCommandResult.exit
+                && displayedList == otherCommandResult.displayedList;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit);
+        return Objects.hash(feedbackToUser, showHelp, exit, displayedList);
     }
 
     @Override
@@ -75,6 +105,7 @@ public class CommandResult {
                 .add("feedbackToUser", feedbackToUser)
                 .add("showHelp", showHelp)
                 .add("exit", exit)
+                .add("displayedList", displayedList)
                 .toString();
     }
 

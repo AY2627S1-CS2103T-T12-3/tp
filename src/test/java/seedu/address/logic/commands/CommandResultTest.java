@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.CommandResult.DisplayedList;
+
 public class CommandResultTest {
     @Test
     public void equals() {
@@ -15,6 +17,7 @@ public class CommandResultTest {
         // same values -> returns true
         assertTrue(commandResult.equals(new CommandResult("feedback")));
         assertTrue(commandResult.equals(new CommandResult("feedback", false, false)));
+        assertTrue(commandResult.equals(new CommandResult("feedback", false, false, DisplayedList.NONE)));
 
         // same object -> returns true
         assertTrue(commandResult.equals(commandResult));
@@ -33,6 +36,9 @@ public class CommandResultTest {
 
         // different exit value -> returns false
         assertFalse(commandResult.equals(new CommandResult("feedback", false, true)));
+
+        // different displayedList value -> returns false
+        assertFalse(commandResult.equals(new CommandResult("feedback", DisplayedList.APPLICATIONS)));
     }
 
     @Test
@@ -50,6 +56,10 @@ public class CommandResultTest {
 
         // different exit value -> returns different hashcode
         assertNotEquals(commandResult.hashCode(), new CommandResult("feedback", false, true).hashCode());
+
+        // different displayedList value -> returns different hashcode
+        assertNotEquals(commandResult.hashCode(),
+                new CommandResult("feedback", DisplayedList.APPLICATIONS).hashCode());
     }
 
     @Test
@@ -57,7 +67,7 @@ public class CommandResultTest {
         CommandResult commandResult = new CommandResult("feedback");
         String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
                 + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
-                + ", exit=" + commandResult.isExit() + "}";
+                + ", exit=" + commandResult.isExit() + ", displayedList=" + commandResult.getDisplayedList() + "}";
         assertEquals(expected, commandResult.toString());
     }
 }
