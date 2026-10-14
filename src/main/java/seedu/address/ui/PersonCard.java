@@ -1,6 +1,7 @@
 package seedu.address.ui;
 
 import java.util.Comparator;
+import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -57,24 +58,26 @@ public class PersonCard extends UiPart<Region> {
         this.person = person;
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
-        phone.setText(person.getPhone().value);
-        address.setText(person.getAddress().value);
-        email.setText(person.getEmail().value);
-        person.getCompany().ifPresentOrElse(c -> company.setText(c.value), () -> {
-            company.setVisible(false);
-            company.setManaged(false);
-        });
-        person.getRole().ifPresentOrElse(r -> role.setText(r.value), () -> {
-            role.setVisible(false);
-            role.setManaged(false);
-        });
-        person.getWhereMet().ifPresentOrElse(w -> whereMet.setText(w.value), () -> {
-            whereMet.setVisible(false);
-            whereMet.setManaged(false);
-        });
-        remark.setText(person.getRemark().value);
+        setOptionalField(company, "Company: ", person.getCompany().map(c -> c.value));
+        setOptionalField(role, "Role: ", person.getRole().map(r -> r.value));
+        email.setText("Email: " + person.getEmail().value);
+        phone.setText("Phone: " + person.getPhone().value);
+        setOptionalField(whereMet, "Where met: ", person.getWhereMet().map(w -> w.value));
+        address.setText("Address: " + person.getAddress().value);
+        String remarkText = person.getRemark().value;
+        setOptionalField(remark, "Remark: ", remarkText.isEmpty() ? Optional.empty() : Optional.of(remarkText));
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
+    }
+
+    /**
+     * Shows {@code label} with the given prefix and value, or hides it if there is no value.
+     */
+    private static void setOptionalField(Label label, String prefix, Optional<String> value) {
+        value.ifPresentOrElse(v -> label.setText(prefix + v), () -> {
+            label.setVisible(false);
+            label.setManaged(false);
+        });
     }
 }
