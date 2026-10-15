@@ -36,13 +36,9 @@ public class PersonUtil {
         sb.append(PREFIX_NAME + person.getName().fullName + " ");
         sb.append(PREFIX_PHONE + person.getPhone().value + " ");
         sb.append(PREFIX_EMAIL + person.getEmail().value + " ");
-        person.getCompany().ifPresent(company -> sb.append(PREFIX_COMPANY + company.value + " "));
-        person.getRole().ifPresent(role -> sb.append(PREFIX_ROLE + role.value + " "));
-        sb.append(PREFIX_ADDRESS + person.getAddress().value + " ");
-        person.getWhereMet().ifPresent(whereMet -> sb.append(PREFIX_WHERE_MET + whereMet.value + " "));
-        person.getTags().stream().forEach(
-            s -> sb.append(PREFIX_TAG + s.tagName + " ")
-        );
+        sb.append(PREFIX_COMPANY + person.getCompany().orElseThrow().value + " ");
+        sb.append(PREFIX_ROLE + person.getRole().orElseThrow().value + " ");
+        sb.append(PREFIX_WHERE_MET + person.getWhereMet().orElseThrow().value + " ");
         return sb.toString();
     }
 
