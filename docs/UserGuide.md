@@ -58,7 +58,7 @@ AddressBook Level 3 (AB3) is a **desktop application for managing contacts, opti
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
+* Extraneous parameters for commands that take no parameters, such as `help`, `list`, `listapp`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -107,6 +107,22 @@ Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD`
 Examples:
 * `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
 * `addapp c/Example Pte Ltd d/Referred by a university alumnus. dt/2026-11-15 n/Product Manager Intern`
+
+After an application is added, InternTrack switches to the application list so that the new record is visible.
+
+### Listing all applications: `listapp`
+
+Shows all internship and graduate-role applications in InternTrack, separately from contacts.
+
+Format: `listapp`
+
+* Each application card shows its Name, Company, Description, and Date.
+* The result box shows how many applications are listed.
+* If you have no applications, InternTrack tells you so and suggests using `addapp` to add one.
+
+Examples:
+* `listapp` shows all saved applications.
+* Run `list` to return to the contact list.
 
 ### Listing all contacts: `list`
 
@@ -233,4 +249,5 @@ Action | Format, Examples
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com r/Software Engineer`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find Google Recruiter`
 **List** | `list`
+**List applications** | `listapp`
 **Help** | `help`

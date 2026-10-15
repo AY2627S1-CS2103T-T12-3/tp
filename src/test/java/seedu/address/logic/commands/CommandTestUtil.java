@@ -113,6 +113,16 @@ public class CommandTestUtil {
     }
 
     /**
+     * Executes a find command and verifies that it switches to the contact list.
+     */
+    public static void assertCommandSuccess(FindCommand command, Model actualModel, String expectedMessage,
+            Model expectedModel) {
+        CommandResult expectedCommandResult = new CommandResult(expectedMessage,
+                CommandResult.DisplayedList.CONTACTS);
+        assertCommandSuccess(command, actualModel, expectedCommandResult, expectedModel);
+    }
+
+    /**
      * Executes the given {@code command}, confirms that <br>
      * - a {@code CommandException} is thrown <br>
      * - the CommandException message matches {@code expectedMessage} <br>

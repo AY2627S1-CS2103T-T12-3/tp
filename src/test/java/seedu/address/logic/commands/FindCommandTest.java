@@ -99,4 +99,5 @@ public class FindCommandTest {
     private ContactContainsKeywordsPredicate preparePredicate(String userInput) {
         return new ContactContainsKeywordsPredicate(List.of(userInput.split("\\s+")));
     }
+
 }
