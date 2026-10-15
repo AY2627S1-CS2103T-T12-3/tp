@@ -110,6 +110,42 @@ Examples:
 
 After an application is added, InternTrack switches to the application list so that the new record is visible.
 
+### Editing an application: `editapp`
+
+Edits an existing internship or graduate-role application.
+
+Format: `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD]`
+
+* Run `listapp` to see the application indexes. `INDEX` must be a positive integer referring to an existing application.
+* At least one field must be provided. Fields may appear in any order, but each prefix may appear only once.
+* Supplied fields replace the existing values; omitted fields remain unchanged. Supplying the same value is allowed.
+* All values follow the constraints described under `addapp`. Fields cannot be cleared with an empty value.
+* An edit cannot give an application the same name and company as another application, ignoring letter case.
+* On success, the application list is shown and the edited card stays at the same position.
+* The index always refers to the application list, even when you are viewing contacts. Contacts are unaffected.
+* Changes are saved automatically. Invalid commands leave the saved applications unchanged.
+
+Examples:
+* `listapp` followed by `editapp 1 d/Interview scheduled.` updates only the first application's description.
+* `editapp 2 n/Graduate Software Engineer c/Example Pte Ltd dt/2026-10-15` updates the second application's name,
+  company and date, keeping its description.
+
+### Deleting an application: `deleteapp`
+
+Deletes an existing application immediately.
+
+Format: `deleteapp INDEX`
+
+* Run `listapp` to see the application indexes. `INDEX` must be a positive integer referring to an existing application.
+* Only one index is accepted. Additional indexes or parameters are invalid.
+* The index always refers to the application list, even when you are viewing contacts. Contacts are unaffected.
+* On success, the application list is shown and the remaining cards are renumbered. Deleting the final application
+  leaves an empty application list.
+* The deletion is saved automatically. An invalid index leaves the saved applications unchanged.
+
+Example:
+* `listapp` followed by `deleteapp 2` deletes the second application.
+
 ### Listing all applications: `listapp`
 
 Shows all internship and graduate-role applications in InternTrack, separately from contacts.
@@ -244,6 +280,8 @@ Action | Format, Examples
 --------|------------------
 **Add contact** | `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER w/WHERE_MET` <br> e.g., `add n/James Ho c/Google r/SWE Recruiter e/jamesho@example.com p/22224444 w/Career fair`
 **Add application** | `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
+**Edit application** | `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD]`<br> e.g., `editapp 1 d/Interview scheduled.`
+**Delete application** | `deleteapp INDEX`<br> e.g., `deleteapp 2`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com r/Software Engineer`

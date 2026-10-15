@@ -15,7 +15,10 @@ import org.junit.jupiter.api.Test;
 import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.DeleteApplicationCommand;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.EditApplicationCommand;
+import seedu.address.logic.commands.EditApplicationCommand.EditApplicationDescriptor;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.logic.commands.ExitCommand;
@@ -146,5 +149,18 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_unknownCommand_throwsParseException() {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("unknownCommand"));
+    }
+
+    @Test
+    public void parseCommand_editApplication() throws Exception {
+        EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
+        descriptor.setDescription(new Description("Interview scheduled."));
+        assertEquals(new EditApplicationCommand(INDEX_FIRST_PERSON, descriptor),
+                parser.parseCommand("editapp 1 d/Interview scheduled."));
+    }
+
+    @Test
+    public void parseCommand_deleteApplication() throws Exception {
+        assertEquals(new DeleteApplicationCommand(INDEX_FIRST_PERSON), parser.parseCommand("deleteapp 1"));
     }
 }

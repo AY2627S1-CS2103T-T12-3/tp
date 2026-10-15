@@ -10,10 +10,13 @@ import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ROLE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.WHERE_MET_DESC_AMY;
 import static seedu.address.testutil.Assert.assertThrows;
+import static seedu.address.testutil.TypicalApplications.PRODUCT_MANAGER_INTERN;
+import static seedu.address.testutil.TypicalApplications.SOFTWARE_ENGINEER_INTERN;
 import static seedu.address.testutil.TypicalPersons.AMY;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -21,10 +24,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import javafx.collections.ObservableList;
 import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
+import seedu.address.logic.commands.EditApplicationCommand;
 import seedu.address.logic.commands.ListApplicationCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -279,5 +284,58 @@ public class LogicManagerTest {
         ModelManager expectedModel = new ModelManager();
         expectedModel.addPerson(expectedPerson);
         assertCommandFailure(addCommand, CommandException.class, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_editAndDeleteApplicationsFromContacts_persistsAndRefreshesList() throws Exception {
+        model.addPerson(AMY);
+        model.addApplication(SOFTWARE_ENGINEER_INTERN);
+        model.addApplication(PRODUCT_MANAGER_INTERN);
+        ObservableList<Application> applications = logic.getApplicationList();
+        logic.execute("list");
+
+        CommandResult editResult = logic.execute("editapp 2 d/Interview scheduled. dt/2026-10-15");
+        Application edited = new Application(PRODUCT_MANAGER_INTERN.getName(), PRODUCT_MANAGER_INTERN.getCompany(),
+                new Description("Interview scheduled."), new ApplicationDate("2026-10-15"));
+        assertEquals(DisplayedList.APPLICATIONS, editResult.getDisplayedList());
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN, edited), applications);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(addressBookFilePath);
+        ReadOnlyAddressBook afterEdit = storage.readAddressBook().orElseThrow();
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN, edited), afterEdit.getApplicationList());
+        assertEquals(List.of(AMY), afterEdit.getPersonList());
+
+        logic.execute("list");
+        CommandResult deleteResult = logic.execute("deleteapp 1");
+        assertEquals(DisplayedList.APPLICATIONS, deleteResult.getDisplayedList());
+        assertEquals(List.of(edited), applications);
+        ReadOnlyAddressBook afterDelete = storage.readAddressBook().orElseThrow();
+        Model reloadedModel = new ModelManager(afterDelete, new UserPrefs());
+        assertEquals(List.of(edited), reloadedModel.getAddressBook().getApplicationList());
+        assertEquals(List.of(AMY), reloadedModel.getAddressBook().getPersonList());
+
+        logic.execute("deleteapp 1");
+        assertEquals(List.of(), applications);
+        assertEquals(List.of(), storage.readAddressBook().orElseThrow().getApplicationList());
+    }
+
+    @Test
+    public void execute_invalidApplicationCommands_preserveMemoryAndSavedFile() throws Exception {
+        model.addApplication(SOFTWARE_ENGINEER_INTERN);
+        model.addApplication(PRODUCT_MANAGER_INTERN);
+        logic.execute("listapp");
+        String savedData = Files.readString(addressBookFilePath);
+        for (String command : List.of("editapp 0 d/Updated", "editapp 1", "editapp 1 dt/2026-02-30",
+                "editapp 1 n/", "deleteapp 1 2", "deleteapp -1")) {
+            assertThrows(ParseException.class, () -> logic.execute(command));
+            assertEquals(savedData, Files.readString(addressBookFilePath));
+            assertEquals(List.of(SOFTWARE_ENGINEER_INTERN, PRODUCT_MANAGER_INTERN), logic.getApplicationList());
+        }
+        for (String command : List.of("editapp 3 d/Updated", "deleteapp 3")) {
+            assertCommandException(command, Messages.MESSAGE_INVALID_APPLICATION_DISPLAYED_INDEX);
+            assertEquals(savedData, Files.readString(addressBookFilePath));
+        }
+        assertCommandException("editapp 1 n/product manager intern c/other corp",
+                EditApplicationCommand.MESSAGE_DUPLICATE_APPLICATION);
+        assertEquals(savedData, Files.readString(addressBookFilePath));
     }
 }
