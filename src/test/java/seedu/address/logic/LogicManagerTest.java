@@ -319,6 +319,31 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_editAndDeleteContacts_persistsAndRefreshesList() throws Exception {
+        model.addPerson(AMY);
+        model.addApplication(SOFTWARE_ENGINEER_INTERN);
+        ObservableList<Person> contacts = logic.getFilteredPersonList();
+        logic.execute("listapp");
+
+        CommandResult editResult = logic.execute("edit 1 c/Meta, Inc. r/Software Engineer w/LinkedIn");
+        Person edited = new PersonBuilder(AMY).withCompany("Meta, Inc.").withRole("Software Engineer")
+                .withWhereMet("LinkedIn").build();
+        assertEquals(DisplayedList.CONTACTS, editResult.getDisplayedList());
+        assertEquals(List.of(edited), contacts);
+
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(addressBookFilePath);
+        assertEquals(List.of(edited), storage.readAddressBook().orElseThrow().getPersonList());
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN), storage.readAddressBook().orElseThrow().getApplicationList());
+
+        logic.execute("listapp");
+        CommandResult deleteResult = logic.execute("delete 1");
+        assertEquals(DisplayedList.CONTACTS, deleteResult.getDisplayedList());
+        assertEquals(List.of(), contacts);
+        assertEquals(List.of(), storage.readAddressBook().orElseThrow().getPersonList());
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN), storage.readAddressBook().orElseThrow().getApplicationList());
+    }
+
+    @Test
     public void execute_invalidApplicationCommands_preserveMemoryAndSavedFile() throws Exception {
         model.addApplication(SOFTWARE_ENGINEER_INTERN);
         model.addApplication(PRODUCT_MANAGER_INTERN);
