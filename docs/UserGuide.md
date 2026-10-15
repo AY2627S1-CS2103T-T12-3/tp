@@ -19,7 +19,7 @@ InternTrack is a **desktop application for tracking internship and graduate-role
 
 1. Copy the JAR file to the folder you want to use as InternTrack's _home folder_.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar InternTrack-v1.3.jar`.<br>
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
    A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
    ![InternTrack contact list](images/listContactsResult.png)
 
