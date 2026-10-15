@@ -7,6 +7,7 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.model.application.exceptions.ApplicationNotFoundException;
 import seedu.address.model.application.exceptions.DuplicateApplicationException;
 
 /**
@@ -41,6 +42,35 @@ public class UniqueApplicationList {
             throw new DuplicateApplicationException();
         }
         internalList.add(toAdd);
+    }
+
+    /**
+     * Replaces {@code target} with {@code editedApplication}, preserving its position.
+     * The target must exist and the edited identity must not duplicate another application.
+     */
+    public void setApplication(Application target, Application editedApplication) {
+        requireAllNonNull(target, editedApplication);
+
+        int index = internalList.indexOf(target);
+        if (index == -1) {
+            throw new ApplicationNotFoundException();
+        }
+        if (!target.isSameApplication(editedApplication) && contains(editedApplication)) {
+            throw new DuplicateApplicationException();
+        }
+
+        internalList.set(index, editedApplication);
+    }
+
+    /**
+     * Removes the application with exactly the same fields as {@code toRemove}.
+     * The application must exist in the list.
+     */
+    public void remove(Application toRemove) {
+        requireNonNull(toRemove);
+        if (!internalList.remove(toRemove)) {
+            throw new ApplicationNotFoundException();
+        }
     }
 
     /**

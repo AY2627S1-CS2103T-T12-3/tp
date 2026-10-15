@@ -66,6 +66,17 @@ public interface Model {
     void addApplication(Application application);
 
     /**
+     * Replaces {@code target} with {@code editedApplication}.
+     * The target must exist and the edited identity must not duplicate another application.
+     */
+    void setApplication(Application target, Application editedApplication);
+
+    /**
+     * Deletes the given application, which must exist in the address book.
+     */
+    void deleteApplication(Application target);
+
+    /**
      * Replaces the given person {@code target} with {@code editedPerson}.
      * {@code target} must exist in the address book.
      * The person identity of {@code editedPerson} must not be the same as another existing person in the address book.
