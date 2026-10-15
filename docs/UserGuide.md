@@ -212,8 +212,7 @@ Examples:
 * `find John` returns `john` and `John Doe`
 * `find Google` returns contacts whose company contains `Google`
 * `find Recruiter` returns contacts whose role contains `Recruiter`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `find alex david` returns matching contacts such as `Alex Yeoh` and `David Li`.
 
 ### Deleting a person: `delete`
 
