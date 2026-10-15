@@ -143,20 +143,23 @@ Examples:
 *  `edit 1 r/Software Engineer` Edits the role of the 1st person to be `Software Engineer`.
 *  `edit 3 w/LinkedIn` Edits where the 3rd person was met to be `LinkedIn`.
 
-### Locating persons by name: `find`
+### Locating contacts by keyword: `find`
 
-Finds persons whose names contain any of the given keywords.
+Finds contacts whose names, companies, or roles contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
-* The search considers only names.
+* The search considers names, companies, and roles.
 * Only full words match; for example, `Han` does not match `Hans`.
-* Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* Contacts matching at least one keyword are returned (an `OR` search); for example, `Google Recruiter` returns contacts whose company contains `Google` or whose role contains `Recruiter`.
+* Contacts without a company or role can still be searched by name.
 
 Examples:
 * `find John` returns `john` and `John Doe`
+* `find Google` returns contacts whose company contains `Google`
+* `find Recruiter` returns contacts whose role contains `Recruiter`
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
@@ -228,6 +231,6 @@ Action | Format, Examples
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com r/Software Engineer`
-**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find Google Recruiter`
 **List** | `list`
 **Help** | `help`

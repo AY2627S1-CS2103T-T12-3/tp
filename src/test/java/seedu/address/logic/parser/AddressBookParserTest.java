@@ -29,7 +29,7 @@ import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Company;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.ContactContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Remark;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
@@ -95,7 +95,7 @@ public class AddressBookParserTest {
         List<String> keywords = List.of("foo", "bar", "baz");
         FindCommand command = (FindCommand) parser.parseCommand(
                 FindCommand.COMMAND_WORD + " " + keywords.stream().collect(Collectors.joining(" ")));
-        assertEquals(new FindCommand(new NameContainsKeywordsPredicate(keywords)), command);
+        assertEquals(new FindCommand(new ContactContainsKeywordsPredicate(keywords)), command);
     }
 
     @Test
