@@ -1,6 +1,6 @@
 [![CI Status](https://github.com/AY2627S1-CS2103T-T12-3/tp/actions/workflows/gradle.yml/badge.svg)](https://github.com/AY2627S1-CS2103T-T12-3/tp/actions/workflows/gradle.yml)
 
-![Ui](docs/images/Ui.png)
+![InternTrack contact list](docs/images/listContactsResult.png)
 
 # InternTrack
 
@@ -17,8 +17,8 @@ users who prefer to enter and find records quickly by typing commands.
   interviewers, alumni, and referrers.
 - Keep contact details together, including phone number, email, company,
   address, tags, and where you met.
-- Record an internship or graduate role application with its role, company,
-  description, and application date.
+- Add, view, edit, and delete internship or graduate role applications with
+  their role, company, description, and application date.
 - Store contacts and application records locally in a JSON data file.
 
 See the [User Guide](docs/UserGuide.md) for the available commands and their
