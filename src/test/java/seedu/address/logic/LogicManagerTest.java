@@ -13,6 +13,7 @@ import static seedu.address.testutil.TypicalPersons.AMY;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.logic.commands.ListApplicationCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -102,6 +104,42 @@ public class LogicManagerTest {
 
         String expectedMessage = String.format(ListApplicationCommand.MESSAGE_SUCCESS, 1);
         assertCommandSuccess(ListApplicationCommand.COMMAND_WORD, expectedMessage, model);
+    }
+
+    @Test
+    public void execute_findFromContactList_showsMatchingContacts() throws Exception {
+        model.addPerson(AMY);
+        CommandResult listResult = logic.execute(ListCommand.COMMAND_WORD);
+        assertEquals(DisplayedList.CONTACTS, listResult.getDisplayedList());
+
+        CommandResult findResult = logic.execute("find Amy");
+
+        assertEquals(DisplayedList.CONTACTS, findResult.getDisplayedList());
+        assertEquals(List.of(AMY), logic.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_findFromApplicationList_switchesToMatchingContacts() throws Exception {
+        model.addPerson(AMY);
+        CommandResult listApplicationResult = logic.execute(ListApplicationCommand.COMMAND_WORD);
+        assertEquals(DisplayedList.APPLICATIONS, listApplicationResult.getDisplayedList());
+
+        CommandResult findResult = logic.execute("find Amy");
+
+        assertEquals(DisplayedList.CONTACTS, findResult.getDisplayedList());
+        assertEquals(List.of(AMY), logic.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_findWithNoResultsFromApplicationList_switchesToEmptyContactList() throws Exception {
+        model.addPerson(AMY);
+        CommandResult listApplicationResult = logic.execute(ListApplicationCommand.COMMAND_WORD);
+        assertEquals(DisplayedList.APPLICATIONS, listApplicationResult.getDisplayedList());
+
+        CommandResult findResult = logic.execute("find Missing");
+
+        assertEquals(DisplayedList.CONTACTS, findResult.getDisplayedList());
+        assertEquals(List.of(), logic.getFilteredPersonList());
     }
 
     @Test
