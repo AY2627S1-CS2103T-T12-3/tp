@@ -46,13 +46,19 @@ public class LogicManager implements Logic {
         logger.info("----------------[USER COMMAND][" + commandText + "]");
 
         CommandResult commandResult;
-        Command command = addressBookParser.parseCommand(commandText);
+        Command command;
+        try {
+            command = addressBookParser.parseCommand(commandText);
+        } catch (ParseException pe) {
+            logger.info("Command could not be parsed: " + pe.getMessage());
+            throw pe;
+        }
         logger.fine("Executing command: " + command);
 
         try {
             commandResult = command.execute(model);
         } catch (CommandException ce) {
-            logger.info("Command failed: " + ce.getMessage());
+            logger.info("Command failed during execution: " + ce.getMessage());
             throw ce;
         }
 
