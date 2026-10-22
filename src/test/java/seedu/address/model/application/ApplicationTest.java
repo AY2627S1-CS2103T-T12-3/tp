@@ -21,6 +21,23 @@ public class ApplicationTest {
     public void constructor_nullField_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> new Application(null, new Company("Tech Corp"),
                 new Description("Applied through the company careers page."), new ApplicationDate("2026-10-07")));
+        assertThrows(NullPointerException.class, () -> new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"), null));
+    }
+
+    @Test
+    public void constructor_defaultStatus_isApplied() {
+        assertEquals(ApplicationStatus.APPLIED, SOFTWARE_ENGINEER_INTERN.getStatus());
+    }
+
+    @Test
+    public void constructor_explicitStatus_returnsStatus() {
+        Application application = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"), ApplicationStatus.INTERVIEWING);
+
+        assertEquals(ApplicationStatus.INTERVIEWING, application.getStatus());
     }
 
     @Test
@@ -89,13 +106,20 @@ public class ApplicationTest {
         editedApplication = new Application(new ApplicationName("Software Engineer Intern"), new Company("Tech Corp"),
                 new Description("Applied through the company careers page."), new ApplicationDate("2026-10-08"));
         assertFalse(SOFTWARE_ENGINEER_INTERN.equals(editedApplication));
+
+        // different status -> returns false
+        editedApplication = new Application(new ApplicationName("Software Engineer Intern"), new Company("Tech Corp"),
+                new Description("Applied through the company careers page."), new ApplicationDate("2026-10-07"),
+                ApplicationStatus.INTERVIEWING);
+        assertFalse(SOFTWARE_ENGINEER_INTERN.equals(editedApplication));
     }
 
     @Test
     public void toStringMethod() {
         String expected = Application.class.getCanonicalName() + "{name=" + SOFTWARE_ENGINEER_INTERN.getName()
                 + ", company=" + SOFTWARE_ENGINEER_INTERN.getCompany() + ", description="
-                + SOFTWARE_ENGINEER_INTERN.getDescription() + ", date=" + SOFTWARE_ENGINEER_INTERN.getDate() + "}";
+                + SOFTWARE_ENGINEER_INTERN.getDescription() + ", date=" + SOFTWARE_ENGINEER_INTERN.getDate()
+                + ", status=" + SOFTWARE_ENGINEER_INTERN.getStatus() + "}";
 
         assertEquals(expected, SOFTWARE_ENGINEER_INTERN.toString());
     }

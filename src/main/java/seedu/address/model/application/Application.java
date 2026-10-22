@@ -17,16 +17,26 @@ public class Application {
     private final Company company;
     private final Description description;
     private final ApplicationDate date;
+    private final ApplicationStatus status;
 
     /**
      * Every field must be present and not null.
      */
     public Application(ApplicationName name, Company company, Description description, ApplicationDate date) {
-        requireAllNonNull(name, company, description, date);
+        this(name, company, description, date, ApplicationStatus.APPLIED);
+    }
+
+    /**
+     * Every field must be present and not null.
+     */
+    public Application(ApplicationName name, Company company, Description description, ApplicationDate date,
+                       ApplicationStatus status) {
+        requireAllNonNull(name, company, description, date, status);
         this.name = name;
         this.company = company;
         this.description = description;
         this.date = date;
+        this.status = status;
     }
 
     public ApplicationName getName() {
@@ -43,6 +53,10 @@ public class Application {
 
     public ApplicationDate getDate() {
         return date;
+    }
+
+    public ApplicationStatus getStatus() {
+        return status;
     }
 
     /**
@@ -76,12 +90,13 @@ public class Application {
         return name.equals(otherApplication.name)
                 && company.equals(otherApplication.company)
                 && description.equals(otherApplication.description)
-                && date.equals(otherApplication.date);
+                && date.equals(otherApplication.date)
+                && status == otherApplication.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, company, description, date);
+        return Objects.hash(name, company, description, date, status);
     }
 
     @Override
@@ -91,6 +106,7 @@ public class Application {
                 .add("company", company)
                 .add("description", description)
                 .add("date", date)
+                .add("status", status)
                 .toString();
     }
 }
