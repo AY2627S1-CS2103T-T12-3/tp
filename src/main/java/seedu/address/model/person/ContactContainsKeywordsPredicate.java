@@ -7,7 +7,7 @@ import seedu.address.commons.util.StringUtil;
 import seedu.address.commons.util.ToStringBuilder;
 
 /**
- * Tests that a {@code Person}'s name, company, or role matches any of the given keywords.
+ * Tests that any field of a {@code Person} matches any of the given keywords.
  */
 public class ContactContainsKeywordsPredicate implements Predicate<Person> {
     private final List<String> keywords;
@@ -23,9 +23,17 @@ public class ContactContainsKeywordsPredicate implements Predicate<Person> {
 
     private boolean containsKeyword(Person person, String keyword) {
         return StringUtil.containsWordIgnoreCase(person.getName().fullName, keyword)
+                || StringUtil.containsWordIgnoreCase(person.getPhone().value, keyword)
+                || StringUtil.containsWordIgnoreCase(person.getEmail().value, keyword)
                 || person.getCompany().map(company -> StringUtil.containsWordIgnoreCase(company.value, keyword))
                         .orElse(false)
-                || person.getRole().map(role -> StringUtil.containsWordIgnoreCase(role.value, keyword)).orElse(false);
+                || person.getRole().map(role -> StringUtil.containsWordIgnoreCase(role.value, keyword)).orElse(false)
+                || person.getWhereMet().map(whereMet -> StringUtil.containsWordIgnoreCase(whereMet.value, keyword))
+                        .orElse(false)
+                || StringUtil.containsWordIgnoreCase(person.getAddress().value, keyword)
+                || StringUtil.containsWordIgnoreCase(person.getRemark().value, keyword)
+                || person.getTags().stream()
+                        .anyMatch(tag -> StringUtil.containsWordIgnoreCase(tag.tagName, keyword));
     }
 
     @Override
