@@ -101,18 +101,20 @@ Examples:
 
 Adds an internship or graduate-role application to InternTrack.
 
-Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD`
+Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`
 
 * All four fields are required.
 * `NAME` is the role or position title. It must not be blank, contain control characters, or exceed 100 characters.
 * `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 * `DESCRIPTION` records relevant application details. It must not be blank or exceed 500 characters.
 * `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
+* `STATUS` is optional. If omitted, the application is created with the `APPLIED` status.
+* The accepted status values are `APPLIED`, `INTERVIEWING`, `OFFERED`, `REJECTED`, and `WITHDRAWN`. Status values are case-insensitive.
 * Two applications with the same `NAME` and `COMPANY` are considered duplicates, ignoring letter case. Their descriptions and dates do not affect duplicate detection.
 
 Examples:
 * `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
-* `addapp c/Example Pte Ltd d/Referred by a university alumnus. dt/2026-11-15 n/Product Manager Intern`
+* `addapp c/Example Pte Ltd d/Referred by a university alumnus. dt/2026-11-15 s/INTERVIEWING n/Product Manager Intern`
 
 After an application is added, InternTrack switches to the application list so that the new record is visible.
 
@@ -120,12 +122,13 @@ After an application is added, InternTrack switches to the application list so t
 
 Edits an existing internship or graduate-role application.
 
-Format: `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD]`
+Format: `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD] [s/STATUS]`
 
 * Run `listapp` to see the application indexes. `INDEX` must be a positive integer referring to an existing application.
 * At least one field must be provided. Fields may appear in any order, but each prefix may appear only once.
 * Supplied fields replace the existing values; omitted fields remain unchanged. Supplying the same value is allowed.
 * All values follow the constraints described under `addapp`. Fields cannot be cleared with an empty value.
+* Use `s/STATUS` to update only the application's status. The accepted values are `APPLIED`, `INTERVIEWING`, `OFFERED`, `REJECTED`, and `WITHDRAWN`.
 * An edit cannot give an application the same name and company as another application, ignoring letter case.
 * On success, the application list is shown and the edited card stays at the same position.
 * The index always refers to the application list, even when you are viewing contacts. Contacts are unaffected.
@@ -135,6 +138,7 @@ Examples:
 * `listapp` followed by `editapp 1 d/Interview scheduled.` updates only the first application's description.
 * `editapp 2 n/Graduate Software Engineer c/Example Pte Ltd dt/2026-10-15` updates the second application's name,
   company and date, keeping its description.
+* `editapp 1 s/OFFERED` updates only the first application's status.
 
 ### Deleting an application: `deleteapp`
 
@@ -158,7 +162,7 @@ Shows all internship and graduate-role applications in InternTrack, separately f
 
 Format: `listapp`
 
-* Each application card shows its Name, Company, Description, and Date.
+* Each application card shows its Name, Company, Description, Date, and Status. Status text uses a different colour for each status.
 * The result box shows how many applications are listed.
 * If you have no applications, InternTrack tells you so and suggests using `addapp` to add one.
 
@@ -284,8 +288,8 @@ _Details coming soon ..._
 Action | Format, Examples
 --------|------------------
 **Add contact** | `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER w/WHERE_MET` <br> e.g., `add n/James Ho c/Google r/SWE Recruiter e/jamesho@example.com p/22224444 w/Career fair`
-**Add application** | `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
-**Edit application** | `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD]`<br> e.g., `editapp 1 d/Interview scheduled.`
+**Add application** | `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07 s/APPLIED`
+**Edit application** | `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD] [s/STATUS]`<br> e.g., `editapp 1 s/INTERVIEWING`
 **Delete application** | `deleteapp INDEX`<br> e.g., `deleteapp 2`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`

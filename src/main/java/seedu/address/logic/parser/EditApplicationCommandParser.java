@@ -6,6 +6,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_COMPANY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditApplicationCommand;
@@ -24,7 +25,7 @@ public class EditApplicationCommandParser implements Parser<EditApplicationComma
     public EditApplicationCommand parse(String args) throws ParseException {
         requireNonNull(args);
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_COMPANY,
-                PREFIX_DESCRIPTION, PREFIX_DATE);
+                PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
 
         Index index;
         try {
@@ -34,7 +35,8 @@ public class EditApplicationCommandParser implements Parser<EditApplicationComma
                     EditApplicationCommand.MESSAGE_USAGE), pe);
         }
 
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE);
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE,
+                PREFIX_STATUS);
         EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
             descriptor.setName(ParserUtil.parseApplicationName(argMultimap.getValue(PREFIX_NAME).get()));
@@ -47,6 +49,9 @@ public class EditApplicationCommandParser implements Parser<EditApplicationComma
         }
         if (argMultimap.getValue(PREFIX_DATE).isPresent()) {
             descriptor.setDate(ParserUtil.parseApplicationDate(argMultimap.getValue(PREFIX_DATE).get()));
+        }
+        if (argMultimap.getValue(PREFIX_STATUS).isPresent()) {
+            descriptor.setStatus(ParserUtil.parseApplicationStatus(argMultimap.getValue(PREFIX_STATUS).get()));
         }
         if (!descriptor.isAnyFieldEdited()) {
             throw new ParseException(EditApplicationCommand.MESSAGE_NOT_EDITED);

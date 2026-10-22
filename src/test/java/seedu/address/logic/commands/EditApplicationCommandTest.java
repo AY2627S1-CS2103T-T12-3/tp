@@ -25,6 +25,7 @@ import seedu.address.model.UserPrefs;
 import seedu.address.model.application.Application;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.ApplicationStatus;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Company;
 
@@ -81,6 +82,19 @@ public class EditApplicationCommandTest {
     }
 
     @Test
+    public void execute_statusEdit_updatesOnlyStatus() throws Exception {
+        EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
+        descriptor.setStatus(ApplicationStatus.INTERVIEWING);
+        Application expected = new Application(SOFTWARE_ENGINEER_INTERN.getName(),
+                SOFTWARE_ENGINEER_INTERN.getCompany(), SOFTWARE_ENGINEER_INTERN.getDescription(),
+                SOFTWARE_ENGINEER_INTERN.getDate(), ApplicationStatus.INTERVIEWING);
+
+        new EditApplicationCommand(Index.fromOneBased(1), descriptor).execute(model);
+
+        assertEquals(List.of(expected, PRODUCT_MANAGER_INTERN), model.getAddressBook().getApplicationList());
+    }
+
+    @Test
     public void execute_caseOnlyIdentityChange_success() throws Exception {
         EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
         descriptor.setName(new ApplicationName("software engineer intern"));
@@ -121,6 +135,18 @@ public class EditApplicationCommandTest {
         descriptor.setDescription(new Description("Changed after construction."));
         command.execute(model);
         assertEquals("Interview scheduled.", model.getAddressBook().getApplicationList().get(0).getDescription().value);
+    }
+
+    @Test
+    public void constructor_mutatedStatus_keepsDefensiveCopy() throws Exception {
+        EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
+        descriptor.setStatus(ApplicationStatus.INTERVIEWING);
+        EditApplicationCommand command = new EditApplicationCommand(Index.fromOneBased(1), descriptor);
+        descriptor.setStatus(ApplicationStatus.OFFERED);
+
+        command.execute(model);
+
+        assertEquals(ApplicationStatus.INTERVIEWING, model.getAddressBook().getApplicationList().get(0).getStatus());
     }
 
     @Test

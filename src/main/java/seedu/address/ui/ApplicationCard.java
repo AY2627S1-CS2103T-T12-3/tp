@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import java.util.Locale;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -12,6 +14,7 @@ import seedu.address.model.application.Application;
 public class ApplicationCard extends UiPart<Region> {
 
     private static final String FXML = "ApplicationListCard.fxml";
+    private static final String STATUS_STYLE_CLASS_PREFIX = "application-status-";
 
     public final Application application;
 
@@ -27,6 +30,8 @@ public class ApplicationCard extends UiPart<Region> {
     private Label description;
     @FXML
     private Label date;
+    @FXML
+    private Label status;
 
     /**
      * Creates an {@code ApplicationCard} with the given {@code Application} and index to display.
@@ -39,5 +44,13 @@ public class ApplicationCard extends UiPart<Region> {
         company.setText("Company: " + application.getCompany().value);
         description.setText("Description: " + application.getDescription().value);
         date.setText("Date: " + application.getDate().value);
+        status.setText("Status: " + formatStatus(application.getStatus().name()));
+        status.getStyleClass().add(STATUS_STYLE_CLASS_PREFIX
+                + application.getStatus().name().toLowerCase(Locale.ROOT));
+    }
+
+    private static String formatStatus(String status) {
+        String normalizedStatus = status.toLowerCase(Locale.ROOT).replace('_', ' ');
+        return Character.toUpperCase(normalizedStatus.charAt(0)) + normalizedStatus.substring(1);
     }
 }

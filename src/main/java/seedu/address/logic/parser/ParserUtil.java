@@ -11,6 +11,7 @@ import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.ApplicationStatus;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
@@ -99,6 +100,21 @@ public class ParserUtil {
             throw new ParseException(ApplicationDate.MESSAGE_CONSTRAINTS);
         }
         return new ApplicationDate(trimmedDate);
+    }
+
+    /**
+     * Parses a {@code String status} into an {@code ApplicationStatus}.
+     * Leading and trailing whitespaces will be trimmed and values are case-insensitive.
+     *
+     * @throws ParseException if the given status is invalid.
+     */
+    public static ApplicationStatus parseApplicationStatus(String status) throws ParseException {
+        requireNonNull(status);
+        try {
+            return ApplicationStatus.fromString(status);
+        } catch (IllegalArgumentException e) {
+            throw new ParseException(ApplicationStatus.MESSAGE_CONSTRAINTS);
+        }
     }
 
     /**
