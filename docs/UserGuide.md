@@ -170,6 +170,12 @@ Examples:
 * `listapp` shows all saved applications.
 * Run `list` to return to the contact list.
 
+### Viewing application dates in the weekly calendar
+
+Choose **View → Application calendar** to see applications arranged by their recorded application date for the current week. The date range appears at the top in `dd/mm – dd/mm` format. Use the left and right arrow buttons to move between weeks. Each day remains visible when it has no applications. Weeks that cross into a new year show the year on both dates.
+
+Choose **View → Contacts** or **View → Applications** to return to either list.
+
 ### Listing all contacts: `list`
 
 Shows all contacts in InternTrack, clearing any filter applied by a previous `find`.
