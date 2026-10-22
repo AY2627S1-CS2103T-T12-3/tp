@@ -31,9 +31,6 @@ import seedu.address.model.person.Company;
  * Edits an application identified by its index in the application list.
  */
 public class EditApplicationCommand extends Command {
-
-    private static final Logger logger = LogsCenter.getLogger(EditApplicationCommand.class);
-
     public static final String COMMAND_WORD = "editapp";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
@@ -51,6 +48,8 @@ public class EditApplicationCommand extends Command {
     public static final String MESSAGE_EDIT_APPLICATION_SUCCESS = "Edited application: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_APPLICATION = "This application already exists in InternTrack.";
+
+    private static final Logger logger = LogsCenter.getLogger(EditApplicationCommand.class);
 
     private final Index index;
     private final EditApplicationDescriptor editApplicationDescriptor;
