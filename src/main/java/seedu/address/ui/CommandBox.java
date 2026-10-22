@@ -15,6 +15,7 @@ public class CommandBox extends UiPart<Region> {
 
     public static final String ERROR_STYLE_CLASS = "error";
     private static final String FXML = "CommandBox.fxml";
+    private static final String FIND_COMMAND_PREFIX = "find ";
 
     private final CommandExecutor commandExecutor;
 
@@ -29,6 +30,22 @@ public class CommandBox extends UiPart<Region> {
         this.commandExecutor = commandExecutor;
         // calls #setStyleToDefault() whenever there is a change to the text of the command box.
         commandTextField.textProperty().addListener((unused1, unused2, unused3) -> setStyleToDefault());
+    }
+
+    /**
+     * Focuses the command field and prepares it for a contact search.
+     */
+    void focusForQuickSearch() {
+        commandTextField.setText(getQuickSearchText(commandTextField.getText()));
+        commandTextField.requestFocus();
+        commandTextField.positionCaret(commandTextField.getText().length());
+    }
+
+    /**
+     * Returns the command text to show when the quick-search shortcut is pressed.
+     */
+    static String getQuickSearchText(String currentText) {
+        return currentText.isBlank() ? FIND_COMMAND_PREFIX : currentText;
     }
 
     /**

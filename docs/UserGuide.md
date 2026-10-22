@@ -40,6 +40,12 @@ InternTrack is a **desktop application for tracking internship and graduate-role
 
 --------------------------------------------------------------------------------------------------------------------
 
+## Keyboard shortcuts
+
+Press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux to focus the command box. If it is empty, InternTrack prepares `find ` for you; existing text is preserved and the caret moves to the end. Press Enter after entering the search keywords to run the command.
+
+--------------------------------------------------------------------------------------------------------------------
+
 ## Features
 
 <div markdown="block" class="alert alert-info">
