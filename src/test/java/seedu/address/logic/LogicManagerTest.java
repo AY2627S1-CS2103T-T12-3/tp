@@ -41,6 +41,7 @@ import seedu.address.model.UserPrefs;
 import seedu.address.model.application.Application;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.ApplicationStatus;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Company;
 import seedu.address.model.person.Person;
@@ -97,6 +98,20 @@ public class LogicManagerTest {
         expectedModel.addApplication(application);
         String command = AddApplicationCommand.COMMAND_WORD + " n/Software Engineer Intern c/Tech Corp "
                 + "d/Applied through the company careers page. dt/2026-10-07";
+        String expectedMessage = String.format(AddApplicationCommand.MESSAGE_SUCCESS, Messages.format(application));
+
+        assertCommandSuccess(command, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_addApplicationCommandWithStatus_success() throws Exception {
+        Application application = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"), ApplicationStatus.INTERVIEWING);
+        Model expectedModel = new ModelManager();
+        expectedModel.addApplication(application);
+        String command = AddApplicationCommand.COMMAND_WORD + " n/Software Engineer Intern c/Tech Corp "
+                + "d/Applied through the company careers page. dt/2026-10-07 s/interviewing";
         String expectedMessage = String.format(AddApplicationCommand.MESSAGE_SUCCESS, Messages.format(application));
 
         assertCommandSuccess(command, expectedMessage, expectedModel);
@@ -294,9 +309,10 @@ public class LogicManagerTest {
         ObservableList<Application> applications = logic.getApplicationList();
         logic.execute("list");
 
-        CommandResult editResult = logic.execute("editapp 2 d/Interview scheduled. dt/2026-10-15");
+        CommandResult editResult = logic.execute("editapp 2 d/Interview scheduled. dt/2026-10-15 s/interviewing");
         Application edited = new Application(PRODUCT_MANAGER_INTERN.getName(), PRODUCT_MANAGER_INTERN.getCompany(),
-                new Description("Interview scheduled."), new ApplicationDate("2026-10-15"));
+                new Description("Interview scheduled."), new ApplicationDate("2026-10-15"),
+                ApplicationStatus.INTERVIEWING);
         assertEquals(DisplayedList.APPLICATIONS, editResult.getDisplayedList());
         assertEquals(List.of(SOFTWARE_ENGINEER_INTERN, edited), applications);
         JsonAddressBookStorage storage = new JsonAddressBookStorage(addressBookFilePath);
@@ -350,7 +366,7 @@ public class LogicManagerTest {
         logic.execute("listapp");
         String savedData = Files.readString(addressBookFilePath);
         for (String command : List.of("editapp 0 d/Updated", "editapp 1", "editapp 1 dt/2026-02-30",
-                "editapp 1 n/", "deleteapp 1 2", "deleteapp -1")) {
+                "editapp 1 n/", "editapp 1 s/pending", "deleteapp 1 2", "deleteapp -1")) {
             assertThrows(ParseException.class, () -> logic.execute(command));
             assertEquals(savedData, Files.readString(addressBookFilePath));
             assertEquals(List.of(SOFTWARE_ENGINEER_INTERN, PRODUCT_MANAGER_INTERN), logic.getApplicationList());
