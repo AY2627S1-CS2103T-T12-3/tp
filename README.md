@@ -19,6 +19,7 @@ users who prefer to enter and find records quickly by typing commands.
   address, tags, and where you met.
 - Add, view, edit, and delete internship or graduate role applications with
   their role, company, description, and application date.
+- View application dates in a navigable weekly calendar.
 - Store contacts and application records locally in a JSON data file.
 
 See the [User Guide](docs/UserGuide.md) for the available commands and their

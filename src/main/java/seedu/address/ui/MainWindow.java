@@ -41,6 +41,7 @@ public class MainWindow extends UiPart<Stage> {
     // Independent Ui parts residing in this Ui container
     private PersonListPanel personListPanel;
     private ApplicationListPanel applicationListPanel;
+    private ApplicationCalendarPanel applicationCalendarPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
     private CommandBox commandBox;
@@ -137,6 +138,7 @@ public class MainWindow extends UiPart<Stage> {
     void fillInnerParts() {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
         applicationListPanel = new ApplicationListPanel(logic.getApplicationList());
+        applicationCalendarPanel = new ApplicationCalendarPanel(logic.getApplicationList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
 
         resultDisplay = new ResultDisplay();
@@ -191,6 +193,24 @@ public class MainWindow extends UiPart<Stage> {
 
     public PersonListPanel getPersonListPanel() {
         return personListPanel;
+    }
+
+    /** Shows the contacts list. */
+    @FXML
+    public void showContacts() {
+        showListPanel(personListPanel.getRoot());
+    }
+
+    /** Shows the applications list. */
+    @FXML
+    public void showApplications() {
+        showListPanel(applicationListPanel.getRoot());
+    }
+
+    /** Shows the weekly application calendar. */
+    @FXML
+    public void showApplicationCalendar() {
+        showListPanel(applicationCalendarPanel);
     }
 
     /**
