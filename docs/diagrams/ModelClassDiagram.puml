@@ -5,9 +5,9 @@ skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
 package "Model" as ModelPackage <<Rectangle>> {
-    interface ReadOnlyAddressBook
-    interface ReadOnlyUserPrefs
-    interface Model
+    class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
+    class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
+    class "<<interface>>\nModel" as Model
 
     class AddressBook
     class ModelManager
@@ -30,13 +30,7 @@ package "Model" as ModelPackage <<Rectangle>> {
     class ApplicationName
     class ApplicationDate
     class Description
-    enum ApplicationStatus {
-        APPLIED
-        INTERVIEWING
-        OFFERED
-        REJECTED
-        WITHDRAWN
-    }
+    class "<<enumeration>>\nApplicationStatus" as ApplicationStatus
 }
 
 AddressBook ..|> ReadOnlyAddressBook
@@ -69,4 +63,18 @@ Application *--> "1" Company
 Application *--> "1" Description
 Application *--> "1" ApplicationDate
 Application --> "1" ApplicationStatus : status
+
+' Keep application and person value objects on separate rows for readability.
+ApplicationName -[hidden]right-> ApplicationDate
+ApplicationDate -[hidden]right-> Description
+Description -[hidden]right-> ApplicationStatus
+ApplicationStatus -[hidden]down-> Name
+Name -[hidden]right-> Phone
+Phone -[hidden]right-> Email
+Email -[hidden]right-> Address
+Address -[hidden]right-> Company
+Company -[hidden]right-> Role
+Role -[hidden]right-> WhereMet
+WhereMet -[hidden]right-> Remark
+Remark -[hidden]right-> Tag
 @enduml
