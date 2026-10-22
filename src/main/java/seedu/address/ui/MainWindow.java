@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -27,6 +29,8 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+    private static final KeyCombination QUICK_SEARCH_ACCELERATOR = new KeyCodeCombination(
+            KeyCode.F, KeyCombination.SHORTCUT_DOWN);
 
     private final Logger logger = LogsCenter.getLogger(getClass());
 
@@ -39,6 +43,7 @@ public class MainWindow extends UiPart<Stage> {
     private ApplicationListPanel applicationListPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
+    private CommandBox commandBox;
 
     @FXML
     private StackPane commandBoxPlaceholder;
@@ -81,6 +86,19 @@ public class MainWindow extends UiPart<Stage> {
 
     private void setAccelerators() {
         setAccelerator(helpMenuItem, KeyCombination.valueOf("F1"));
+        getRoot().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (isQuickSearchShortcut(event) && commandBox != null) {
+                commandBox.focusForQuickSearch();
+                event.consume();
+            }
+        });
+    }
+
+    /**
+     * Returns whether {@code event} is the platform's quick-search shortcut.
+     */
+    static boolean isQuickSearchShortcut(KeyEvent event) {
+        return QUICK_SEARCH_ACCELERATOR.match(event);
     }
 
     /**
@@ -127,7 +145,7 @@ public class MainWindow extends UiPart<Stage> {
         StatusBarFooter statusBarFooter = new StatusBarFooter(dataFilePath);
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
-        CommandBox commandBox = new CommandBox(this::executeCommand);
+        commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
     }
 
