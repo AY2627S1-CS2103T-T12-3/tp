@@ -45,7 +45,7 @@ public class CommandBox extends UiPart<Region> {
      * Returns the command text to show when the quick-search shortcut is pressed.
      */
     static String getQuickSearchText(String currentText) {
-        return currentText.isEmpty() ? FIND_COMMAND_PREFIX : currentText;
+        return currentText.isBlank() ? FIND_COMMAND_PREFIX : currentText;
     }
 
     /**

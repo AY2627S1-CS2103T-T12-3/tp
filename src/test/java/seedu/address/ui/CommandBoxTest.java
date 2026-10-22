@@ -12,6 +12,11 @@ public class CommandBoxTest {
     }
 
     @Test
+    public void getQuickSearchText_whitespaceInput_preparesFindCommand() {
+        assertEquals("find ", CommandBox.getQuickSearchText("   \t"));
+    }
+
+    @Test
     public void getQuickSearchText_existingCommand_preservesText() {
         String command = "add n/Alex Yeoh";
 
