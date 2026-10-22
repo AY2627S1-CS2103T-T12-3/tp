@@ -5,11 +5,14 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_COMPANY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
@@ -20,6 +23,7 @@ import seedu.address.model.Model;
 import seedu.address.model.application.Application;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.ApplicationStatus;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Company;
 
@@ -27,6 +31,8 @@ import seedu.address.model.person.Company;
  * Edits an application identified by its index in the application list.
  */
 public class EditApplicationCommand extends Command {
+
+    private static final Logger logger = LogsCenter.getLogger(EditApplicationCommand.class);
 
     public static final String COMMAND_WORD = "editapp";
 
@@ -37,9 +43,10 @@ public class EditApplicationCommand extends Command {
             + "[" + PREFIX_NAME + "NAME] "
             + "[" + PREFIX_COMPANY + "COMPANY] "
             + "[" + PREFIX_DESCRIPTION + "DESCRIPTION] "
-            + "[" + PREFIX_DATE + "YYYY-MM-DD]\n"
+            + "[" + PREFIX_DATE + "YYYY-MM-DD] "
+            + "[" + PREFIX_STATUS + "STATUS]\n"
             + "Example: " + COMMAND_WORD + " 1 " + PREFIX_DESCRIPTION + "Interview scheduled. "
-            + PREFIX_DATE + "2026-10-15";
+            + PREFIX_DATE + "2026-10-15 " + PREFIX_STATUS + "INTERVIEWING";
 
     public static final String MESSAGE_EDIT_APPLICATION_SUCCESS = "Edited application: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
@@ -71,6 +78,10 @@ public class EditApplicationCommand extends Command {
         }
 
         model.setApplication(applicationToEdit, editedApplication);
+        if (applicationToEdit.getStatus() != editedApplication.getStatus()) {
+            logger.info(() -> String.format("Updated application status at index %d: %s -> %s",
+                    index.getOneBased(), applicationToEdit.getStatus(), editedApplication.getStatus()));
+        }
         return new CommandResult(String.format(MESSAGE_EDIT_APPLICATION_SUCCESS, Messages.format(editedApplication)),
                 DisplayedList.APPLICATIONS);
     }
@@ -80,7 +91,8 @@ public class EditApplicationCommand extends Command {
         Company company = descriptor.getCompany().orElse(original.getCompany());
         Description description = descriptor.getDescription().orElse(original.getDescription());
         ApplicationDate date = descriptor.getDate().orElse(original.getDate());
-        return new Application(name, company, description, date);
+        ApplicationStatus status = descriptor.getStatus().orElse(original.getStatus());
+        return new Application(name, company, description, date, status);
     }
 
     @Override
@@ -111,6 +123,7 @@ public class EditApplicationCommand extends Command {
         private Company company;
         private Description description;
         private ApplicationDate date;
+        private ApplicationStatus status;
 
         public EditApplicationDescriptor() {}
 
@@ -122,13 +135,14 @@ public class EditApplicationCommand extends Command {
             company = toCopy.company;
             description = toCopy.description;
             date = toCopy.date;
+            status = toCopy.status;
         }
 
         /**
          * Returns true if at least one field is supplied.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, company, description, date);
+            return CollectionUtil.isAnyNonNull(name, company, description, date, status);
         }
 
         public void setName(ApplicationName name) {
@@ -163,6 +177,14 @@ public class EditApplicationCommand extends Command {
             return Optional.ofNullable(date);
         }
 
+        public void setStatus(ApplicationStatus status) {
+            this.status = status;
+        }
+
+        public Optional<ApplicationStatus> getStatus() {
+            return Optional.ofNullable(status);
+        }
+
         @Override
         public boolean equals(Object other) {
             if (other == this) {
@@ -175,7 +197,8 @@ public class EditApplicationCommand extends Command {
             return Objects.equals(name, otherDescriptor.name)
                     && Objects.equals(company, otherDescriptor.company)
                     && Objects.equals(description, otherDescriptor.description)
-                    && Objects.equals(date, otherDescriptor.date);
+                    && Objects.equals(date, otherDescriptor.date)
+                    && status == otherDescriptor.status;
         }
 
         @Override
@@ -185,6 +208,7 @@ public class EditApplicationCommand extends Command {
                     .add("company", company)
                     .add("description", description)
                     .add("date", date)
+                    .add("status", status)
                     .toString();
         }
     }

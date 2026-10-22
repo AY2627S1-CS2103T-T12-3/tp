@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_COMPANY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalApplications.PRODUCT_MANAGER_INTERN;
@@ -17,6 +18,7 @@ import seedu.address.logic.commands.EditApplicationCommand;
 import seedu.address.logic.commands.EditApplicationCommand.EditApplicationDescriptor;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.ApplicationStatus;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Company;
 
@@ -30,8 +32,9 @@ public class EditApplicationCommandParserTest {
         descriptor.setCompany(PRODUCT_MANAGER_INTERN.getCompany());
         descriptor.setDescription(PRODUCT_MANAGER_INTERN.getDescription());
         descriptor.setDate(PRODUCT_MANAGER_INTERN.getDate());
+        descriptor.setStatus(ApplicationStatus.INTERVIEWING);
         assertParseSuccess(parser, " 2 dt/2026-10-08 d/Applied through a university careers portal. "
-                + "c/Other Corp n/Product Manager Intern",
+                + "c/Other Corp s/interviewing n/Product Manager Intern",
                 new EditApplicationCommand(Index.fromOneBased(2), descriptor));
     }
 
@@ -52,6 +55,9 @@ public class EditApplicationCommandParserTest {
         descriptor.setDate(new ApplicationDate("2028-02-29"));
         assertParseSuccess(parser, " \t 1 dt/2028-02-29 ",
                 new EditApplicationCommand(Index.fromOneBased(1), descriptor));
+        descriptor = new EditApplicationDescriptor();
+        descriptor.setStatus(ApplicationStatus.OFFERED);
+        assertParseSuccess(parser, " 1 s/offered ", new EditApplicationCommand(Index.fromOneBased(1), descriptor));
     }
 
     @Test
@@ -78,11 +84,13 @@ public class EditApplicationCommandParserTest {
         for (String date : new String[]{"", "2026-02-29", "2026-02-30", "15-10-2026", "2026-1-01"}) {
             assertParseFailure(parser, " 1 dt/" + date, ApplicationDate.MESSAGE_CONSTRAINTS);
         }
+        assertParseFailure(parser, " 1 s/", ApplicationStatus.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, " 1 s/pending", ApplicationStatus.MESSAGE_CONSTRAINTS);
     }
 
     @Test
     public void parse_repeatedPrefixes_failure() {
-        Prefix[] prefixes = {PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE};
+        Prefix[] prefixes = {PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS};
         for (Prefix prefix : prefixes) {
             assertParseFailure(parser, " 1 " + prefix + "first " + prefix + "second",
                     Messages.getErrorMessageForDuplicatePrefixes(prefix));
