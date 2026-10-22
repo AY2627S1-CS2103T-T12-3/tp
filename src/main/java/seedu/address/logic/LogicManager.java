@@ -46,14 +46,29 @@ public class LogicManager implements Logic {
         logger.info("----------------[USER COMMAND][" + commandText + "]");
 
         CommandResult commandResult;
-        Command command = addressBookParser.parseCommand(commandText);
-        commandResult = command.execute(model);
+        Command command;
+        try {
+            command = addressBookParser.parseCommand(commandText);
+        } catch (ParseException pe) {
+            logger.info("Command could not be parsed: " + pe.getMessage());
+            throw pe;
+        }
+        logger.fine("Executing command: " + command);
+
+        try {
+            commandResult = command.execute(model);
+        } catch (CommandException ce) {
+            logger.info("Command failed during execution: " + ce.getMessage());
+            throw ce;
+        }
 
         try {
             storage.saveAddressBook(model.getAddressBook());
         } catch (AccessDeniedException e) {
+            logger.warning("No permission to save data file: " + e.getMessage());
             throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
         } catch (IOException ioe) {
+            logger.warning("Failed to save data file: " + ioe.getMessage());
             throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
         }
 
