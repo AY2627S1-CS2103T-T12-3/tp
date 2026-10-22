@@ -62,6 +62,7 @@ public class ModelManager implements Model {
 
     @Override
     public void setAddressBook(ReadOnlyAddressBook addressBook) {
+        logger.info("Replacing all contacts and applications");
         this.addressBook.resetData(addressBook);
     }
 
@@ -78,11 +79,13 @@ public class ModelManager implements Model {
 
     @Override
     public void deletePerson(Person target) {
+        logger.fine("Deleting contact: " + target);
         addressBook.removePerson(target);
     }
 
     @Override
     public void addPerson(Person person) {
+        logger.fine("Adding contact: " + person);
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
     }
@@ -95,23 +98,27 @@ public class ModelManager implements Model {
 
     @Override
     public void addApplication(Application application) {
+        logger.fine("Adding application: " + application);
         addressBook.addApplication(application);
     }
 
     @Override
     public void setApplication(Application target, Application editedApplication) {
         requireAllNonNull(target, editedApplication);
+        logger.fine("Editing application: " + target + " -> " + editedApplication);
         addressBook.setApplication(target, editedApplication);
     }
 
     @Override
     public void deleteApplication(Application target) {
+        logger.fine("Deleting application: " + target);
         addressBook.removeApplication(target);
     }
 
     @Override
     public void setPerson(Person target, Person editedPerson) {
         requireAllNonNull(target, editedPerson);
+        logger.fine("Editing contact: " + target + " -> " + editedPerson);
 
         addressBook.setPerson(target, editedPerson);
     }
