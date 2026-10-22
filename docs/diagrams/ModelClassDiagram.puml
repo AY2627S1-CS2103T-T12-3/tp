@@ -4,51 +4,69 @@ skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
 
-Package Model as ModelPackage <<Rectangle>>{
-Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
-Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
-Class "<<interface>>\nModel" as Model
-Class AddressBook
-Class ModelManager
-Class UserPrefs
+package "Model" as ModelPackage <<Rectangle>> {
+    interface ReadOnlyAddressBook
+    interface ReadOnlyUserPrefs
+    interface Model
 
-Class UniquePersonList
-Class Person
-Class Address
-Class Email
-Class Name
-Class Phone
-Class Tag
+    class AddressBook
+    class ModelManager
+    class UserPrefs
 
-Class I #FFFFFF
+    class UniquePersonList
+    class Person
+    class Name
+    class Phone
+    class Email
+    class Address
+    class Company
+    class Role
+    class WhereMet
+    class Remark
+    class Tag
+
+    class UniqueApplicationList
+    class Application
+    class ApplicationName
+    class ApplicationDate
+    class Description
+    enum ApplicationStatus {
+        APPLIED
+        INTERVIEWING
+        OFFERED
+        REJECTED
+        WITHDRAWN
+    }
 }
 
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> Model
+AddressBook ..|> ReadOnlyAddressBook
+ModelManager ..|> Model
+UserPrefs ..|> ReadOnlyUserPrefs
 
-AddressBook .up.|> ReadOnlyAddressBook
-
-ModelManager .up.|> Model
-Model .right.> ReadOnlyUserPrefs
-Model .left.> ReadOnlyAddressBook
-ModelManager -left-> "1" AddressBook
-ModelManager -right-> "1" UserPrefs
-UserPrefs .up.|> ReadOnlyUserPrefs
+Model ..> ReadOnlyAddressBook
+Model ..> ReadOnlyUserPrefs
+ModelManager *--> "1" AddressBook
+ModelManager *--> "1" UserPrefs
+ModelManager --> "0..* filtered" Person
 
 AddressBook *--> "1" UniquePersonList
-UniquePersonList --> "~* all" Person
-Person *--> Name
-Person *--> Phone
-Person *--> Email
-Person *--> Address
-Person *--> "*" Tag
+AddressBook *--> "1" UniqueApplicationList
+UniquePersonList --> "0..*" Person
+UniqueApplicationList --> "0..*" Application
 
-Person -[hidden]up--> I
-UniquePersonList -[hidden]right-> I
+Person *--> "1" Name
+Person *--> "1" Phone
+Person *--> "1" Email
+Person *--> "1" Address
+Person *--> "0..1" Company
+Person *--> "0..1" Role
+Person *--> "0..1" WhereMet
+Person *--> "1" Remark
+Person *--> "0..*" Tag
 
-Name -[hidden]right-> Phone
-Phone -[hidden]right-> Address
-Address -[hidden]right-> Email
-
-ModelManager --> "~* filtered" Person
+Application *--> "1" ApplicationName
+Application *--> "1" Company
+Application *--> "1" Description
+Application *--> "1" ApplicationDate
+Application --> "1" ApplicationStatus : status
 @enduml
