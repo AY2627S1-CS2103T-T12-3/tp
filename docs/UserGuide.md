@@ -213,21 +213,23 @@ Examples:
 
 ### Locating contacts by keyword: `find`
 
-Finds contacts whose names, companies, or roles contain any of the given keywords.
+Finds contacts whose fields contain any of the given keywords.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
-* The search considers names, companies, and roles.
+* The search considers names, phone numbers, email addresses, companies, roles, where-met details, addresses, remarks, and tags.
 * Only full words match; for example, `Han` does not match `Hans`.
 * Contacts matching at least one keyword are returned (an `OR` search); for example, `Google Recruiter` returns contacts whose company contains `Google` or whose role contains `Recruiter`.
-* Contacts without a company or role can still be searched by name.
+* Contacts without optional company, role, or where-met details can still be found using their other fields.
 
 Examples:
 * `find John` returns `john` and `John Doe`
 * `find Google` returns contacts whose company contains `Google`
 * `find Recruiter` returns contacts whose role contains `Recruiter`
+* `find 85355255` returns contacts whose phone number is `85355255`
+* `find LinkedIn` returns contacts whose where-met details contain `LinkedIn`
 * `find alex david` returns matching contacts such as `Alex Yeoh` and `David Li`.
 
 ### Deleting a person: `delete`
