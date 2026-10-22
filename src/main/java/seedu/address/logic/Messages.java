@@ -61,7 +61,8 @@ public class Messages {
         return application.getName()
                 + "; Company: " + application.getCompany()
                 + "; Description: " + application.getDescription()
-                + "; Date: " + application.getDate();
+                + "; Date: " + application.getDate()
+                + "; Status: " + application.getStatus();
     }
 
 }
