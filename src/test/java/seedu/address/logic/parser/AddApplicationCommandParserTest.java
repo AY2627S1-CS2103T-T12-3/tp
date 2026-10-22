@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_COMPANY;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
@@ -15,6 +16,7 @@ import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.model.application.Application;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.ApplicationStatus;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Company;
 
@@ -24,6 +26,7 @@ public class AddApplicationCommandParserTest {
     private static final String COMPANY_DESC = " c/Tech Corp";
     private static final String DESCRIPTION_DESC = " d/Applied through the company careers page.";
     private static final String DATE_DESC = " dt/2026-10-07";
+    private static final String STATUS_DESC = " s/interviewing";
     private static final String VALID_APPLICATION_STRING = NAME_DESC + COMPANY_DESC + DESCRIPTION_DESC + DATE_DESC;
 
     private final AddApplicationCommandParser parser = new AddApplicationCommandParser();
@@ -38,6 +41,16 @@ public class AddApplicationCommandParserTest {
     }
 
     @Test
+    public void parse_statusPresent_success() {
+        Application expectedApplication = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Applied through the company careers page."),
+                new ApplicationDate("2026-10-07"), ApplicationStatus.INTERVIEWING);
+
+        assertParseSuccess(parser, VALID_APPLICATION_STRING + STATUS_DESC,
+                new AddApplicationCommand(expectedApplication));
+    }
+
+    @Test
     public void parse_repeatedValue_failure() {
         assertParseFailure(parser, NAME_DESC + VALID_APPLICATION_STRING,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME));
@@ -47,6 +60,8 @@ public class AddApplicationCommandParserTest {
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DESCRIPTION));
         assertParseFailure(parser, DATE_DESC + VALID_APPLICATION_STRING,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DATE));
+        assertParseFailure(parser, STATUS_DESC + VALID_APPLICATION_STRING + STATUS_DESC,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_STATUS));
     }
 
     @Test
@@ -70,6 +85,8 @@ public class AddApplicationCommandParserTest {
         assertParseFailure(parser, NAME_DESC + COMPANY_DESC + " d/ " + DATE_DESC, Description.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, NAME_DESC + COMPANY_DESC + DESCRIPTION_DESC + " dt/2026-02-30",
                 ApplicationDate.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, VALID_APPLICATION_STRING + " s/", ApplicationStatus.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, VALID_APPLICATION_STRING + " s/pending", ApplicationStatus.MESSAGE_CONSTRAINTS);
     }
 
     @Test
