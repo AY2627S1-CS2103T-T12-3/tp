@@ -1,0 +1,49 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+actor User USER_COLOR
+
+box UI UI_COLOR_T1
+participant ":MainWindow" as MainWindow UI_COLOR
+participant ":ApplicationCalendarPanel" as CalendarPanel UI_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "applications:\nObservableList" as Applications MODEL_COLOR
+end box
+
+User -> MainWindow : selects "Application calendar"
+activate MainWindow
+MainWindow -> MainWindow : showListPanel(applicationCalendarPanel)
+deactivate MainWindow
+
+User -> CalendarPanel : clicks previous / next week
+activate CalendarPanel
+CalendarPanel -> CalendarPanel : changeWeek(weekOffset)
+note right: weekStart moves by\nweekOffset weeks
+CalendarPanel -> CalendarPanel : renderWeek()
+activate CalendarPanel
+CalendarPanel -> CalendarPanel : set date range label\n(dd/MM – dd/MM, or dd/MM/yyyy\nif the week spans two years)
+
+loop for each of the 7 days in the week
+    CalendarPanel -> CalendarPanel : createDayColumn(date)
+    activate CalendarPanel
+    CalendarPanel -> Applications : iterate applications
+    Applications --> CalendarPanel : applications
+    opt application date equals date
+        CalendarPanel -> CalendarPanel : createApplicationCard(application)\n(role and company)
+    end
+    opt no application on date
+        CalendarPanel -> CalendarPanel : add "No applications" label
+    end
+    deactivate CalendarPanel
+end
+deactivate CalendarPanel
+deactivate CalendarPanel
+
+note over CalendarPanel, Applications
+renderWeek() also runs whenever the application list changes,
+because the panel registers a ListChangeListener on it.
+end note
+@enduml
