@@ -131,6 +131,10 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values are skipped. The activity diagram summarizes this matching logic.
+
+<img src="images/ContactSearchActivityDiagram.png" width="650" />
+
 <div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
 
 <img src="images/BetterModelClassDiagram.png" width="450" />
@@ -283,7 +287,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | new user | see usage instructions                            | learn or recall how to use InternTrack               |
 | `* * *`  | student  | add a professional contact                        | keep details of people relevant to my job search     |
 | `* * *`  | student  | list my professional contacts                     | review my professional connections                   |
-| `* * *`  | student  | find a professional contact by name               | retrieve relevant contact details quickly             |
+| `* * *`  | student  | search contacts by any field                      | retrieve relevant contact details quickly             |
 | `* * *`  | student  | add an internship or graduate role application    | track each opportunity I apply for                    |
 | `* * *`  | student  | list my internship and graduate role applications | review the opportunities I am pursuing               |
 | `* *`    | student  | edit a professional contact                       | keep the contact's details accurate                   |
@@ -356,9 +360,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User enters the `find` command with one or more name keywords.
-2.  InternTrack searches contact names without regard to case.
-3.  InternTrack shows the contacts whose names contain any of the keywords.
+1.  User enters the `find` command with one or more keywords.
+2.  InternTrack searches all contact fields using case-insensitive, full-word matching.
+3.  InternTrack shows the contacts where any keyword matches any field.
 
     Use case ends.
 
