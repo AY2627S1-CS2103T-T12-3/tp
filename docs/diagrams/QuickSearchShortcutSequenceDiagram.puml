@@ -1,0 +1,40 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+actor User USER_COLOR
+participant "JavaFX\nKeyEvent" as KeyEvent
+
+box UI UI_COLOR_T1
+participant ":MainWindow" as MainWindow UI_COLOR
+participant ":CommandBox" as CommandBox UI_COLOR
+participant ":TextField" as TextField UI_COLOR
+end box
+
+User -> KeyEvent : presses Cmd+F / Ctrl+F
+KeyEvent -> MainWindow : KEY_PRESSED
+activate MainWindow
+MainWindow -> MainWindow : isQuickSearchShortcut(event)
+MainWindow -> CommandBox : focusForQuickSearch()
+activate CommandBox
+CommandBox -> TextField : getText()
+TextField --> CommandBox : currentText
+
+alt currentText.isBlank()
+    CommandBox -> TextField : setText("find ")
+else currentText is not blank
+    CommandBox -> TextField : setText(currentText)
+end
+
+CommandBox -> TextField : requestFocus()
+CommandBox -> TextField : positionCaret(text.length())
+TextField --> CommandBox : focus and caret at end
+deactivate CommandBox
+MainWindow -> KeyEvent : consume()
+deactivate MainWindow
+
+note over MainWindow, TextField
+The shortcut prepares the command field only;
+the user still presses Enter to execute a search.
+end note
+@enduml
