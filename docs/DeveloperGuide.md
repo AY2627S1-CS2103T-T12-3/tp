@@ -283,7 +283,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | new user | see usage instructions                            | learn or recall how to use InternTrack               |
 | `* * *`  | student  | add a professional contact                        | keep details of people relevant to my job search     |
 | `* * *`  | student  | list my professional contacts                     | review my professional connections                   |
-| `* * *`  | student  | find a professional contact by name               | retrieve relevant contact details quickly             |
+| `* * *`  | student  | search contacts by any field                      | retrieve relevant contact details quickly             |
 | `* * *`  | student  | add an internship or graduate role application    | track each opportunity I apply for                    |
 | `* * *`  | student  | list my internship and graduate role applications | review the opportunities I am pursuing               |
 | `* *`    | student  | edit a professional contact                       | keep the contact's details accurate                   |
@@ -356,9 +356,9 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1.  User enters the `find` command with one or more name keywords.
-2.  InternTrack searches contact names without regard to case.
-3.  InternTrack shows the contacts whose names contain any of the keywords.
+1.  User enters the `find` command with one or more keywords.
+2.  InternTrack searches all contact fields using case-insensitive, full-word matching.
+3.  InternTrack shows the contacts where any keyword matches any field.
 
     Use case ends.
 
