@@ -127,6 +127,10 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values are skipped. The activity diagram summarizes this matching logic.
+
+<img src="images/ContactSearchActivityDiagram.png" width="650" />
+
 <div markdown="span" class="alert alert-info">:information_source: **Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
 
 <img src="images/BetterModelClassDiagram.png" width="450" />
