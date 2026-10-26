@@ -32,7 +32,7 @@ InternTrack is a **desktop application for tracking internship and graduate-role
 
    * `delete 3` : Deletes the 3rd contact shown in the current list.
 
-   * `clear` : Deletes all contacts.
+   * `clear` : Deletes all contacts and applications.
 
    * `exit` : Exits the app.
 
