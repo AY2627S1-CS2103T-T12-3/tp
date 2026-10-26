@@ -1,0 +1,659 @@
+.app-root {
+    -fx-background-color: #f5f7fb;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.app-header {
+    -fx-background-color: #172945;
+}
+
+.brand-mark {
+    -fx-background-color: #78d8ca;
+    -fx-background-radius: 6;
+    -fx-min-height: 40;
+    -fx-min-width: 40;
+    -fx-pref-height: 40;
+    -fx-pref-width: 40;
+}
+
+.brand-mark-icon {
+    -fx-fill: transparent;
+    -fx-stroke: #17304b;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+    -fx-stroke-width: 1.8;
+}
+
+.brand-title {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 21px;
+    -fx-text-fill: white;
+}
+
+.brand-subtitle,
+.content-eyebrow,
+.sidebar-section-title,
+.command-panel-title {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 10px;
+    -fx-text-fill: #8fa1bd;
+    -fx-font-weight: bold;
+}
+
+.header-help-button {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-border-width: 0;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-min-height: 42;
+    -fx-pref-height: 42;
+    -fx-max-height: 42;
+    -fx-padding: 0 20 0 20;
+}
+
+.header-help-button {
+    -fx-background-color: #2b4268;
+    -fx-text-fill: #dae4f2;
+}
+
+.header-help-button:hover {
+    -fx-background-color: #38547f;
+}
+
+.header-help-button:focused {
+    -fx-border-color: transparent;
+    -fx-border-style: none;
+    -fx-border-width: 0;
+}
+
+.app-body {
+    -fx-background-color: #f5f7fb;
+}
+
+.workspace-sidebar {
+    -fx-background-color: #f9fbfe;
+    -fx-border-color: #e1e7f0;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-min-width: 200;
+    -fx-pref-width: 200;
+}
+
+.sidebar-section-title {
+    -fx-padding: 4 6 8 6;
+}
+
+.navigation-button,
+.quick-command-button {
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-text-fill: #40516c;
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+}
+
+.navigation-button {
+    -fx-font-size: 14px;
+    -fx-padding: 11 13 11 13;
+    -fx-max-width: Infinity;
+}
+
+.navigation-button:hover {
+    -fx-background-color: #e2f4f1;
+    -fx-text-fill: #186d66;
+}
+
+.navigation-button-active {
+    -fx-background-color: #e0f3ee;
+    -fx-text-fill: #1b766b;
+}
+
+.quick-command-button {
+    -fx-background-color: white;
+    -fx-border-color: #dce5f1;
+    -fx-border-width: 1;
+    -fx-font-size: 13px;
+    -fx-padding: 10 12 10 12;
+    -fx-max-width: Infinity;
+}
+
+.quick-command-button:hover {
+    -fx-background-color: #eff9f7;
+    -fx-border-color: #78d8ca;
+}
+
+.sidebar-tip {
+    -fx-background-color: #eaf1fb;
+    -fx-background-radius: 8;
+    -fx-font-size: 11px;
+    -fx-text-fill: #647896;
+    -fx-padding: 11;
+}
+
+.workspace-content {
+    -fx-padding: 0 0 0 2;
+}
+
+.content-eyebrow {
+    -fx-text-fill: #5b8eab;
+}
+
+.content-title {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 28px;
+    -fx-text-fill: #213451;
+}
+
+.content-subtitle,
+.records-hint {
+    -fx-font-size: 13px;
+    -fx-text-fill: #71829d;
+}
+
+.feedback-panel {
+    -fx-background-color: #edf3fa;
+    -fx-border-color: #dce7f4;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-padding: 3 10 3 10;
+}
+
+.feedback-panel .result-display {
+    -fx-text-fill: #465b79;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 12px;
+}
+
+.records-panel {
+    -fx-background-color: white;
+    -fx-border-color: #dde6f1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.records-title {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 20px;
+    -fx-text-fill: #243955;
+}
+
+.records-panel .list-view,
+.records-panel .list-cell:filled:even,
+.records-panel .list-cell:filled:odd,
+.records-panel .list-cell:empty,
+.list-page-records .list-view,
+.list-page-records .list-cell:filled:even,
+.list-page-records .list-cell:filled:odd,
+.list-page-records .list-cell:empty {
+    -fx-background-color: white;
+}
+
+.records-panel .list-cell,
+.list-page-records .list-cell {
+    -fx-padding: 4 0 4 0;
+}
+
+.records-panel .list-cell:filled:selected,
+.list-page-records .list-cell:filled:selected {
+    -fx-background-color: #e4f4f1;
+}
+
+.records-panel #cardPane,
+.list-page-records #cardPane {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 8;
+    -fx-border-color: #e4eaf2;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+.records-panel .cell_big_label,
+.list-page-records .cell_big_label {
+    -fx-text-fill: #263b58;
+}
+
+.records-panel .cell_small_label,
+.list-page-records .cell_small_label {
+    -fx-text-fill: #637590;
+}
+
+.command-panel {
+    -fx-background-color: #172945;
+    -fx-background-radius: 12;
+}
+
+.command-panel-title {
+    -fx-text-fill: #9db0ce;
+}
+
+.command-panel .stack-pane {
+    -fx-background-color: transparent;
+}
+
+.command-panel #commandTextField {
+    -fx-background-color: #263b5c;
+    -fx-border-color: transparent;
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.command-panel-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: #9db0ce;
+}
+
+.command-panel .pane-with-border {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.command-panel .result-display {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 11px;
+    -fx-text-fill: #9db0ce;
+}
+
+.dashboard {
+    -fx-padding: 4 0 0 0;
+}
+
+.dashboard-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+.dashboard-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.dashboard-greeting {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 27px;
+    -fx-text-fill: #213451;
+}
+
+.dashboard-subtitle,
+.panel-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #71829d;
+}
+
+.summary-cards {
+    -fx-padding: 4 0 2 0;
+}
+
+.summary-card {
+    -fx-background-color: white;
+    -fx-border-color: #dde6f1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.summary-card-active {
+    -fx-border-color: #c9ebe5;
+}
+
+.summary-card-interviewing {
+    -fx-border-color: #dce3fb;
+}
+
+.summary-card-follow-up {
+    -fx-border-color: #f7dfc7;
+}
+
+.summary-heading {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8192ad;
+}
+
+.summary-count {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 28px;
+    -fx-text-fill: #233855;
+}
+
+.summary-suffix {
+    -fx-font-size: 11px;
+    -fx-text-fill: #8291a8;
+}
+
+.dashboard-main-content {
+    -fx-min-height: 300;
+}
+
+.dashboard-applications-panel,
+.dashboard-activity-panel {
+    -fx-background-color: white;
+    -fx-border-color: #dde6f1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.dashboard-contacts-panel {
+    -fx-background-color: white;
+    -fx-border-color: #dde6f1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.panel-title {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 20px;
+    -fx-text-fill: #243955;
+}
+
+.dashboard-application-table {
+    -fx-background-color: transparent;
+    -fx-base: white;
+    -fx-control-inner-background: white;
+    -fx-table-cell-border-color: #edf1f6;
+    -fx-padding: 8 0 0 0;
+}
+
+.dashboard-application-table .column-header-background,
+.dashboard-application-table .filler,
+.dashboard-application-table .column-header {
+    -fx-background-color: white;
+}
+
+.dashboard-application-table .column-header {
+    -fx-border-color: transparent transparent #e5ebf3 transparent;
+    -fx-size: 34;
+}
+
+.dashboard-application-table .column-header .label {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8291a8;
+}
+
+.dashboard-application-table .table-row-cell,
+.dashboard-application-table .table-row-cell:odd,
+.dashboard-application-table .table-row-cell:even {
+    -fx-background-color: white;
+    -fx-cell-size: 56;
+}
+
+.dashboard-application-table .table-row-cell:filled:selected,
+.dashboard-application-table:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #edf8f6;
+    -fx-background-insets: 0;
+}
+
+.dashboard-application-table .table-cell {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: #40516c;
+    -fx-border-color: transparent transparent #edf1f6 transparent;
+}
+
+.status-badge {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 11px;
+    -fx-padding: 5 13 5 13;
+    -fx-background-radius: 16;
+}
+
+.status-badge-applied {
+    -fx-background-color: #e0f3ee;
+    -fx-text-fill: #218576;
+}
+
+.status-badge-interviewing {
+    -fx-background-color: #e7edff;
+    -fx-text-fill: #586fd1;
+}
+
+.status-badge-offered {
+    -fx-background-color: #e5f4df;
+    -fx-text-fill: #4b8935;
+}
+
+.status-badge-rejected,
+.status-badge-withdrawn {
+    -fx-background-color: #fbe8e8;
+    -fx-text-fill: #ba5555;
+}
+
+.next-steps-list {
+    -fx-padding: 12 0 8 0;
+}
+
+.next-step-card {
+    -fx-background-color: #f7f9fc;
+    -fx-border-color: #e5ebf3;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+}
+
+.next-step-date {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #258f84;
+}
+
+.next-step-action {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e59;
+}
+
+.next-step-notes,
+.dashboard-placeholder {
+    -fx-font-size: 11px;
+    -fx-text-fill: #71829d;
+}
+
+.dashboard-contact-cards {
+    -fx-padding: 8 0 0 0;
+}
+
+.dashboard-contact-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+.dashboard-contact-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.contact-card {
+    -fx-background-color: #f7f9fc;
+    -fx-border-color: #e5ebf3;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-min-width: 270;
+    -fx-pref-width: 270;
+    -fx-max-width: 270;
+}
+
+.contact-card-avatar {
+    -fx-alignment: CENTER;
+    -fx-background-color: #e0f3ee;
+    -fx-background-radius: 18;
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 12px;
+    -fx-text-fill: #218576;
+    -fx-min-height: 32;
+    -fx-min-width: 32;
+    -fx-pref-height: 32;
+    -fx-pref-width: 32;
+}
+
+.contact-card-name {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e59;
+}
+
+.contact-card-header {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.contact-card-index {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e59;
+}
+
+.overview-contact-tags {
+    -fx-hgap: 6;
+    -fx-vgap: 3;
+}
+
+.overview-contact-tags .label {
+    -fx-background-color: #3e7b91;
+    -fx-background-radius: 2;
+    -fx-font-size: 11px;
+    -fx-padding: 1 3 1 3;
+    -fx-text-fill: white;
+}
+
+.contact-card-detail {
+    -fx-font-size: 11px;
+    -fx-text-fill: #71829d;
+    -fx-line-spacing: 2;
+}
+
+.list-workspace-page {
+    -fx-padding: 4 0 0 0;
+}
+
+.list-page-title {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 27px;
+    -fx-text-fill: #213451;
+}
+
+.list-page-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #71829d;
+}
+
+.list-page-records {
+    -fx-background-color: white;
+    -fx-border-color: #dde6f1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 14;
+}
+
+.list-page-records .list-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.list-page-records .empty-list-placeholder {
+    -fx-text-fill: #71829d;
+}
+
+.application-calendar {
+    -fx-background-color: white;
+    -fx-border-color: #dde6f1;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.calendar-range-label {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 18px;
+    -fx-text-fill: #263b58;
+}
+
+.calendar-navigation-button {
+    -fx-background-color: #eaf1fb;
+    -fx-background-radius: 18;
+    -fx-border-width: 0;
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 18px;
+    -fx-padding: 3 11 3 11;
+    -fx-text-fill: #526b8e;
+}
+
+.calendar-navigation-button:hover {
+    -fx-background-color: #dcecf8;
+}
+
+.calendar-scroll-pane,
+.calendar-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+}
+
+.calendar-day-column {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e1e8f1;
+    -fx-border-width: 1;
+}
+
+.calendar-day-heading {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: #41536d;
+}
+
+.calendar-empty-day {
+    -fx-font-size: 11px;
+    -fx-text-fill: #9aa8ba;
+}
+
+.calendar-application-card {
+    -fx-background-color: #e0f3ee;
+    -fx-border-color: #a9dcd4;
+    -fx-border-width: 0 0 3 0;
+    -fx-background-radius: 6;
+}
+
+.calendar-application-role {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 12px;
+    -fx-text-fill: #265b58;
+}
+
+.calendar-application-company {
+    -fx-font-size: 11px;
+    -fx-text-fill: #527c78;
+}
+
+.app-root .scroll-bar {
+    -fx-background-color: #eef3f9;
+}
+
+.app-root .scroll-bar .thumb {
+    -fx-background-color: #bdcce0;
+    -fx-background-radius: 8;
+    -fx-background-insets: 2;
+}
+
+.app-root .scroll-bar .thumb:hover {
+    -fx-background-color: #9eb4d0;
+}
+
+.app-root .scroll-bar .increment-button,
+.app-root .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.status-bar,
+.status-bar-with-border {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.status-bar .label,
+.status-bar-with-border .label {
+    -fx-text-fill: #71829d;
+}

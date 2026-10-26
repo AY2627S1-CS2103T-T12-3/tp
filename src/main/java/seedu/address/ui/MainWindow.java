@@ -3,16 +3,17 @@ package seedu.address.ui;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputControl;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
@@ -29,6 +30,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 public class MainWindow extends UiPart<Stage> {
 
     private static final String FXML = "MainWindow.fxml";
+    private static final KeyCombination HELP_ACCELERATOR = KeyCombination.valueOf("F1");
     private static final KeyCombination QUICK_SEARCH_ACCELERATOR = new KeyCodeCombination(
             KeyCode.F, KeyCombination.SHORTCUT_DOWN);
 
@@ -42,15 +44,17 @@ public class MainWindow extends UiPart<Stage> {
     private PersonListPanel personListPanel;
     private ApplicationListPanel applicationListPanel;
     private ApplicationCalendarPanel applicationCalendarPanel;
+    private DashboardPanel dashboardPanel;
+    private ScrollPane dashboardScrollPane;
+    private WorkspaceListPanel contactsPage;
+    private WorkspaceListPanel applicationsPage;
+    private WorkspaceListPanel calendarPage;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
     private CommandBox commandBox;
 
     @FXML
     private StackPane commandBoxPlaceholder;
-
-    @FXML
-    private MenuItem helpMenuItem;
 
     @FXML
     private StackPane personListPanelPlaceholder;
@@ -60,6 +64,21 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private StackPane statusbarPlaceholder;
+
+    @FXML
+    private VBox commandPanel;
+
+    @FXML
+    private Button overviewButton;
+
+    @FXML
+    private Button applicationsButton;
+
+    @FXML
+    private Button contactsButton;
+
+    @FXML
+    private Button calendarButton;
 
     /**
      * Creates a {@code MainWindow} with the given {@code Stage}, {@code Logic},
@@ -86,9 +105,11 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     private void setAccelerators() {
-        setAccelerator(helpMenuItem, KeyCombination.valueOf("F1"));
         getRoot().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (isQuickSearchShortcut(event) && commandBox != null) {
+            if (HELP_ACCELERATOR.match(event)) {
+                handleHelp();
+                event.consume();
+            } else if (isQuickSearchShortcut(event) && commandBox != null) {
                 commandBox.focusForQuickSearch();
                 event.consume();
             }
@@ -103,43 +124,28 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Sets the accelerator of a MenuItem.
-     * @param keyCombination the KeyCombination value of the accelerator
-     */
-    private void setAccelerator(MenuItem menuItem, KeyCombination keyCombination) {
-        menuItem.setAccelerator(keyCombination);
-
-        /*
-         * TODO: the code below can be removed once the bug reported here
-         * https://bugs.openjdk.java.net/browse/JDK-8131666
-         * is fixed in a later version of the SDK.
-         *
-         * According to the bug report, TextInputControl (TextField, TextArea) will
-         * consume function-key events. Because CommandBox contains a TextField and
-         * ResultDisplay contains a TextArea, some accelerators (e.g., F1) will
-         * not work when the focus is in them because the key event is consumed by
-         * the TextInputControl(s).
-         *
-         * For now, we add the following event filter to capture such key events and open
-         * the help window purposely so as to support accelerators even when focus is
-         * in CommandBox or ResultDisplay.
-         */
-        getRoot().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getTarget() instanceof TextInputControl && keyCombination.match(event)) {
-                menuItem.getOnAction().handle(new ActionEvent());
-                event.consume();
-            }
-        });
-    }
-
-    /**
      * Fills up all the placeholders of this window.
      */
     void fillInnerParts() {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
         applicationListPanel = new ApplicationListPanel(logic.getApplicationList());
         applicationCalendarPanel = new ApplicationCalendarPanel(logic.getApplicationList());
-        personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
+        dashboardPanel = new DashboardPanel(logic.getApplicationList(), logic.getPersonList());
+        dashboardPanel.setMinHeight(Region.USE_PREF_SIZE);
+        dashboardScrollPane = new ScrollPane(dashboardPanel);
+        dashboardScrollPane.setFitToWidth(true);
+        dashboardScrollPane.setFitToHeight(false);
+        dashboardScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        dashboardScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        dashboardScrollPane.setPannable(true);
+        dashboardScrollPane.getStyleClass().add("dashboard-scroll-pane");
+        contactsPage = new WorkspaceListPanel("Contacts", "People and organisations in your internship network.",
+                personListPanel.getRoot());
+        applicationsPage = new WorkspaceListPanel("Applications",
+                "Your current internship and graduate role applications.", applicationListPanel.getRoot());
+        calendarPage = new WorkspaceListPanel("Application calendar",
+                "Review application dates one week at a time.", applicationCalendarPanel);
+        personListPanelPlaceholder.getChildren().add(dashboardScrollPane);
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
@@ -149,6 +155,8 @@ public class MainWindow extends UiPart<Stage> {
 
         commandBox = new CommandBox(this::executeCommand);
         commandBoxPlaceholder.getChildren().add(commandBox.getRoot());
+        dashboardPanel.showCommandPanel(commandPanel);
+        setActiveNavigation(overviewButton);
     }
 
     /**
@@ -195,22 +203,54 @@ public class MainWindow extends UiPart<Stage> {
         return personListPanel;
     }
 
+    /** Shows the workspace overview. */
+    @FXML
+    public void showOverview() {
+        dashboardPanel.showCommandPanel(commandPanel);
+        showListPanel(dashboardScrollPane);
+        setActiveNavigation(overviewButton);
+    }
+
     /** Shows the contacts list. */
     @FXML
     public void showContacts() {
-        showListPanel(personListPanel.getRoot());
+        contactsPage.showCommandPanel(commandPanel);
+        showListPanel(contactsPage);
+        setActiveNavigation(contactsButton);
     }
 
     /** Shows the applications list. */
     @FXML
     public void showApplications() {
-        showListPanel(applicationListPanel.getRoot());
+        applicationsPage.showCommandPanel(commandPanel);
+        showListPanel(applicationsPage);
+        setActiveNavigation(applicationsButton);
     }
 
     /** Shows the weekly application calendar. */
     @FXML
     public void showApplicationCalendar() {
-        showListPanel(applicationCalendarPanel);
+        calendarPage.showCommandPanel(commandPanel);
+        showListPanel(calendarPage);
+        setActiveNavigation(calendarButton);
+    }
+
+    /** Prepares the command box for adding an application. */
+    @FXML
+    public void prepareApplicationCreation() {
+        commandBox.focusForApplicationCreation();
+    }
+
+    /** Prepares the command box for adding a contact. */
+    @FXML
+    public void prepareContactCreation() {
+        commandBox.focusForContactCreation();
+    }
+
+    /** Focuses the command box and prepares a contact search. */
+    @FXML
+    public void prepareContactSearch() {
+        commandBox.focusForQuickSearch();
     }
 
     /**
@@ -225,9 +265,9 @@ public class MainWindow extends UiPart<Stage> {
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
 
             if (commandResult.getDisplayedList() == DisplayedList.CONTACTS) {
-                showListPanel(personListPanel.getRoot());
+                showContacts();
             } else if (commandResult.getDisplayedList() == DisplayedList.APPLICATIONS) {
-                showListPanel(applicationListPanel.getRoot());
+                showApplications();
             }
 
             if (commandResult.isShowHelp()) {
@@ -248,5 +288,13 @@ public class MainWindow extends UiPart<Stage> {
 
     private void showListPanel(Node panel) {
         personListPanelPlaceholder.getChildren().setAll(panel);
+    }
+
+    private void setActiveNavigation(Button activeButton) {
+        overviewButton.getStyleClass().remove("navigation-button-active");
+        applicationsButton.getStyleClass().remove("navigation-button-active");
+        contactsButton.getStyleClass().remove("navigation-button-active");
+        calendarButton.getStyleClass().remove("navigation-button-active");
+        activeButton.getStyleClass().add("navigation-button-active");
     }
 }
