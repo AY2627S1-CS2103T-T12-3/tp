@@ -304,10 +304,6 @@
     -fx-border-color: #dce3fb;
 }
 
-.summary-card-follow-up {
-    -fx-border-color: #f7dfc7;
-}
-
 .summary-heading {
     -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
     -fx-font-size: 10px;
@@ -330,8 +326,7 @@
     -fx-min-height: 300;
 }
 
-.dashboard-applications-panel,
-.dashboard-activity-panel {
+.dashboard-applications-panel {
     -fx-background-color: white;
     -fx-border-color: #dde6f1;
     -fx-background-radius: 12;
@@ -425,31 +420,6 @@
     -fx-text-fill: #ba5555;
 }
 
-.next-steps-list {
-    -fx-padding: 12 0 8 0;
-}
-
-.next-step-card {
-    -fx-background-color: #f7f9fc;
-    -fx-border-color: #e5ebf3;
-    -fx-background-radius: 9;
-    -fx-border-radius: 9;
-}
-
-.next-step-date {
-    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
-    -fx-font-size: 10px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #258f84;
-}
-
-.next-step-action {
-    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
-    -fx-font-size: 13px;
-    -fx-text-fill: #2c3e59;
-}
-
-.next-step-notes,
 .dashboard-placeholder {
     -fx-font-size: 11px;
     -fx-text-fill: #71829d;

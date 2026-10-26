@@ -2,8 +2,6 @@ package seedu.address.ui;
 
 import static java.util.Objects.requireNonNull;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -32,15 +30,10 @@ import seedu.address.model.person.Person;
  * A live overview of applications and contacts in InternTrack.
  */
 public class DashboardPanel extends VBox {
-    private static final int MAX_NEXT_STEPS = 3;
-    private static final DateTimeFormatter FOLLOW_UP_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM d", Locale.ENGLISH);
-
     private final ObservableList<Application> applications;
     private final ObservableList<Person> persons;
     private final Label activeApplicationCount = new Label();
     private final Label interviewingCount = new Label();
-    private final Label followUpCount = new Label();
-    private final VBox nextSteps = new VBox(12);
     private final HBox contactCards = new HBox(10);
     private final ScrollPane contactCardsScrollPane = new ScrollPane(contactCards);
 
@@ -73,8 +66,7 @@ public class DashboardPanel extends VBox {
     private HBox createSummaryCards() {
         HBox cards = new HBox(16,
                 createSummaryCard("ACTIVE APPLICATIONS", activeApplicationCount, "active"),
-                createSummaryCard("INTERVIEWING", interviewingCount, "interviewing"),
-                createSummaryCard("FOLLOW UPS", followUpCount, "follow-up"));
+                createSummaryCard("INTERVIEWING", interviewingCount, "interviewing"));
         cards.getStyleClass().add("summary-cards");
         return cards;
     }
@@ -100,11 +92,8 @@ public class DashboardPanel extends VBox {
     private VBox createMainContent() {
         VBox applicationsPanel = createApplicationsPanel();
         VBox contactsPanel = createContactsPanel();
-        VBox activityPanel = createActivityPanel();
-        HBox bottomRow = new HBox(16, contactsPanel, activityPanel);
-        HBox.setHgrow(contactsPanel, Priority.ALWAYS);
 
-        VBox content = new VBox(16, applicationsPanel, bottomRow);
+        VBox content = new VBox(16, applicationsPanel, contactsPanel);
         content.getStyleClass().add("dashboard-main-content");
         VBox.setVgrow(content, Priority.ALWAYS);
         return content;
@@ -198,28 +187,9 @@ public class DashboardPanel extends VBox {
         return column;
     }
 
-    private VBox createActivityPanel() {
-        Label title = new Label("Next steps");
-        title.getStyleClass().add("panel-title");
-        Label subtitle = new Label("A few things to follow up on");
-        subtitle.getStyleClass().add("panel-subtitle");
-
-        nextSteps.getStyleClass().add("next-steps-list");
-        VBox.setVgrow(nextSteps, Priority.ALWAYS);
-
-        VBox activityPanel = new VBox(8, title, subtitle, nextSteps);
-        activityPanel.getStyleClass().add("dashboard-activity-panel");
-        activityPanel.setPadding(new Insets(18));
-        activityPanel.setPrefWidth(280);
-        activityPanel.setMinWidth(250);
-        return activityPanel;
-    }
-
     private void refresh() {
         activeApplicationCount.setText(String.valueOf(countActiveApplications()));
         interviewingCount.setText(String.valueOf(countWithStatus(ApplicationStatus.INTERVIEWING)));
-        followUpCount.setText(String.valueOf(countFollowUps()));
-        refreshNextSteps();
         refreshContactCards();
     }
 
@@ -232,45 +202,6 @@ public class DashboardPanel extends VBox {
 
     private long countWithStatus(ApplicationStatus status) {
         return applications.stream().filter(application -> application.getStatus() == status).count();
-    }
-
-    private long countFollowUps() {
-        return applications.stream().filter(DashboardPanel::requiresFollowUp).count();
-    }
-
-    private void refreshNextSteps() {
-        List<Application> followUps = applications.stream()
-                .filter(DashboardPanel::requiresFollowUp)
-                .filter(application -> LocalDate.parse(application.getDate().value).isAfter(LocalDate.now()))
-                .sorted(Comparator.comparing(application -> LocalDate.parse(application.getDate().value)))
-                .limit(MAX_NEXT_STEPS)
-                .toList();
-        nextSteps.getChildren().setAll(followUps.stream().map(this::createNextStep).toList());
-        if (followUps.isEmpty()) {
-            nextSteps.getChildren().setAll(createPlaceholder("No follow ups yet."));
-        }
-    }
-
-    private VBox createNextStep(Application application) {
-        LocalDate date = LocalDate.parse(application.getDate().value);
-        Label dateLabel = new Label(FOLLOW_UP_DATE_FORMAT.format(date).toUpperCase(Locale.ROOT));
-        dateLabel.getStyleClass().add("next-step-date");
-
-        String action = application.getStatus() == ApplicationStatus.INTERVIEWING
-                ? "Prepare for " + application.getCompany().value + " interview"
-                : "Follow up with " + application.getCompany().value;
-        Label actionLabel = new Label(action);
-        actionLabel.getStyleClass().add("next-step-action");
-        actionLabel.setWrapText(true);
-
-        Label notes = new Label(application.getDescription().value);
-        notes.getStyleClass().add("next-step-notes");
-        notes.setWrapText(true);
-
-        VBox step = new VBox(5, dateLabel, actionLabel, notes);
-        step.getStyleClass().add("next-step-card");
-        step.setPadding(new Insets(12));
-        return step;
     }
 
     private void refreshContactCards() {
@@ -333,11 +264,6 @@ public class DashboardPanel extends VBox {
             parent.getChildren().remove(commandPanel);
         }
         getChildren().add(index, commandPanel);
-    }
-
-    private static boolean requiresFollowUp(Application application) {
-        return application.getStatus() == ApplicationStatus.APPLIED
-                || application.getStatus() == ApplicationStatus.INTERVIEWING;
     }
 
     private static Label createPlaceholder(String text) {
