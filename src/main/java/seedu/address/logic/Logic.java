@@ -24,6 +24,9 @@ public interface Logic {
     /** Returns an unmodifiable view of the filtered list of persons */
     ObservableList<Person> getFilteredPersonList();
 
+    /** Returns an unmodifiable view of every saved contact. */
+    ObservableList<Person> getPersonList();
+
     /** Returns an unmodifiable view of the application list. */
     ObservableList<Application> getApplicationList();
 

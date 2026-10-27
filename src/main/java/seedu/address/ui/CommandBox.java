@@ -42,6 +42,24 @@ public class CommandBox extends UiPart<Region> {
     }
 
     /**
+     * Focuses the command field and prepares an application creation command.
+     */
+    void focusForApplicationCreation() {
+        commandTextField.setText("addapp ");
+        commandTextField.requestFocus();
+        commandTextField.positionCaret(commandTextField.getText().length());
+    }
+
+    /**
+     * Focuses the command field and prepares a contact creation command.
+     */
+    void focusForContactCreation() {
+        commandTextField.setText("add ");
+        commandTextField.requestFocus();
+        commandTextField.positionCaret(commandTextField.getText().length());
+    }
+
+    /**
      * Returns the command text to show when the quick-search shortcut is pressed.
      */
     static String getQuickSearchText(String currentText) {
