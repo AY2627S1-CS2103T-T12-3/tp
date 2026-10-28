@@ -108,7 +108,7 @@ Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`
 * `NAME` is the role or position title. It must not be blank, contain control characters, or exceed 100 characters.
 * `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 * `DESCRIPTION` records relevant application details. It must not be blank or exceed 500 characters.
-* `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
+* `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format, from `2000-01-01` to `2099-12-31`. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
 * `STATUS` is optional. If omitted, the application is created with the `APPLIED` status.
 * The accepted status values are `APPLIED`, `INTERVIEWING`, `OFFERED`, `REJECTED`, and `WITHDRAWN`. Status values are case-insensitive.
 * Two applications with the same `NAME` and `COMPANY` are considered duplicates, ignoring letter case. Their descriptions and dates do not affect duplicate detection.
