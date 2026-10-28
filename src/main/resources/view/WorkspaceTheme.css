@@ -456,6 +456,8 @@
     -fx-border-color: #e5ebf3;
     -fx-background-radius: 9;
     -fx-border-radius: 9;
+    -fx-min-height: 280;
+    -fx-pref-height: 280;
     -fx-min-width: 270;
     -fx-pref-width: 270;
     -fx-max-width: 270;
