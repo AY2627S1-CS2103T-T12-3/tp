@@ -139,6 +139,7 @@ public class DashboardPanel extends VBox {
         contactCardsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         contactCardsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         contactCardsScrollPane.setPannable(true);
+        contactCardsScrollPane.addEventHandler(ScrollEvent.SCROLL, event -> event.consume());
         contactCardsScrollPane.setMinViewportHeight(CONTACT_CARD_HEIGHT);
         contactCardsScrollPane.setPrefViewportHeight(CONTACT_CARD_HEIGHT);
 
