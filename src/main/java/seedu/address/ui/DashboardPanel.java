@@ -30,6 +30,8 @@ import seedu.address.model.person.Person;
  * A live overview of applications and contacts in InternTrack.
  */
 public class DashboardPanel extends VBox {
+    private static final double CONTACT_CARD_HEIGHT = 280;
+
     private final ObservableList<Application> applications;
     private final ObservableList<Person> persons;
     private final Label activeApplicationCount = new Label();
@@ -135,9 +137,11 @@ public class DashboardPanel extends VBox {
         contactCardsScrollPane.getStyleClass().add("dashboard-contact-scroll-pane");
         contactCardsScrollPane.setFitToHeight(false);
         contactCardsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        contactCardsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        contactCardsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         contactCardsScrollPane.setPannable(true);
-        contactCardsScrollPane.setMinViewportHeight(190);
+        contactCardsScrollPane.addEventHandler(ScrollEvent.SCROLL, event -> event.consume());
+        contactCardsScrollPane.setMinViewportHeight(CONTACT_CARD_HEIGHT);
+        contactCardsScrollPane.setPrefViewportHeight(CONTACT_CARD_HEIGHT);
 
         VBox panel = new VBox(7, title, subtitle, contactCardsScrollPane);
         panel.getStyleClass().add("dashboard-contacts-panel");
