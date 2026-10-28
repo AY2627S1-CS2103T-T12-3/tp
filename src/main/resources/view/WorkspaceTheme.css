@@ -139,6 +139,8 @@
     -fx-background-color: #eaf1fb;
     -fx-background-radius: 8;
     -fx-font-size: 11px;
+    -fx-min-height: 72;
+    -fx-pref-height: 72;
     -fx-text-fill: #647896;
     -fx-padding: 11;
 }

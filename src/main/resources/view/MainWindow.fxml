@@ -65,7 +65,8 @@
                         styleClass="quick-command-button" />
                 <Button mnemonicParsing="false" onAction="#prepareContactSearch" text="find&#10;Search contacts"
                         styleClass="quick-command-button" />
-                <Label text="Tip: Use the command box to see all available commands." wrapText="true"
+                <Label text="Need help? Select Help in the top-right corner to view all commands."
+                       wrapText="true"
                        styleClass="sidebar-tip" />
                 <padding>
                   <Insets top="24" right="18" bottom="20" left="18" />
