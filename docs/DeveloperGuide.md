@@ -424,7 +424,7 @@ testers are expected to do more *exploratory* testing.
    1. Download the release JAR into an empty, writable folder. In a terminal, change to that folder and run `java -version` to confirm Java 25.
 
    1. Run `java -jar addressbook.jar` (use the downloaded file's actual name if different).<br>
-      Expected: The GUI opens with sample contacts and creates `preferences.json`. The data file `data/addressbook.json` is created after the first successful command.
+      Expected: The GUI opens with sample contacts and creates `preferences.json`. After adding a contact, its saved data is available in `data/addressbook.json`.
 
 1. Saving window preferences
 
