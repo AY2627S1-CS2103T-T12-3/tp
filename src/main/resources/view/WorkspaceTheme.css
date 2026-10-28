@@ -441,16 +441,6 @@
     -fx-padding: 8 0 0 0;
 }
 
-.dashboard-contact-scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-border-width: 0;
-}
-
-.dashboard-contact-scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
-
 .contact-card {
     -fx-background-color: #f7f9fc;
     -fx-border-color: #e5ebf3;
