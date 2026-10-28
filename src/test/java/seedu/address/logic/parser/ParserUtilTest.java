@@ -195,6 +195,12 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseCompany_overMaxLengthOnlyBeforeNormalization_returnsNormalizedCompany() throws Exception {
+        String paddedCompany = "Tech" + " ".repeat(Company.MAX_LENGTH) + "Corp";
+        assertEquals(new Company("Tech Corp"), ParserUtil.parseCompany(paddedCompany));
+    }
+
+    @Test
     public void parseRole_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parseRole(null));
     }
