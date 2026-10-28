@@ -128,7 +128,7 @@ class JsonAdaptedPerson {
         }
         final Email modelEmail = new Email(email);
 
-        if (company != null && !Company.isValidCompany(company)) {
+        if (company != null && !Company.isValidCompany(Company.normalize(company))) {
             throw new IllegalValueException(Company.MESSAGE_CONSTRAINTS);
         }
         final Optional<Company> modelCompany = Optional.ofNullable(company).map(Company::new);

@@ -78,6 +78,13 @@
     -fx-background-radius: 14;
     -fx-min-width: 200;
     -fx-pref-width: 200;
+    -fx-padding: 0;
+}
+
+.workspace-sidebar > .viewport,
+.workspace-sidebar-content {
+    -fx-background-color: #f9fbfe;
+    -fx-background-radius: 14;
 }
 
 .sidebar-section-title {
@@ -116,8 +123,11 @@
     -fx-border-color: #dce5f1;
     -fx-border-width: 1;
     -fx-font-size: 13px;
+    -fx-min-height: 64;
+    -fx-pref-height: 64;
     -fx-padding: 10 12 10 12;
     -fx-max-width: Infinity;
+    -fx-wrap-text: true;
 }
 
 .quick-command-button:hover {
@@ -129,6 +139,8 @@
     -fx-background-color: #eaf1fb;
     -fx-background-radius: 8;
     -fx-font-size: 11px;
+    -fx-min-height: 72;
+    -fx-pref-height: 72;
     -fx-text-fill: #647896;
     -fx-padding: 11;
 }
@@ -444,6 +456,7 @@
     -fx-border-color: #e5ebf3;
     -fx-background-radius: 9;
     -fx-border-radius: 9;
+    -fx-min-height: 280;
     -fx-min-width: 270;
     -fx-pref-width: 270;
     -fx-max-width: 270;

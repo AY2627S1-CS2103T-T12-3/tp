@@ -30,8 +30,8 @@ public class AddApplicationCommandParser implements Parser<AddApplicationCommand
      * @throws ParseException if the user input does not conform to the expected format.
      */
     public AddApplicationCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_COMPANY,
-                PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenizeWithFreeText(args, PREFIX_DESCRIPTION,
+                PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE)
                 || !argMultimap.getPreamble().isEmpty()) {

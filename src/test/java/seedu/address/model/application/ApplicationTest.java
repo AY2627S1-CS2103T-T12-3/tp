@@ -58,6 +58,11 @@ public class ApplicationTest {
                 new Description("Interview scheduled."), new ApplicationDate("2026-10-08"));
         assertTrue(SOFTWARE_ENGINEER_INTERN.isSameApplication(editedApplication));
 
+        // company differs only in repeated internal whitespace -> returns true
+        editedApplication = new Application(new ApplicationName("Software Engineer Intern"), new Company("Tech  Corp"),
+                new Description("Interview scheduled."), new ApplicationDate("2026-10-08"));
+        assertTrue(SOFTWARE_ENGINEER_INTERN.isSameApplication(editedApplication));
+
         // different name -> returns false
         editedApplication = new Application(new ApplicationName("Product Manager Intern"), new Company("Tech Corp"),
                 new Description("Applied through the company careers page."), new ApplicationDate("2026-10-07"));

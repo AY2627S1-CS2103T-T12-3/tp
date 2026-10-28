@@ -137,6 +137,21 @@ public class ArgumentTokenizerTest {
     }
 
     @Test
+    public void tokenizeWithFreeText_prefixLikeTextKeptInFreeTextValue() {
+        Prefix dSlash = new Prefix("d/");
+        Prefix nSlash = new Prefix("n/");
+        String argsString = " n/Name d/Text n/a and p/q, n/ab p/Value n/x";
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenizeWithFreeText(argsString, dSlash,
+                dSlash, nSlash, pSlash);
+        assertPreambleEmpty(argMultimap);
+        // n/ab is not prefix-like text, so it ends the free text value
+        assertArgumentPresent(argMultimap, dSlash, "Text n/a and p/q,");
+        // n/x is outside the free text value, so it is still a prefix
+        assertArgumentPresent(argMultimap, nSlash, "Name", "ab", "x");
+        assertArgumentPresent(argMultimap, pSlash, "Value");
+    }
+
+    @Test
     public void equalsMethod() {
         Prefix aaa = new Prefix("aaa");
 

@@ -29,6 +29,47 @@ public class ArgumentTokenizer {
     }
 
     /**
+     * Tokenizes an arguments string like {@link #tokenize(String, Prefix...)}, but keeps short prefix-like text
+     * such as {@code n/a}, {@code s/o} or {@code c/o} in the value of {@code freeTextPrefix} instead of reading it
+     * as another prefix. Such text is a prefix followed by a single letter and then whitespace, punctuation or
+     * the end of the string.
+     *
+     * @param argsString     Arguments string of the form: {@code preamble <prefix>value <prefix>value ...}
+     * @param freeTextPrefix Prefix whose value may contain prefix-like text
+     * @param prefixes       Prefixes to tokenize the arguments string with
+     * @return               ArgumentMultimap object that maps prefixes to their arguments
+     */
+    public static ArgumentMultimap tokenizeWithFreeText(String argsString, Prefix freeTextPrefix,
+                                                        Prefix... prefixes) {
+        List<PrefixPosition> positions = findAllPrefixPositions(argsString, prefixes);
+        positions.sort((prefix1, prefix2) -> prefix1.getStartPosition() - prefix2.getStartPosition());
+
+        List<PrefixPosition> keptPositions = new ArrayList<>();
+        Prefix currentPrefix = null;
+        for (PrefixPosition position : positions) {
+            if (freeTextPrefix.equals(currentPrefix) && isPrefixLikeText(argsString, position)) {
+                continue;
+            }
+            keptPositions.add(position);
+            currentPrefix = position.getPrefix();
+        }
+        return extractArguments(argsString, keptPositions);
+    }
+
+    /**
+     * Returns true if the prefix at {@code position} is followed by a single letter and then whitespace,
+     * punctuation or the end of {@code argsString}, e.g. {@code n/a} or {@code s/o.}.
+     */
+    private static boolean isPrefixLikeText(String argsString, PrefixPosition position) {
+        int valueStart = position.getStartPosition() + position.getPrefix().getPrefix().length();
+        if (valueStart >= argsString.length() || !Character.isLetter(argsString.charAt(valueStart))) {
+            return false;
+        }
+        int afterValue = valueStart + 1;
+        return afterValue == argsString.length() || !Character.isLetterOrDigit(argsString.charAt(afterValue));
+    }
+
+    /**
      * Finds all zero-based prefix positions in the given arguments string.
      *
      * @param argsString Arguments string of the form: {@code preamble <prefix>value <prefix>value ...}

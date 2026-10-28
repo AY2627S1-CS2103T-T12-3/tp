@@ -134,6 +134,12 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Removes the {@code WhereMet} value of the person being built. */
+    public PersonBuilder withoutWhereMet() {
+        this.whereMet = Optional.empty();
+        return this;
+    }
+
     public Person build() {
         return new Person(name, phone, email, company, role, whereMet, address, remark, tags);
     }

@@ -12,8 +12,12 @@ import java.time.format.DateTimeParseException;
  */
 public class ApplicationDate {
 
+    public static final LocalDate EARLIEST_DATE = LocalDate.of(2000, 1, 1);
+    public static final LocalDate LATEST_DATE = LocalDate.of(2099, 12, 31);
+
     public static final String MESSAGE_CONSTRAINTS =
-            "Date should be a valid calendar date in YYYY-MM-DD format.";
+            "Date should be a valid calendar date in YYYY-MM-DD format, from " + EARLIEST_DATE + " to "
+            + LATEST_DATE + ".";
 
     private static final String DATE_FORMAT_REGEX = "\\d{4}-\\d{2}-\\d{2}";
 
@@ -31,7 +35,8 @@ public class ApplicationDate {
     }
 
     /**
-     * Returns true if {@code test} is a valid calendar date in {@code YYYY-MM-DD} format.
+     * Returns true if {@code test} is a valid calendar date in {@code YYYY-MM-DD} format,
+     * between {@link #EARLIEST_DATE} and {@link #LATEST_DATE} inclusive.
      */
     public static boolean isValidDate(String test) {
         requireNonNull(test);
@@ -41,8 +46,8 @@ public class ApplicationDate {
         }
 
         try {
-            LocalDate.parse(test);
-            return true;
+            LocalDate date = LocalDate.parse(test);
+            return !date.isBefore(EARLIEST_DATE) && !date.isAfter(LATEST_DATE);
         } catch (DateTimeParseException e) {
             return false;
         }
