@@ -112,7 +112,9 @@ public class EditCommand extends Command {
         Email updatedEmail = editPersonDescriptor.getEmail().orElse(personToEdit.getEmail());
         Optional<Company> updatedCompany = editPersonDescriptor.getCompany().or(personToEdit::getCompany);
         Optional<Role> updatedRole = editPersonDescriptor.getRole().or(personToEdit::getRole);
-        Optional<WhereMet> updatedWhereMet = editPersonDescriptor.getWhereMet().or(personToEdit::getWhereMet);
+        Optional<WhereMet> updatedWhereMet = editPersonDescriptor.isWhereMetCleared()
+                ? Optional.empty()
+                : editPersonDescriptor.getWhereMet().or(personToEdit::getWhereMet);
         Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
@@ -155,6 +157,7 @@ public class EditCommand extends Command {
         private Company company;
         private Role role;
         private WhereMet whereMet;
+        private boolean isWhereMetCleared;
         private Address address;
         private Set<Tag> tags;
 
@@ -171,6 +174,7 @@ public class EditCommand extends Command {
             setCompany(toCopy.company);
             setRole(toCopy.role);
             setWhereMet(toCopy.whereMet);
+            isWhereMetCleared = toCopy.isWhereMetCleared;
             setAddress(toCopy.address);
             setTags(toCopy.tags);
         }
@@ -179,7 +183,8 @@ public class EditCommand extends Command {
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, phone, email, company, role, whereMet, address, tags);
+            return CollectionUtil.isAnyNonNull(name, phone, email, company, role, whereMet, address, tags)
+                    || isWhereMetCleared;
         }
 
         public void setName(Name name) {
@@ -224,10 +229,23 @@ public class EditCommand extends Command {
 
         public void setWhereMet(WhereMet whereMet) {
             this.whereMet = whereMet;
+            isWhereMetCleared = false;
         }
 
         public Optional<WhereMet> getWhereMet() {
             return Optional.ofNullable(whereMet);
+        }
+
+        /**
+         * Marks the where-met detail to be removed from the edited person.
+         */
+        public void clearWhereMet() {
+            whereMet = null;
+            isWhereMetCleared = true;
+        }
+
+        public boolean isWhereMetCleared() {
+            return isWhereMetCleared;
         }
 
         public void setAddress(Address address) {
@@ -272,6 +290,7 @@ public class EditCommand extends Command {
                     && Objects.equals(company, otherEditPersonDescriptor.company)
                     && Objects.equals(role, otherEditPersonDescriptor.role)
                     && Objects.equals(whereMet, otherEditPersonDescriptor.whereMet)
+                    && isWhereMetCleared == otherEditPersonDescriptor.isWhereMetCleared
                     && Objects.equals(address, otherEditPersonDescriptor.address)
                     && Objects.equals(tags, otherEditPersonDescriptor.tags);
         }
@@ -285,6 +304,7 @@ public class EditCommand extends Command {
                     .add("company", company)
                     .add("role", role)
                     .add("whereMet", whereMet)
+                    .add("isWhereMetCleared", isWhereMetCleared)
                     .add("address", address)
                     .add("tags", tags)
                     .toString();

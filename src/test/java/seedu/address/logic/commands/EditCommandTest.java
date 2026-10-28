@@ -89,6 +89,22 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_whereMetCleared_removesWhereMet() {
+        Person original = new PersonBuilder(model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()))
+                .build();
+        Person editedPerson = new PersonBuilder(original).withoutWhereMet().build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptor();
+        descriptor.clearWhereMet();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(original, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_roleSpecified_preservesOtherFields() {
         Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         Person editedPerson = new PersonBuilder(original).withRole(VALID_ROLE_BOB).build();
