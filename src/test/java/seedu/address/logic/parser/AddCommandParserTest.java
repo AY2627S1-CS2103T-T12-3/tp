@@ -157,9 +157,13 @@ public class AddCommandParserTest {
         assertParseFailure(parser, NAME_DESC_BOB + COMPANY_DESC_BOB + ROLE_DESC_BOB + EMAIL_DESC_BOB
                 + WHERE_MET_DESC_BOB, expectedMessage);
 
-        // missing where-met prefix
-        assertParseFailure(parser, NAME_DESC_BOB + COMPANY_DESC_BOB + ROLE_DESC_BOB + EMAIL_DESC_BOB
-                + PHONE_DESC_BOB, expectedMessage);
+    }
+
+    @Test
+    public void parse_whereMetMissing_success() {
+        Person expectedPerson = new PersonBuilder(getExpectedPerson()).withoutWhereMet().build();
+        assertParseSuccess(parser, NAME_DESC_BOB + COMPANY_DESC_BOB + ROLE_DESC_BOB + EMAIL_DESC_BOB
+                + PHONE_DESC_BOB, new AddCommand(expectedPerson));
     }
 
     @Test
