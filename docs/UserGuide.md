@@ -211,6 +211,20 @@ Examples:
 *  `edit 1 r/Software Engineer` Edits the role of the 1st person to be `Software Engineer`.
 *  `edit 3 w/LinkedIn` Edits where the 3rd person was met to be `LinkedIn`.
 
+### Adding or removing a remark: `remark`
+
+Adds, replaces, or removes the remark of a contact.
+
+Format: `remark INDEX r/[REMARK]`
+
+* `INDEX` must be a positive integer referring to a contact in the displayed list.
+* The supplied remark replaces any existing remark for that contact.
+* To remove a remark, enter `r/` without any text after it.
+
+Examples:
+* `remark 1 r/Met at NUS Career Fair` adds or replaces the remark of the 1st contact.
+* `remark 1 r/` removes the remark of the 1st contact.
+
 ### Locating contacts by keyword: `find`
 
 Finds contacts whose fields contain any of the given keywords.
@@ -302,6 +316,7 @@ Action | Format, Examples
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS] [w/WHERE_MET] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com r/Software Engineer w/LinkedIn`
+**Remark** | `remark INDEX r/[REMARK]`<br> e.g., `remark 1 r/Met at NUS Career Fair`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find Google Recruiter`
 **List** | `list`
 **List applications** | `listapp`
