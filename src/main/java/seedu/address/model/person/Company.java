@@ -24,13 +24,14 @@ public class Company {
 
     /**
      * Constructs a {@code Company}.
+     * Repeated internal whitespace is reduced to one space.
      *
      * @param company A valid company name.
      */
     public Company(String company) {
         requireNonNull(company);
         checkArgument(isValidCompany(company), MESSAGE_CONSTRAINTS);
-        value = company;
+        value = normalize(company);
     }
 
     /**
@@ -38,6 +39,10 @@ public class Company {
      */
     public static boolean isValidCompany(String test) {
         return test.length() <= MAX_LENGTH && test.matches(VALIDATION_REGEX);
+    }
+
+    private static String normalize(String company) {
+        return company.trim().replaceAll("\\s{2,}", " ");
     }
 
     @Override

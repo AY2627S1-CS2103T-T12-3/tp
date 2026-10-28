@@ -110,7 +110,7 @@ Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`
 * `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
 * `STATUS` is optional. If omitted, the application is created with the `APPLIED` status.
 * The accepted status values are `APPLIED`, `INTERVIEWING`, `OFFERED`, `REJECTED`, and `WITHDRAWN`. Status values are case-insensitive.
-* Two applications with the same `NAME` and `COMPANY` are considered duplicates, ignoring letter case. Their descriptions and dates do not affect duplicate detection.
+* Two applications with the same `NAME` and `COMPANY` are considered duplicates, ignoring letter case and repeated spaces. Their descriptions and dates do not affect duplicate detection.
 
 Examples:
 * `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
@@ -129,7 +129,7 @@ Format: `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD] [s/S
 * Supplied fields replace the existing values; omitted fields remain unchanged. Supplying the same value is allowed.
 * All values follow the constraints described under `addapp`. Fields cannot be cleared with an empty value.
 * Use `s/STATUS` to update only the application's status. The accepted values are `APPLIED`, `INTERVIEWING`, `OFFERED`, `REJECTED`, and `WITHDRAWN`.
-* An edit cannot give an application the same name and company as another application, ignoring letter case.
+* An edit cannot give an application the same name and company as another application, ignoring letter case and repeated spaces.
 * On success, the application list is shown and the edited card stays at the same position.
 * The index always refers to the application list, even when you are viewing contacts. Contacts are unaffected.
 * Changes are saved automatically. Invalid commands leave the saved applications unchanged.

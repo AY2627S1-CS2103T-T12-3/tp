@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -17,6 +18,13 @@ public class CompanyTest {
     public void constructor_invalidCompany_throwsIllegalArgumentException() {
         String invalidCompany = "";
         assertThrows(IllegalArgumentException.class, () -> new Company(invalidCompany));
+    }
+
+    @Test
+    public void constructor_repeatedInternalWhitespace_normalized() {
+        assertEquals("Tech Corp", new Company("Tech  Corp").value);
+        assertEquals("Bank of America", new Company("Bank   of  America").value);
+        assertEquals(new Company("Tech Corp"), new Company("Tech  Corp"));
     }
 
     @Test
