@@ -67,7 +67,12 @@ public class EditCommandParser implements Parser<EditCommand> {
             editPersonDescriptor.setRole(ParserUtil.parseRole(argMultimap.getValue(PREFIX_ROLE).get()));
         }
         if (argMultimap.getValue(PREFIX_WHERE_MET).isPresent()) {
-            editPersonDescriptor.setWhereMet(ParserUtil.parseWhereMet(argMultimap.getValue(PREFIX_WHERE_MET).get()));
+            String whereMet = argMultimap.getValue(PREFIX_WHERE_MET).get();
+            if (whereMet.isBlank()) {
+                editPersonDescriptor.clearWhereMet();
+            } else {
+                editPersonDescriptor.setWhereMet(ParserUtil.parseWhereMet(whereMet));
+            }
         }
         if (argMultimap.getValue(PREFIX_ADDRESS).isPresent()) {
             editPersonDescriptor.setAddress(ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get()));

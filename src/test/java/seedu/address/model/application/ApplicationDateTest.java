@@ -32,10 +32,16 @@ public class ApplicationDateTest {
         assertFalse(ApplicationDate.isValidDate("2026-02-30")); // impossible date
         assertFalse(ApplicationDate.isValidDate("2025-02-29")); // non-leap-year date
         assertFalse(ApplicationDate.isValidDate("2026-13-01")); // invalid month
+        assertFalse(ApplicationDate.isValidDate("0001-01-01")); // far past
+        assertFalse(ApplicationDate.isValidDate("1999-12-31")); // just before earliest date
+        assertFalse(ApplicationDate.isValidDate("2100-01-01")); // just after latest date
+        assertFalse(ApplicationDate.isValidDate("9999-12-31")); // far future
 
         // valid dates
         assertTrue(ApplicationDate.isValidDate("2026-01-01"));
         assertTrue(ApplicationDate.isValidDate("2024-02-29")); // leap-year date
         assertTrue(ApplicationDate.isValidDate("2026-12-31"));
+        assertTrue(ApplicationDate.isValidDate("2000-01-01")); // earliest date
+        assertTrue(ApplicationDate.isValidDate("2099-12-31")); // latest date
     }
 }

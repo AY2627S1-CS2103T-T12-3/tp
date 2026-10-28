@@ -67,7 +67,7 @@ class JsonAdaptedApplication {
         if (company == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Company.class.getSimpleName()));
         }
-        if (!Company.isValidCompany(company)) {
+        if (!Company.isValidCompany(Company.normalize(company))) {
             throw new IllegalValueException(Company.MESSAGE_CONSTRAINTS);
         }
         final Company modelCompany = new Company(company);

@@ -89,6 +89,15 @@ public class EditApplicationCommandParserTest {
     }
 
     @Test
+    public void parse_prefixLikeTextInDescription_success() {
+        EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
+        descriptor.setDescription(new Description("Recruiter said s/o needed, n/a otherwise"));
+        descriptor.setStatus(ApplicationStatus.OFFERED);
+        assertParseSuccess(parser, " 1 d/Recruiter said s/o needed, n/a otherwise s/offered",
+                new EditApplicationCommand(Index.fromOneBased(1), descriptor));
+    }
+
+    @Test
     public void parse_repeatedPrefixes_failure() {
         Prefix[] prefixes = {PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS};
         for (Prefix prefix : prefixes) {

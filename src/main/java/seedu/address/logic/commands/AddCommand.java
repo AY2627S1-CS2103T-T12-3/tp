@@ -28,7 +28,7 @@ public class AddCommand extends Command {
             + PREFIX_ROLE + "ROLE "
             + PREFIX_EMAIL + "EMAIL "
             + PREFIX_PHONE + "PHONE "
-            + PREFIX_WHERE_MET + "WHERE_MET\n"
+            + "[" + PREFIX_WHERE_MET + "WHERE_MET]\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "John Doe "
             + PREFIX_COMPANY + "Google "

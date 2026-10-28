@@ -149,17 +149,17 @@ public class ParserUtil {
 
     /**
      * Parses a {@code String company} into a {@code Company}.
-     * Leading and trailing whitespaces will be trimmed.
+     * Leading and trailing whitespaces will be trimmed and repeated internal whitespace reduced to one space.
      *
      * @throws ParseException if the given {@code company} is invalid.
      */
     public static Company parseCompany(String company) throws ParseException {
         requireNonNull(company);
-        String trimmedCompany = company.trim();
-        if (!Company.isValidCompany(trimmedCompany)) {
+        String normalizedCompany = Company.normalize(company);
+        if (!Company.isValidCompany(normalizedCompany)) {
             throw new ParseException(Company.MESSAGE_CONSTRAINTS);
         }
-        return new Company(trimmedCompany);
+        return new Company(normalizedCompany);
     }
 
     /**

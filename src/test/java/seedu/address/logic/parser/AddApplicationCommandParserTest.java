@@ -90,6 +90,31 @@ public class AddApplicationCommandParserTest {
     }
 
     @Test
+    public void parse_prefixLikeTextInDescription_success() {
+        Application expectedApplication = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Follow up later, n/a for now. Sent c/o recruiter, s/o"),
+                new ApplicationDate("2026-10-07"), ApplicationStatus.INTERVIEWING);
+
+        assertParseSuccess(parser, NAME_DESC + COMPANY_DESC
+                + " d/Follow up later, n/a for now. Sent c/o recruiter, s/o" + DATE_DESC + STATUS_DESC,
+                new AddApplicationCommand(expectedApplication));
+
+        // prefix-like text at the end of the input
+        expectedApplication = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Referral n/a"), new ApplicationDate("2026-10-07"));
+        assertParseSuccess(parser, NAME_DESC + COMPANY_DESC + DATE_DESC + " d/Referral n/a",
+                new AddApplicationCommand(expectedApplication));
+    }
+
+    @Test
+    public void parse_prefixAfterDescription_stillRecognised() {
+        // longer values after the description are still read as fields
+        assertParseFailure(parser, VALID_APPLICATION_STRING + " s/pending", ApplicationStatus.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, VALID_APPLICATION_STRING + " n/Data Analyst",
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME));
+    }
+
+    @Test
     public void parse_nonEmptyPreamble_failure() {
         assertParseFailure(parser, "unexpected" + VALID_APPLICATION_STRING,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddApplicationCommand.MESSAGE_USAGE));

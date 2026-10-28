@@ -19,6 +19,7 @@ public class StringUtil {
      *       containsWordIgnoreCase("ABc def", "abc") == true
      *       containsWordIgnoreCase("ABc def", "DEF") == true
      *       containsWordIgnoreCase("ABc def", "AB") == false //not a full word match
+     *       containsWordIgnoreCase("ABc, def", "abc") == true //leading and trailing punctuation is ignored
      *       </pre>
      * @param sentence cannot be null
      * @param word cannot be null, cannot be empty, must be a single word
@@ -33,9 +34,20 @@ public class StringUtil {
 
         String preppedSentence = sentence;
         String[] wordsInPreppedSentence = preppedSentence.split("\\s+");
+        String strippedWord = stripEdgePunctuation(preppedWord);
 
         return Arrays.stream(wordsInPreppedSentence)
-                .anyMatch(preppedWord::equalsIgnoreCase);
+                .anyMatch(sentenceWord -> preppedWord.equalsIgnoreCase(sentenceWord)
+                        || !strippedWord.isEmpty()
+                                && strippedWord.equalsIgnoreCase(stripEdgePunctuation(sentenceWord)));
+    }
+
+    /**
+     * Returns {@code word} without any leading or trailing punctuation, e.g. {@code "Google,"} becomes
+     * {@code "Google"} and {@code "(Sep"} becomes {@code "Sep"}.
+     */
+    private static String stripEdgePunctuation(String word) {
+        return word.replaceAll("^\\p{P}+|\\p{P}+$", "");
     }
 
     /**

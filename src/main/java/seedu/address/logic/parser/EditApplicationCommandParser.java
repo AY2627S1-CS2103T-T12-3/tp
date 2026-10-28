@@ -24,8 +24,8 @@ public class EditApplicationCommandParser implements Parser<EditApplicationComma
      */
     public EditApplicationCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_COMPANY,
-                PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenizeWithFreeText(args, PREFIX_DESCRIPTION,
+                PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
 
         Index index;
         try {

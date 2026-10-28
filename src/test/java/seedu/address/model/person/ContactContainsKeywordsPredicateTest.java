@@ -82,6 +82,12 @@ public class ContactContainsKeywordsPredicateTest {
         predicate = new ContactContainsKeywordsPredicate(List.of("Career"));
         assertTrue(predicate.test(new PersonBuilder().withWhereMet("Career Fair").build()));
 
+        // Words next to punctuation
+        predicate = new ContactContainsKeywordsPredicate(List.of("Google"));
+        assertTrue(predicate.test(new PersonBuilder().withCompany("Google, Inc.").build()));
+        predicate = new ContactContainsKeywordsPredicate(List.of("Fair"));
+        assertTrue(predicate.test(new PersonBuilder().withWhereMet("NUS Career Fair, 2026").build()));
+
         // Address
         predicate = new ContactContainsKeywordsPredicate(List.of("Market"));
         assertTrue(predicate.test(new PersonBuilder().withAddress("55 Market Street").build()));
