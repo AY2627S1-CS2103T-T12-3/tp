@@ -90,6 +90,36 @@ public class AddApplicationCommandParserTest {
     }
 
     @Test
+    public void parse_prefixLikeTextInDescription_failureWithHint() {
+        // "n/a" in the description is read as a second name
+        assertParseFailure(parser, NAME_DESC + COMPANY_DESC + " d/Follow up later, n/a for now" + DATE_DESC,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NAME) + "\n"
+                        + ParserUtil.MESSAGE_DESCRIPTION_PREFIX_HINT);
+
+        // "s/o" in the description is read as a status
+        assertParseFailure(parser, NAME_DESC + COMPANY_DESC + " d/Recruiter said s/o needed" + DATE_DESC,
+                ApplicationStatus.MESSAGE_CONSTRAINTS + "\n" + ParserUtil.MESSAGE_DESCRIPTION_PREFIX_HINT);
+
+        // "c/o" in the description is read as a second company
+        assertParseFailure(parser, NAME_DESC + COMPANY_DESC + " d/Sent c/o the recruiter" + DATE_DESC,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_COMPANY) + "\n"
+                        + ParserUtil.MESSAGE_DESCRIPTION_PREFIX_HINT);
+
+        // ordinary invalid value after the description -> no hint
+        assertParseFailure(parser, VALID_APPLICATION_STRING + " s/pending", ApplicationStatus.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
+    public void parse_capitalisedPrefixLikeTextInDescription_success() {
+        Application expectedApplication = new Application(new ApplicationName("Software Engineer Intern"),
+                new Company("Tech Corp"), new Description("Follow up later, N/A for now"),
+                new ApplicationDate("2026-10-07"));
+
+        assertParseSuccess(parser, NAME_DESC + COMPANY_DESC + " d/Follow up later, N/A for now" + DATE_DESC,
+                new AddApplicationCommand(expectedApplication));
+    }
+
+    @Test
     public void parse_nonEmptyPreamble_failure() {
         assertParseFailure(parser, "unexpected" + VALID_APPLICATION_STRING,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddApplicationCommand.MESSAGE_USAGE));

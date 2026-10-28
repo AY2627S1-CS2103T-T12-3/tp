@@ -89,6 +89,12 @@ public class EditApplicationCommandParserTest {
     }
 
     @Test
+    public void parse_prefixLikeTextInDescription_failureWithHint() {
+        assertParseFailure(parser, " 1 d/Recruiter said s/o needed",
+                ApplicationStatus.MESSAGE_CONSTRAINTS + "\n" + ParserUtil.MESSAGE_DESCRIPTION_PREFIX_HINT);
+    }
+
+    @Test
     public void parse_repeatedPrefixes_failure() {
         Prefix[] prefixes = {PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS};
         for (Prefix prefix : prefixes) {
