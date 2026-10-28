@@ -40,8 +40,7 @@ public class AddCommandParser implements Parser<AddCommand> {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_COMPANY, PREFIX_ROLE,
                 PREFIX_EMAIL, PREFIX_PHONE, PREFIX_WHERE_MET);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_COMPANY, PREFIX_ROLE, PREFIX_EMAIL, PREFIX_PHONE,
-                PREFIX_WHERE_MET)
+        if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_COMPANY, PREFIX_ROLE, PREFIX_EMAIL, PREFIX_PHONE)
                 || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
@@ -53,10 +52,13 @@ public class AddCommandParser implements Parser<AddCommand> {
         Role role = ParserUtil.parseRole(argMultimap.getValue(PREFIX_ROLE).get());
         Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
-        WhereMet whereMet = ParserUtil.parseWhereMet(argMultimap.getValue(PREFIX_WHERE_MET).get());
+        Optional<WhereMet> whereMet = Optional.empty();
+        if (argMultimap.getValue(PREFIX_WHERE_MET).isPresent()) {
+            whereMet = Optional.of(ParserUtil.parseWhereMet(argMultimap.getValue(PREFIX_WHERE_MET).get()));
+        }
 
         Person person = new Person(name, phone, email, Optional.of(company), Optional.of(role),
-                Optional.of(whereMet), LEGACY_DEFAULT_ADDRESS, new Remark(""), Set.of());
+                whereMet, LEGACY_DEFAULT_ADDRESS, new Remark(""), Set.of());
 
         return new AddCommand(person);
     }

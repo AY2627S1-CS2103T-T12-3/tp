@@ -83,12 +83,12 @@ Format: `help`
 
 Adds a professional contact to InternTrack.
 
-Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER w/WHERE_MET`
+Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER [w/WHERE_MET]`
 
-* All six fields are required.
+* All fields except `WHERE_MET` are required.
 * `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 * `ROLE` is the role the person holds, such as `SWE Recruiter`. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
-* `WHERE_MET` describes how or where you met the person. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 200 characters.
+* `WHERE_MET` is optional and describes how or where you met the person. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 200 characters.
 * `NAME` may contain Unicode letters, digits, spaces, hyphens, and apostrophes. It must contain at least one letter or digit and be no longer than 100 characters. Leading and trailing whitespace is removed, and internal whitespace is reduced to one space.
 * `PHONE_NUMBER` must contain 7 to 15 digits, with an optional leading `+`. Spaces and hyphens can separate digits; they are removed when the phone number is stored.
 * Two contacts with the same name and email address are considered duplicates, ignoring letter case.
@@ -96,6 +96,7 @@ Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER w/WHERE_MET`
 Examples:
 * `add n/John Doe c/Google r/SWE Recruiter e/john@example.com p/98765432 w/Career fair 2026`
 * `add c/Meta r/Software Engineer e/jane@meta.com n/Jane Lim w/LinkedIn p/91234567`
+* `add n/Sam Tan c/Grab r/HR e/sam@grab.com p/91112222` adds a contact without a where-met detail
 
 ### Adding an application: `addapp`
 
@@ -203,6 +204,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
 * To remove all of a person's tags, enter `t/` without a tag after it.
+* To remove a person's where-met detail, enter `w/` without a value after it.
 
 Examples:
 *  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
@@ -210,6 +212,20 @@ Examples:
 *  `edit 3 c/Meta, Inc.` Edits the company of the 3rd person to be `Meta, Inc.`.
 *  `edit 1 r/Software Engineer` Edits the role of the 1st person to be `Software Engineer`.
 *  `edit 3 w/LinkedIn` Edits where the 3rd person was met to be `LinkedIn`.
+
+### Adding or removing a remark: `remark`
+
+Adds, replaces, or removes the remark of a contact.
+
+Format: `remark INDEX r/[REMARK]`
+
+* `INDEX` must be a positive integer referring to a contact in the displayed list.
+* The supplied remark replaces any existing remark for that contact.
+* To remove a remark, enter `r/` without any text after it.
+
+Examples:
+* `remark 1 r/Met at NUS Career Fair` adds or replaces the remark of the 1st contact.
+* `remark 1 r/` removes the remark of the 1st contact.
 
 ### Locating contacts by keyword: `find`
 
@@ -295,13 +311,15 @@ _Details coming soon ..._
 
 Action | Format, Examples
 --------|------------------
-**Add contact** | `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER w/WHERE_MET` <br> e.g., `add n/James Ho c/Google r/SWE Recruiter e/jamesho@example.com p/22224444 w/Career fair`
+**Add contact** | `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER [w/WHERE_MET]` <br> e.g., `add n/James Ho c/Google r/SWE Recruiter e/jamesho@example.com p/22224444 w/Career fair`
 **Add application** | `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07 s/APPLIED`
 **Edit application** | `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD] [s/STATUS]`<br> e.g., `editapp 1 s/INTERVIEWING`
 **Delete application** | `deleteapp INDEX`<br> e.g., `deleteapp 2`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS] [w/WHERE_MET] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com r/Software Engineer w/LinkedIn`
+**Exit** | `exit`
+**Remark** | `remark INDEX r/[REMARK]`<br> e.g., `remark 1 r/Met at NUS Career Fair`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find Google Recruiter`
 **List** | `list`
 **List applications** | `listapp`
