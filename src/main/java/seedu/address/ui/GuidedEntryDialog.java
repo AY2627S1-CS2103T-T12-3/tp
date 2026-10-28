@@ -83,6 +83,7 @@ class GuidedEntryDialog {
         VBox contents = new VBox(10, prompt, kind, input, status, error);
         contents.setPrefWidth(420);
         dialog.getDialogPane().setContent(contents);
+        dialog.setOnShown(event -> kind.requestFocus());
         render();
     }
 
