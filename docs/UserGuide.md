@@ -44,6 +44,8 @@ InternTrack is a **desktop application for tracking internship and graduate-role
 
 Press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux to focus the command box. If it is empty, InternTrack prepares `find ` for you; existing text is preserved and the caret moves to the end. Press Enter after entering the search keywords to run the command.
 
+In the command box, press **Up** to recall earlier commands and **Down** to move toward newer ones. Moving past the newest command restores the text you were typing. History lasts for the current app session and includes commands that returned an error, so you can edit and retry them.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## Features
