@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -33,7 +34,8 @@ public class DashboardPanel extends VBox {
     private final ObservableList<Person> persons;
     private final Label activeApplicationCount = new Label();
     private final Label interviewingCount = new Label();
-    private final FlowPane contactCards = new FlowPane(10, 10);
+    private final HBox contactCards = new HBox(10);
+    private final ScrollPane contactCardsScrollPane = new ScrollPane(contactCards);
 
     /**
      * Creates a dashboard that updates when the supplied application or contact lists change.
@@ -130,9 +132,14 @@ public class DashboardPanel extends VBox {
         subtitle.getStyleClass().add("panel-subtitle");
 
         contactCards.getStyleClass().add("dashboard-contact-cards");
-        contactCards.setMaxWidth(Double.MAX_VALUE);
+        contactCardsScrollPane.getStyleClass().add("dashboard-contact-scroll-pane");
+        contactCardsScrollPane.setFitToHeight(false);
+        contactCardsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        contactCardsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        contactCardsScrollPane.setPannable(true);
+        contactCardsScrollPane.setMinViewportHeight(190);
 
-        VBox panel = new VBox(7, title, subtitle, contactCards);
+        VBox panel = new VBox(7, title, subtitle, contactCardsScrollPane);
         panel.getStyleClass().add("dashboard-contacts-panel");
         panel.setPadding(new Insets(18));
         return panel;
@@ -235,7 +242,7 @@ public class DashboardPanel extends VBox {
 
         VBox card = new VBox(7, header, tags, details);
         card.getStyleClass().add("contact-card");
-        card.setPadding(new Insets(12));
+        card.setPadding(new Insets(12, 12, 48, 12));
         return card;
     }
 
