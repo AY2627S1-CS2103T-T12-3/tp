@@ -89,9 +89,12 @@ public class EditApplicationCommandParserTest {
     }
 
     @Test
-    public void parse_prefixLikeTextInDescription_failureWithHint() {
-        assertParseFailure(parser, " 1 d/Recruiter said s/o needed",
-                ApplicationStatus.MESSAGE_CONSTRAINTS + "\n" + ParserUtil.MESSAGE_DESCRIPTION_PREFIX_HINT);
+    public void parse_prefixLikeTextInDescription_success() {
+        EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
+        descriptor.setDescription(new Description("Recruiter said s/o needed, n/a otherwise"));
+        descriptor.setStatus(ApplicationStatus.OFFERED);
+        assertParseSuccess(parser, " 1 d/Recruiter said s/o needed, n/a otherwise s/offered",
+                new EditApplicationCommand(Index.fromOneBased(1), descriptor));
     }
 
     @Test

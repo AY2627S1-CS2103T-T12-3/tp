@@ -23,17 +23,9 @@ public class EditApplicationCommandParser implements Parser<EditApplicationComma
      * @throws ParseException if the index or fields are invalid, or no fields are supplied.
      */
     public EditApplicationCommand parse(String args) throws ParseException {
-        try {
-            return parseArguments(args);
-        } catch (ParseException pe) {
-            throw ParserUtil.withDescriptionPrefixHint(pe, args);
-        }
-    }
-
-    private EditApplicationCommand parseArguments(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_COMPANY,
-                PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenizeWithFreeText(args, PREFIX_DESCRIPTION,
+                PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
 
         Index index;
         try {

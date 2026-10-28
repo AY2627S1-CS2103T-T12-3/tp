@@ -1,16 +1,10 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_COMPANY;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_STATUS;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
@@ -34,8 +28,6 @@ import seedu.address.model.tag.Tag;
 public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
-    public static final String MESSAGE_DESCRIPTION_PREFIX_HINT = "If your description contains text such as "
-            + "n/a, s/o or c/o, it is read as a separate field. Write it in capitals instead, for example N/A.";
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
@@ -240,30 +232,5 @@ public class ParserUtil {
             tagSet.add(parseTag(tagName));
         }
         return tagSet;
-    }
-
-    /**
-     * Returns {@code pe} with {@link #MESSAGE_DESCRIPTION_PREFIX_HINT} appended if a name, company or status prefix
-     * followed by a single letter (such as {@code n/a} or {@code s/o}) appears after the description prefix in
-     * {@code args}, as that text was probably meant to be part of the description.
-     * Otherwise, returns {@code pe} unchanged.
-     */
-    public static ParseException withDescriptionPrefixHint(ParseException pe, String args) {
-        requireNonNull(pe);
-        requireNonNull(args);
-        String paddedArgs = " " + args;
-        int descriptionIndex = paddedArgs.indexOf(" " + PREFIX_DESCRIPTION);
-        if (descriptionIndex == -1) {
-            return pe;
-        }
-
-        String afterDescription = paddedArgs.substring(descriptionIndex);
-        boolean hasAbbreviationAfterDescription = Stream.of(PREFIX_NAME, PREFIX_COMPANY, PREFIX_STATUS)
-                .anyMatch(prefix -> Pattern.compile("\\s" + Pattern.quote(prefix.getPrefix()) + "\\p{L}(?!\\p{L})")
-                        .matcher(afterDescription).find());
-        if (!hasAbbreviationAfterDescription) {
-            return pe;
-        }
-        return new ParseException(pe.getMessage() + "\n" + MESSAGE_DESCRIPTION_PREFIX_HINT, pe);
     }
 }
