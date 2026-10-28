@@ -248,7 +248,7 @@ Examples:
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the address book.
+Deletes all contacts and applications from InternTrack. This cannot be undone.
 
 Format: `clear`
 
