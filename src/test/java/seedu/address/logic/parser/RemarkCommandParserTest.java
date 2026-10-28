@@ -28,9 +28,9 @@ public class RemarkCommandParserTest {
     }
 
     @Test
-    public void parse_missingRemarkPrefix_returnsRemarkCommandWithEmptyRemark() throws Exception {
-        RemarkCommand expectedCommand = new RemarkCommand(INDEX_SECOND_PERSON, new Remark(""));
-        assertEquals(expectedCommand, parser.parse("2"));
+    public void parse_missingRemarkPrefix_throwsParseException() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, RemarkCommand.MESSAGE_USAGE);
+        assertThrows(ParseException.class, expectedMessage, () -> parser.parse("2"));
     }
 
     @Test
