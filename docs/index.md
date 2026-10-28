@@ -5,7 +5,7 @@ title: InternTrack
 
 [![CI Status](https://github.com/AY2627S1-CS2103T-T12-3/tp/actions/workflows/gradle.yml/badge.svg)](https://github.com/AY2627S1-CS2103T-T12-3/tp/actions/workflows/gradle.yml)
 
-![Ui](images/Ui.png)
+![InternTrack overview showing application counts, recent applications, and the command box](images/Ui.png)
 
 **InternTrack helps university Computing students keep internship applications and professional contacts in one place.** It combines a desktop interface with a command line interface (CLI) for users who prefer keyboard-driven workflows.
 
