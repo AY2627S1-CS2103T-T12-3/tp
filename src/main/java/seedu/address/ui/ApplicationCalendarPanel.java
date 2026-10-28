@@ -10,6 +10,7 @@ import java.util.Locale;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -22,10 +23,6 @@ import seedu.address.model.application.Application;
 public class ApplicationCalendarPanel extends VBox {
     private static final DateTimeFormatter DAY_MONTH_FORMAT = DateTimeFormatter.ofPattern("dd/MM");
     private static final DateTimeFormatter FULL_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final String MUTED_TEXT_STYLE = "-fx-text-fill: #a0a0a0;";
-    private static final String DAY_COLUMN_STYLE = "-fx-background-color: #292929;"
-            + "-fx-border-color: #4d4d4d; -fx-border-width: 1;";
-
     private final ObservableList<Application> applications;
     private final Label dateRangeLabel = new Label();
     private final HBox weekColumns = new HBox(8);
@@ -36,24 +33,28 @@ public class ApplicationCalendarPanel extends VBox {
         this.applications = applications;
         weekStart = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
+        getStyleClass().add("application-calendar");
         setSpacing(10);
         setPadding(new Insets(12));
-        setStyle("-fx-background-color: #1f1f1f;");
 
         Button previousWeekButton = new Button("‹");
+        previousWeekButton.getStyleClass().add("calendar-navigation-button");
         previousWeekButton.setAccessibleText("Previous week");
         previousWeekButton.setOnAction(event -> changeWeek(-1));
 
         Button nextWeekButton = new Button("›");
+        nextWeekButton.getStyleClass().add("calendar-navigation-button");
         nextWeekButton.setAccessibleText("Next week");
         nextWeekButton.setOnAction(event -> changeWeek(1));
 
-        dateRangeLabel.setStyle("-fx-font-size: 20pt; -fx-text-fill: white;");
+        dateRangeLabel.getStyleClass().add("calendar-range-label");
         HBox header = new HBox(16, previousWeekButton, dateRangeLabel, nextWeekButton);
-        header.setStyle("-fx-alignment: center;");
+        header.getStyleClass().add("calendar-header");
+        header.setAlignment(Pos.CENTER);
 
         weekColumns.setFillHeight(true);
         ScrollPane weekScrollPane = new ScrollPane(weekColumns);
+        weekScrollPane.getStyleClass().add("calendar-scroll-pane");
         weekScrollPane.setFitToHeight(true);
         weekScrollPane.setFitToWidth(false);
         weekScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -88,11 +89,11 @@ public class ApplicationCalendarPanel extends VBox {
         String weekday = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
         Label dayHeading = new Label(weekday.toUpperCase(Locale.getDefault()) + "  "
                 + DAY_MONTH_FORMAT.format(date));
-        dayHeading.setStyle("-fx-font-size: 13pt; -fx-font-weight: bold; -fx-text-fill: white;");
+        dayHeading.getStyleClass().add("calendar-day-heading");
 
         VBox dayColumn = new VBox(8);
+        dayColumn.getStyleClass().add("calendar-day-column");
         dayColumn.setPadding(new Insets(10));
-        dayColumn.setStyle(DAY_COLUMN_STYLE);
         dayColumn.setMinWidth(135);
         dayColumn.setPrefWidth(170);
         HBox.setHgrow(dayColumn, Priority.ALWAYS);
@@ -107,7 +108,7 @@ public class ApplicationCalendarPanel extends VBox {
         }
         if (!hasApplication) {
             Label emptyDay = new Label("No applications");
-            emptyDay.setStyle(MUTED_TEXT_STYLE);
+            emptyDay.getStyleClass().add("calendar-empty-day");
             dayColumn.getChildren().add(emptyDay);
         }
         return dayColumn;
@@ -115,17 +116,16 @@ public class ApplicationCalendarPanel extends VBox {
 
     private VBox createApplicationCard(Application application) {
         Label role = new Label(application.getName().value);
-        role.setStyle("-fx-font-weight: bold; -fx-text-fill: #202020;");
+        role.getStyleClass().add("calendar-application-role");
         role.setWrapText(true);
 
         Label company = new Label(application.getCompany().value);
-        company.setStyle("-fx-text-fill: #303030;");
+        company.getStyleClass().add("calendar-application-company");
         company.setWrapText(true);
 
         VBox card = new VBox(4, role, company);
+        card.getStyleClass().add("calendar-application-card");
         card.setPadding(new Insets(9));
-        card.setStyle("-fx-background-color: #8cb9e8; -fx-border-color: #6394c7;"
-                + " -fx-border-width: 0 0 3 0; -fx-background-radius: 4;");
         return card;
     }
 }
