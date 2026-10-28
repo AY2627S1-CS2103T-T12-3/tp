@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -36,7 +37,7 @@ public class RemarkCommandTest {
         RemarkCommand command = new RemarkCommand(INDEX_FIRST_PERSON, remark);
         String expectedMessage = String.format(RemarkCommand.MESSAGE_ADD_REMARK_SUCCESS,
                 Messages.format(editedPerson));
-        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertCommandSuccess(command, model, new CommandResult(expectedMessage, DisplayedList.CONTACTS), expectedModel);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class RemarkCommandTest {
         RemarkCommand command = new RemarkCommand(INDEX_FIRST_PERSON, new Remark(""));
         String expectedMessage = String.format(RemarkCommand.MESSAGE_DELETE_REMARK_SUCCESS,
                 Messages.format(editedPerson));
-        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertCommandSuccess(command, model, new CommandResult(expectedMessage, DisplayedList.CONTACTS), expectedModel);
     }
 
     @Test
