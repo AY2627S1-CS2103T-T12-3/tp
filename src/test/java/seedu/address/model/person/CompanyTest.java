@@ -28,6 +28,12 @@ public class CompanyTest {
     }
 
     @Test
+    public void constructor_overMaxLengthOnlyBeforeNormalization_accepted() {
+        String paddedCompany = "Tech" + " ".repeat(Company.MAX_LENGTH) + "Corp";
+        assertEquals("Tech Corp", new Company(paddedCompany).value);
+    }
+
+    @Test
     public void isValidCompany() {
         // null company
         assertThrows(NullPointerException.class, () -> Company.isValidCompany(null));

@@ -30,8 +30,9 @@ public class Company {
      */
     public Company(String company) {
         requireNonNull(company);
-        checkArgument(isValidCompany(company), MESSAGE_CONSTRAINTS);
-        value = normalize(company);
+        String normalizedCompany = normalize(company);
+        checkArgument(isValidCompany(normalizedCompany), MESSAGE_CONSTRAINTS);
+        value = normalizedCompany;
     }
 
     /**
@@ -41,7 +42,11 @@ public class Company {
         return test.length() <= MAX_LENGTH && test.matches(VALIDATION_REGEX);
     }
 
-    private static String normalize(String company) {
+    /**
+     * Returns {@code company} with leading and trailing whitespace removed
+     * and repeated internal whitespace reduced to one space.
+     */
+    public static String normalize(String company) {
         return company.trim().replaceAll("\\s{2,}", " ");
     }
 
