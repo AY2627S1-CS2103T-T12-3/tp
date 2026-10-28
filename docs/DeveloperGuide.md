@@ -9,7 +9,7 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* _{List the sources of reused or adapted ideas, code, documentation, and third-party libraries here, with links to the originals.}_
+* In v1.5, mao455 used [OpenAI Codex](https://openai.com/codex/) to investigate alpha-test defects, prepare fixes for contact view switching and remark prefix validation, add regression tests, and update the User Guide and Developer Guide.
 
 --------------------------------------------------------------------------------------------------------------------
 

@@ -36,6 +36,8 @@ public class RemarkCommandParser implements Parser<RemarkCommand> {
                     RemarkCommand.MESSAGE_USAGE));
         }
 
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_REMARK);
+
         Remark remark = new Remark(argMultimap.getValue(PREFIX_REMARK).get());
         return new RemarkCommand(index, remark);
     }
