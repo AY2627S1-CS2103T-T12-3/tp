@@ -7,6 +7,8 @@ title: InternTrack
 
 ![InternTrack overview showing application counts, recent applications, and the command box](images/Ui.png)
 
+_The screenshot uses example application records._
+
 **InternTrack helps university Computing students keep internship applications and professional contacts in one place.** It combines a desktop interface with a command line interface (CLI) for users who prefer keyboard-driven workflows.
 
 * To learn how to use InternTrack, start with the [_Quick Start_ section of the **User Guide**](UserGuide.html#quick-start).
