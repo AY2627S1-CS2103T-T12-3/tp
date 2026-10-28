@@ -66,7 +66,8 @@ public class EditPersonDescriptorTest {
                 + editPersonDescriptor.getEmail().orElse(null) + ", company="
                 + editPersonDescriptor.getCompany().orElse(null) + ", role="
                 + editPersonDescriptor.getRole().orElse(null) + ", whereMet="
-                + editPersonDescriptor.getWhereMet().orElse(null) + ", address="
+                + editPersonDescriptor.getWhereMet().orElse(null) + ", isWhereMetCleared="
+                + editPersonDescriptor.isWhereMetCleared() + ", address="
                 + editPersonDescriptor.getAddress().orElse(null) + ", tags="
                 + editPersonDescriptor.getTags().orElse(null) + "}";
         assertEquals(expected, editPersonDescriptor.toString());

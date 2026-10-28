@@ -107,7 +107,7 @@ public class DashboardPanel extends VBox {
 
         TableView<Application> applicationTable = new TableView<>(applications);
         applicationTable.getStyleClass().add("dashboard-application-table");
-        applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         applicationTable.addEventHandler(ScrollEvent.SCROLL, event -> event.consume());
         applicationTable.setPlaceholder(createPlaceholder("No applications yet. Use addapp to create one."));
         applicationTable.getColumns().add(createRoleColumn());

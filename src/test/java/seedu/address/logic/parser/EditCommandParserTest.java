@@ -37,6 +37,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_WHERE_MET;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
@@ -182,6 +183,13 @@ public class EditCommandParserTest {
         // WhereMet
         userInput = targetIndex.getOneBased() + WHERE_MET_DESC_AMY;
         descriptor = new EditPersonDescriptorBuilder().withWhereMet(VALID_WHERE_MET_AMY).build();
+        expectedCommand = new EditCommand(targetIndex, descriptor);
+        assertParseSuccess(parser, userInput, expectedCommand);
+
+        // blank WhereMet clears it
+        userInput = targetIndex.getOneBased() + " " + PREFIX_WHERE_MET;
+        descriptor = new EditPersonDescriptor();
+        descriptor.clearWhereMet();
         expectedCommand = new EditCommand(targetIndex, descriptor);
         assertParseSuccess(parser, userInput, expectedCommand);
 
