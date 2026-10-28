@@ -17,6 +17,10 @@ title: Developer Guide
 
 Refer to the guide [_Setting up and getting started_](SettingUp.md).
 
+For releases, build the standard JAR with `./gradlew shadowJar`. Build the Apple Silicon JAR with
+`./gradlew shadowJar -PmacJavaFxClassifier=mac-aarch64`; this produces
+`build/libs/addressbook-mac-arm64.jar`. Publish both JARs and run each on Java 25 on its target Mac architecture.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Design**

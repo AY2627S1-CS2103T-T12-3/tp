@@ -52,18 +52,22 @@ task coverage(type: JacocoReport) {
 dependencies {
     String jUnitVersion = '5.14.4'
     String javaFxVersion = '17.0.7'
+    String macJavaFxClassifier = providers.gradleProperty('macJavaFxClassifier').orElse('mac').get()
+    if (!(macJavaFxClassifier in ['mac', 'mac-aarch64'])) {
+        throw new GradleException('macJavaFxClassifier must be mac or mac-aarch64')
+    }
 
     implementation "org.openjfx:javafx-base:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-base:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:${macJavaFxClassifier}"
     implementation "org.openjfx:javafx-base:${javaFxVersion}:linux"
     implementation "org.openjfx:javafx-controls:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:${macJavaFxClassifier}"
     implementation "org.openjfx:javafx-controls:${javaFxVersion}:linux"
     implementation "org.openjfx:javafx-fxml:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:${macJavaFxClassifier}"
     implementation "org.openjfx:javafx-fxml:${javaFxVersion}:linux"
     implementation "org.openjfx:javafx-graphics:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:${macJavaFxClassifier}"
     implementation "org.openjfx:javafx-graphics:${javaFxVersion}:linux"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
@@ -76,7 +80,8 @@ dependencies {
 }
 
 shadowJar {
-    archiveFileName = 'addressbook.jar'
+    archiveFileName = providers.gradleProperty('macJavaFxClassifier').orElse('mac').get() == 'mac-aarch64'
+            ? 'addressbook-mac-arm64.jar' : 'addressbook.jar'
 }
 
 defaultTasks 'clean', 'test'
