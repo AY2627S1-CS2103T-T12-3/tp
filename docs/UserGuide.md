@@ -221,6 +221,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search considers names, phone numbers, email addresses, companies, roles, where-met details, addresses, remarks, and tags.
 * Only full words match; for example, `Han` does not match `Hans`.
+* Punctuation at the start or end of a word is ignored; for example, `Google` matches the company `Google, Inc.`.
 * Contacts matching at least one keyword are returned (an `OR` search); for example, `Google Recruiter` returns contacts whose company contains `Google` or whose role contains `Recruiter`.
 * Contacts without optional company, role, or where-met details can still be found using their other fields.
 
