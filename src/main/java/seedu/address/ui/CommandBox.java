@@ -76,6 +76,12 @@ public class CommandBox extends UiPart<Region> {
             return;
         }
 
+        if (commandText.trim().equalsIgnoreCase("guide")) {
+            new GuidedEntryDialog(commandExecutor, commandTextField).show();
+            commandTextField.clear();
+            return;
+        }
+
         try {
             commandExecutor.execute(commandText);
             commandTextField.setText("");
