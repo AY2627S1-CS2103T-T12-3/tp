@@ -239,7 +239,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
-* The search considers names, phone numbers, email addresses, companies, roles, where-met details, addresses, remarks, and tags.
+* The search considers names, phone numbers, email addresses, companies, roles, where-met details, supplied addresses, remarks, and tags. A missing address shown as `Not provided` is not searched; an address explicitly set to `Not provided` is searchable.
 * Only full words match; for example, `Han` does not match `Hans`.
 * Punctuation at the start or end of a word is ignored; for example, `Google` matches the company `Google, Inc.`.
 * Contacts matching at least one keyword are returned (an `OR` search); for example, `Google Recruiter` returns contacts whose company contains `Google` or whose role contains `Recruiter`.

@@ -142,6 +142,18 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_searchAddressPlaceholder_distinguishesAbsentAndSuppliedAddress() throws Exception {
+        logic.execute("add n/Alex c/Acme r/Developer e/alex@example.com p/91234567 w/Fair");
+        logic.execute("find provided");
+        assertEquals(List.of(), logic.getFilteredPersonList());
+
+        logic.execute("list");
+        logic.execute("edit 1 a/Not provided");
+        logic.execute("find provided");
+        assertEquals(1, logic.getFilteredPersonList().size());
+    }
+
+    @Test
     public void execute_findFromApplicationList_switchesToMatchingContacts() throws Exception {
         model.addPerson(AMY);
         CommandResult listApplicationResult = logic.execute(ListApplicationCommand.COMMAND_WORD);
