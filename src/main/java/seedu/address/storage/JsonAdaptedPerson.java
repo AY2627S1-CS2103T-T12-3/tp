@@ -101,6 +101,11 @@ class JsonAdaptedPerson {
     public Person toModelType() throws IllegalValueException {
         final List<Tag> personTags = new ArrayList<>();
         for (JsonAdaptedTag tag : tags) {
+            // OpenAI Codex assisted mao455 with this null-tag recovery fix and its regression test.
+            if (tag == null) {
+                throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT,
+                        Tag.class.getSimpleName()));
+            }
             personTags.add(tag.toModelType());
         }
 

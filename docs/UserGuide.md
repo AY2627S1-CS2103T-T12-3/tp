@@ -12,7 +12,7 @@ InternTrack is a **desktop application for tracking internship and graduate-role
 
 ## Quick start
 
-1. Ensure that Java `25` or later is installed on your computer.<br>
+1. Ensure that Java `25` is installed on your computer. Run `java -version` in a terminal to check.<br>
    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
 1. Download the latest InternTrack JAR from the [GitHub releases page](https://github.com/AY2627S1-CS2103T-T12-3/tp/releases). On an Apple Silicon Mac using an arm64 Java installation, choose `addressbook-mac-arm64.jar`. On an Intel Mac, Windows, or Linux, choose `addressbook.jar`.

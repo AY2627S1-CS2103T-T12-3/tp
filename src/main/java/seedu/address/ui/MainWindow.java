@@ -266,7 +266,8 @@ public class MainWindow extends UiPart<Stage> {
 
             if (commandResult.getDisplayedList() == DisplayedList.CONTACTS) {
                 showContacts();
-            } else if (commandResult.getDisplayedList() == DisplayedList.APPLICATIONS) {
+            } else if (commandResult.getDisplayedList() == DisplayedList.APPLICATIONS
+                    && !(isCalendarVisible() && isApplicationMutation(commandText))) {
                 showApplications();
             }
 
@@ -288,6 +289,14 @@ public class MainWindow extends UiPart<Stage> {
 
     private void showListPanel(Node panel) {
         personListPanelPlaceholder.getChildren().setAll(panel);
+    }
+
+    private boolean isCalendarVisible() {
+        return personListPanelPlaceholder.getChildren().contains(calendarPage);
+    }
+
+    private static boolean isApplicationMutation(String commandText) {
+        return commandText.trim().matches("^(addapp|editapp|deleteapp)(\\s.*)?$");
     }
 
     private void setActiveNavigation(Button activeButton) {
