@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
@@ -28,8 +27,6 @@ import seedu.address.model.person.WhereMet;
  * Parses input arguments and creates a new AddCommand object
  */
 public class AddCommandParser implements Parser<AddCommand> {
-
-    private static final Address LEGACY_DEFAULT_ADDRESS = new Address("Not provided");
 
     /**
      * Parses the given {@code String} of arguments in the context of the AddCommand
@@ -58,7 +55,7 @@ public class AddCommandParser implements Parser<AddCommand> {
         }
 
         Person person = new Person(name, phone, email, Optional.of(company), Optional.of(role),
-                whereMet, LEGACY_DEFAULT_ADDRESS, new Remark(""), Set.of());
+                whereMet, Optional.empty(), new Remark(""), Set.of());
 
         return new AddCommand(person);
     }

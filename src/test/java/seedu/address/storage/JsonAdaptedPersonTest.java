@@ -1,6 +1,7 @@
 package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static seedu.address.storage.JsonAdaptedPerson.MISSING_FIELD_MESSAGE_FORMAT;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
@@ -17,6 +18,7 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Company;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Role;
 import seedu.address.model.person.WhereMet;
@@ -63,6 +65,30 @@ public class JsonAdaptedPersonTest {
         JsonAdaptedPerson person = new JsonAdaptedPerson(new PersonBuilder(BENSON).withWhereMet("Career fair 2026")
                 .build());
         assertEquals(new PersonBuilder(BENSON).withWhereMet("Career fair 2026").build(), person.toModelType());
+    }
+
+    @Test
+    public void toModelType_absentAddress_roundTrips() throws Exception {
+        Person personWithoutAddress = new PersonBuilder(BENSON).withoutAddress().build();
+        JsonAdaptedPerson adaptedPerson = new JsonAdaptedPerson(personWithoutAddress);
+
+        assertEquals(personWithoutAddress, adaptedPerson.toModelType());
+    }
+
+    @Test
+    public void toModelType_explicitLegacyPlaceholderAddress_roundTrips() throws Exception {
+        Person personWithLegacyAddress = new PersonBuilder(BENSON).withAddress(Address.LEGACY_DEFAULT_VALUE).build();
+        JsonAdaptedPerson adaptedPerson = new JsonAdaptedPerson(personWithLegacyAddress);
+
+        assertEquals(personWithLegacyAddress, adaptedPerson.toModelType());
+    }
+
+    @Test
+    public void toModelType_legacyPlaceholderWithoutPresenceFlag_treatsAddressAsAbsent() throws Exception {
+        JsonAdaptedPerson legacyPerson = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null, null, null,
+                Address.LEGACY_DEFAULT_VALUE, "", VALID_TAGS);
+
+        assertFalse(legacyPerson.toModelType().getAddressOptional().isPresent());
     }
 
     @Test

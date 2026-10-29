@@ -47,8 +47,6 @@ import seedu.address.model.person.WhereMet;
 import seedu.address.testutil.PersonBuilder;
 
 public class AddCommandParserTest {
-    private static final String LEGACY_DEFAULT_ADDRESS = "Not provided";
-
     private final AddCommandParser parser = new AddCommandParser();
 
     @Test
@@ -207,6 +205,6 @@ public class AddCommandParserTest {
 
     private Person getExpectedPerson() {
         return new PersonBuilder(BOB).withCompany(VALID_COMPANY_BOB).withRole(VALID_ROLE_BOB)
-                .withWhereMet(VALID_WHERE_MET_BOB).withAddress(LEGACY_DEFAULT_ADDRESS).withTags().build();
+                .withWhereMet(VALID_WHERE_MET_BOB).withoutAddress().withTags().build();
     }
 }
