@@ -8,6 +8,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -32,7 +33,8 @@ public class ListCommandTest {
         String expectedMessage = String.format(ListCommand.MESSAGE_SUCCESS,
                 expectedModel.getFilteredPersonList().size());
         assertCommandSuccess(new ListCommand(), model,
-                new CommandResult(expectedMessage, DisplayedList.CONTACTS), expectedModel);
+                new CommandResult(expectedMessage, DisplayedList.CONTACTS, ContactSearchAction.CLEAR, ""),
+                expectedModel);
     }
 
     @Test
@@ -41,13 +43,15 @@ public class ListCommandTest {
         String expectedMessage = String.format(ListCommand.MESSAGE_SUCCESS,
                 expectedModel.getFilteredPersonList().size());
         assertCommandSuccess(new ListCommand(), model,
-                new CommandResult(expectedMessage, DisplayedList.CONTACTS), expectedModel);
+                new CommandResult(expectedMessage, DisplayedList.CONTACTS, ContactSearchAction.CLEAR, ""),
+                expectedModel);
     }
 
     @Test
     public void execute_emptyContactList_showsEmptyMessage() {
         Model emptyModel = new ModelManager();
         assertCommandSuccess(new ListCommand(), emptyModel,
-                new CommandResult(ListCommand.MESSAGE_EMPTY, DisplayedList.CONTACTS), new ModelManager());
+                new CommandResult(ListCommand.MESSAGE_EMPTY, DisplayedList.CONTACTS,
+                        ContactSearchAction.CLEAR, ""), new ModelManager());
     }
 }

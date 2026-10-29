@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.model.Model;
 
@@ -24,8 +25,9 @@ public class ListCommand extends Command {
 
         int contactCount = model.getFilteredPersonList().size();
         if (contactCount == 0) {
-            return new CommandResult(MESSAGE_EMPTY, DisplayedList.CONTACTS);
+            return new CommandResult(MESSAGE_EMPTY, DisplayedList.CONTACTS, ContactSearchAction.CLEAR, "");
         }
-        return new CommandResult(String.format(MESSAGE_SUCCESS, contactCount), DisplayedList.CONTACTS);
+        return new CommandResult(String.format(MESSAGE_SUCCESS, contactCount), DisplayedList.CONTACTS,
+                ContactSearchAction.CLEAR, "");
     }
 }

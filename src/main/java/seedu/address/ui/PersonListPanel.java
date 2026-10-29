@@ -23,6 +23,9 @@ public class PersonListPanel extends UiPart<Region> {
     @FXML
     private ListView<Person> personListView;
 
+    @FXML
+    private Label activeSearchLabel;
+
     /**
      * Creates a {@code PersonListPanel} with the given {@code ObservableList}.
      */
@@ -37,6 +40,14 @@ public class PersonListPanel extends UiPart<Region> {
         Label placeholder = new Label(EMPTY_LIST_MESSAGE);
         placeholder.getStyleClass().add("empty-list-placeholder");
         return placeholder;
+    }
+
+    /** Updates the persistent indicator for the currently active contact search. */
+    public void setActiveSearchTerm(String searchTerm) {
+        boolean hasSearchTerm = !searchTerm.isEmpty();
+        activeSearchLabel.setText(hasSearchTerm ? "Filtered by: " + searchTerm : "");
+        activeSearchLabel.setVisible(hasSearchTerm);
+        activeSearchLabel.setManaged(hasSearchTerm);
     }
 
     /**

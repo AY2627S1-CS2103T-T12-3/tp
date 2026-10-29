@@ -118,7 +118,8 @@ public class CommandTestUtil {
     public static void assertCommandSuccess(FindCommand command, Model actualModel, String expectedMessage,
             Model expectedModel) {
         CommandResult expectedCommandResult = new CommandResult(expectedMessage,
-                CommandResult.DisplayedList.CONTACTS);
+                CommandResult.DisplayedList.CONTACTS, CommandResult.ContactSearchAction.SET,
+                command.getSearchTerm());
         assertCommandSuccess(command, actualModel, expectedCommandResult, expectedModel);
     }
 
@@ -128,7 +129,7 @@ public class CommandTestUtil {
     public static void assertCommandSuccess(EditCommand command, Model actualModel, String expectedMessage,
             Model expectedModel) {
         CommandResult expectedCommandResult = new CommandResult(expectedMessage,
-                CommandResult.DisplayedList.CONTACTS);
+                CommandResult.DisplayedList.CONTACTS, CommandResult.ContactSearchAction.CLEAR, "");
         assertCommandSuccess(command, actualModel, expectedCommandResult, expectedModel);
     }
 

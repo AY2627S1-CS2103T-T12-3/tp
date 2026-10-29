@@ -525,6 +525,12 @@
     -fx-text-fill: #71829d;
 }
 
+.active-search-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #3e7b91;
+    -fx-padding: 0 0 8 0;
+}
+
 .list-page-records {
     -fx-background-color: white;
     -fx-border-color: #dde6f1;
