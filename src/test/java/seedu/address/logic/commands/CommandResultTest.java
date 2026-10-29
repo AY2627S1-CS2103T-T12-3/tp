@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 
 public class CommandResultTest {
@@ -67,7 +68,18 @@ public class CommandResultTest {
         CommandResult commandResult = new CommandResult("feedback");
         String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
                 + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
-                + ", exit=" + commandResult.isExit() + ", displayedList=" + commandResult.getDisplayedList() + "}";
+                + ", exit=" + commandResult.isExit() + ", displayedList=" + commandResult.getDisplayedList()
+                + ", contactSearchAction=" + commandResult.getContactSearchAction()
+                + ", contactSearchTerm=" + commandResult.getContactSearchTerm() + "}";
         assertEquals(expected, commandResult.toString());
+    }
+
+    @Test
+    public void contactSearchActionAndTerm_areStored() {
+        CommandResult commandResult = new CommandResult("Found contacts", DisplayedList.CONTACTS,
+                ContactSearchAction.SET, "Ada Lovelace");
+
+        assertEquals(ContactSearchAction.SET, commandResult.getContactSearchAction());
+        assertEquals("Ada Lovelace", commandResult.getContactSearchTerm());
     }
 }

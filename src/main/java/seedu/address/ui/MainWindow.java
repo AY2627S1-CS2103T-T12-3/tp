@@ -19,6 +19,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Logic;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -263,6 +264,12 @@ public class MainWindow extends UiPart<Stage> {
             CommandResult commandResult = logic.execute(commandText);
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
+
+            if (commandResult.getContactSearchAction() == ContactSearchAction.SET) {
+                personListPanel.setActiveSearchTerm(commandResult.getContactSearchTerm());
+            } else if (commandResult.getContactSearchAction() == ContactSearchAction.CLEAR) {
+                personListPanel.setActiveSearchTerm("");
+            }
 
             if (commandResult.getDisplayedList() == DisplayedList.CONTACTS) {
                 showContacts();

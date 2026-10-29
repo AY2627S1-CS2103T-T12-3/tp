@@ -18,6 +18,13 @@ public class CommandResult {
         APPLICATIONS
     }
 
+    /** Describes whether the result changes the active contact search indicator. */
+    public enum ContactSearchAction {
+        UNCHANGED,
+        SET,
+        CLEAR
+    }
+
     private final String feedbackToUser;
 
     /** Help information should be shown to the user. */
@@ -28,6 +35,8 @@ public class CommandResult {
 
     /** The list to display, or {@link DisplayedList#NONE} to keep the current list. */
     private final DisplayedList displayedList;
+    private final ContactSearchAction contactSearchAction;
+    private final String contactSearchTerm;
 
     /**
      * Constructs a {@code CommandResult} with the specified fields.
@@ -40,10 +49,23 @@ public class CommandResult {
      * Constructs a {@code CommandResult} with the specified fields.
      */
     public CommandResult(String feedbackToUser, boolean showHelp, boolean exit, DisplayedList displayedList) {
+        this(feedbackToUser, showHelp, exit, displayedList, ContactSearchAction.UNCHANGED, "");
+    }
+
+    /** Constructs a result that also updates the active contact search indicator. */
+    public CommandResult(String feedbackToUser, DisplayedList displayedList,
+            ContactSearchAction contactSearchAction, String contactSearchTerm) {
+        this(feedbackToUser, false, false, displayedList, contactSearchAction, contactSearchTerm);
+    }
+
+    private CommandResult(String feedbackToUser, boolean showHelp, boolean exit, DisplayedList displayedList,
+            ContactSearchAction contactSearchAction, String contactSearchTerm) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
         this.displayedList = requireNonNull(displayedList);
+        this.contactSearchAction = requireNonNull(contactSearchAction);
+        this.contactSearchTerm = requireNonNull(contactSearchTerm);
     }
 
     /**
@@ -77,6 +99,16 @@ public class CommandResult {
         return displayedList;
     }
 
+    /** Returns how the main window should update the contact search indicator. */
+    public ContactSearchAction getContactSearchAction() {
+        return contactSearchAction;
+    }
+
+    /** Returns the search terms for the contact search indicator. */
+    public String getContactSearchTerm() {
+        return contactSearchTerm;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -91,12 +123,14 @@ public class CommandResult {
         return feedbackToUser.equals(otherCommandResult.feedbackToUser)
                 && showHelp == otherCommandResult.showHelp
                 && exit == otherCommandResult.exit
-                && displayedList == otherCommandResult.displayedList;
+                && displayedList == otherCommandResult.displayedList
+                && contactSearchAction == otherCommandResult.contactSearchAction
+                && contactSearchTerm.equals(otherCommandResult.contactSearchTerm);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit, displayedList);
+        return Objects.hash(feedbackToUser, showHelp, exit, displayedList, contactSearchAction, contactSearchTerm);
     }
 
     @Override
@@ -106,6 +140,8 @@ public class CommandResult {
                 .add("showHelp", showHelp)
                 .add("exit", exit)
                 .add("displayedList", displayedList)
+                .add("contactSearchAction", contactSearchAction)
+                .add("contactSearchTerm", contactSearchTerm)
                 .toString();
     }
 

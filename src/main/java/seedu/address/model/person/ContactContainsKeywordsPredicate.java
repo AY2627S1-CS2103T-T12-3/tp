@@ -16,6 +16,10 @@ public class ContactContainsKeywordsPredicate implements Predicate<Person> {
         this.keywords = keywords;
     }
 
+    public List<String> getKeywords() {
+        return keywords;
+    }
+
     @Override
     public boolean test(Person person) {
         return keywords.stream().anyMatch(keyword -> containsKeyword(person, keyword));
