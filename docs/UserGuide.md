@@ -64,6 +64,8 @@ Under **QUICK COMMANDS**, selecting **addapp** or **add** replaces the command-b
 
 ## Keyboard shortcuts
 
+Type `guide` in the command box and press Enter to open guided entry. Choose **Contact** or **Application** with the arrow keys, then press Enter. Enter each requested field and press Enter or choose **Next** to continue. Use **Back** to correct an earlier answer. For application status, use Up/Down to choose one of the listed statuses and press Enter. Choose **Add** to submit through the same validation as the normal `add` or `addapp` command. **Cancel** or Esc closes the guide without adding anything.
+
 Press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux to focus the command box. If it is empty, InternTrack prepares `find ` for you; existing text is preserved and the caret moves to the end. Press Enter after entering the search keywords to run the command.
 
 Press **F1**, select **Help** at the top right, or enter `help` to open the help window.
