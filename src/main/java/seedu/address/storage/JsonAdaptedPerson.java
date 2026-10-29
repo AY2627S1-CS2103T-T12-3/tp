@@ -36,6 +36,7 @@ class JsonAdaptedPerson {
     private final String role;
     private final String whereMet;
     private final String address;
+    private final Boolean addressProvided;
     private final String remark;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
 
@@ -47,7 +48,8 @@ class JsonAdaptedPerson {
             @JsonProperty("email") String email, @JsonProperty("company") String company,
             @JsonProperty("role") String role,
             @JsonProperty("whereMet") String whereMet,
-            @JsonProperty("address") String address, @JsonProperty("remark") String remark,
+            @JsonProperty("address") String address, @JsonProperty("addressProvided") Boolean addressProvided,
+            @JsonProperty("remark") String remark,
             @JsonProperty("tags") List<JsonAdaptedTag> tags) {
         this.name = name;
         this.phone = phone;
@@ -56,10 +58,17 @@ class JsonAdaptedPerson {
         this.role = role;
         this.whereMet = whereMet;
         this.address = address;
+        this.addressProvided = addressProvided;
         this.remark = remark == null ? "" : remark;
         if (tags != null) {
             this.tags.addAll(tags);
         }
+    }
+
+    /** Constructs an adapter from legacy data that does not record whether the address was provided. */
+    public JsonAdaptedPerson(String name, String phone, String email, String company, String role, String whereMet,
+            String address, String remark, List<JsonAdaptedTag> tags) {
+        this(name, phone, email, company, role, whereMet, address, null, remark, tags);
     }
 
     /** Constructs a person adapter without Role or WhereMet for compatibility with older callers. */
@@ -87,6 +96,7 @@ class JsonAdaptedPerson {
         role = source.getRole().map(r -> r.value).orElse(null);
         whereMet = source.getWhereMet().map(w -> w.value).orElse(null);
         address = source.getAddress().value;
+        addressProvided = source.getAddressOptional().isPresent();
         remark = source.getRemark().value;
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
@@ -155,11 +165,15 @@ class JsonAdaptedPerson {
             throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
         }
         final Address modelAddress = new Address(address);
+        final boolean hasAddress = addressProvided != null
+                ? addressProvided
+                : !Address.LEGACY_DEFAULT_VALUE.equals(address);
         final Remark modelRemark = new Remark(remark);
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelRole, modelWhereMet, modelAddress,
-                modelRemark, modelTags);
+        Optional<Address> modelAddressOptional = hasAddress ? Optional.of(modelAddress) : Optional.empty();
+        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelRole, modelWhereMet,
+                modelAddressOptional, modelRemark, modelTags);
     }
 
 }
