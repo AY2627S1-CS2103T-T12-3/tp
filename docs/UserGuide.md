@@ -299,7 +299,7 @@ Examples:
 - `find John` returns `john` and `John Doe`
 - `find Google` returns contacts whose company contains `Google`
 - `find Recruiter` returns contacts whose role contains `Recruiter`
-- `find 87438807` finds the sample contact Alex Yeoh by phone number. Search using the stored number without spaces or hyphens; for an email address, use the complete address such as `alexyeoh@example.com`.
+- `find 87438807` finds the sample contact Alex Yeoh by phone number. Formatted numbers also work; for example, `find +65 9123-4567` matches a contact whose stored number is `+6591234567`. For an email address, use the complete address such as `alexyeoh@example.com`.
 - `find LinkedIn` returns contacts whose where-met details contain `LinkedIn`
 - `find alex david` returns matching contacts such as `Alex Yeoh` and `David Li`.
 
