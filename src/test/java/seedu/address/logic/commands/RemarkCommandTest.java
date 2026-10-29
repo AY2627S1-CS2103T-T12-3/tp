@@ -44,6 +44,18 @@ public class RemarkCommandTest {
     }
 
     @Test
+    public void execute_addRemark_preservesAbsentAddress() throws Exception {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person personWithoutAddress = new PersonBuilder(original).withoutAddress().build();
+        model.setPerson(original, personWithoutAddress);
+
+        new RemarkCommand(INDEX_FIRST_PERSON, new Remark("Met at career fair")).execute(model);
+
+        assertFalse(model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased())
+                .getAddressOptional().isPresent());
+    }
+
+    @Test
     public void execute_removeRemark_success() {
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         Person personWithRemark = new PersonBuilder(personToEdit).withRemark("Temporary remark").build();

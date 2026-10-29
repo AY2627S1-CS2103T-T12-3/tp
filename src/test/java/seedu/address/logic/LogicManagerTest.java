@@ -159,6 +159,29 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_formattedPhoneSearch_preservesOriginalKeywordMatches() throws Exception {
+        logic.execute("add n/Alex c/Acme r/Developer e/alex@example.com p/1234 5678");
+        logic.execute("add n/Bob c/Other r/Recruiter e/bob@example.com p/87654321");
+        logic.execute("remark 2 r/Follow up 1234");
+
+        logic.execute("find 1234 5678");
+
+        assertEquals(2, logic.getFilteredPersonList().size());
+    }
+
+    @Test
+    public void execute_searchAddressPlaceholder_distinguishesAbsentAndSuppliedAddress() throws Exception {
+        logic.execute("add n/Alex c/Acme r/Developer e/alex@example.com p/91234567 w/Fair");
+        logic.execute("find provided");
+        assertEquals(List.of(), logic.getFilteredPersonList());
+
+        logic.execute("list");
+        logic.execute("edit 1 a/Not provided");
+        logic.execute("find provided");
+        assertEquals(1, logic.getFilteredPersonList().size());
+    }
+
+    @Test
     public void execute_findFromApplicationList_switchesToMatchingContacts() throws Exception {
         model.addPerson(AMY);
         CommandResult listApplicationResult = logic.execute(ListApplicationCommand.COMMAND_WORD);

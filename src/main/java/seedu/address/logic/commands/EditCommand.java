@@ -114,7 +114,7 @@ public class EditCommand extends Command {
         Optional<WhereMet> updatedWhereMet = editPersonDescriptor.isWhereMetCleared()
                 ? Optional.empty()
                 : editPersonDescriptor.getWhereMet().or(personToEdit::getWhereMet);
-        Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
+        Optional<Address> updatedAddress = editPersonDescriptor.getAddress().or(personToEdit::getAddressOptional);
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
         Remark remark = personToEdit.getRemark();

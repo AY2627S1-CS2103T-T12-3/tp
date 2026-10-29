@@ -39,4 +39,13 @@ public class FindCommandParserTest {
         assertEquals("Alice Bob", command.getSearchTerm());
     }
 
+    @Test
+    public void parse_formattedPhoneNumber_addsNormalizedPhoneToOriginalKeywords() {
+        FindCommand expectedFindCommand = new FindCommand(
+                new ContactContainsKeywordsPredicate(List.of("+65", "9123-4567", "+6591234567")),
+                "+65 9123-4567");
+
+        assertParseSuccess(parser, "+65 9123-4567", expectedFindCommand);
+    }
+
 }

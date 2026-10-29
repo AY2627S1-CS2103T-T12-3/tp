@@ -141,7 +141,7 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
-Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values are skipped. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. The activity diagram summarizes the matching logic.
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
 
 <img src="images/ContactSearchActivityDiagram.png" width="650" />
 
@@ -414,75 +414,193 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 --------------------------------------------------------------------------------------------------------------------
 
-## **Appendix: Instructions for manual testing**
+## **Appendix: Instructions for Manual Testing**
 
-Given below are instructions to test the app manually.
+This appendix provides a reproducible route through InternTrack's user-testable features, with representative valid
+and invalid inputs. Run the sections in order unless a section states otherwise. Enter each command separately.
+For command syntax and field constraints, refer to the [User Guide](UserGuide.md); explore additional variations
+beyond the cases below.
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** These instructions only provide a starting point for testers to work on;
-testers are expected to do more *exploratory* testing.
+### Test setup, launch and help
 
-</div>
+1. Download the release JAR into a **new, empty, writable test folder**, separate from your real InternTrack data.
+   Follow [Quick start](UserGuide.md#quick-start) to select the JAR for your platform. In a terminal, change to this
+   test folder, run `java -version` and confirm Java 25, then launch with `java -jar "addressbook.jar"`
+   (substitute the actual downloaded filename, including `addressbook-mac-arm64.jar` where applicable).<br>
+   **Expected:** Overview opens with six sample contacts and no applications. `preferences.json` is created in
+   the test folder. The app must not load records from your normal home folder.
+2. Enter `help`, close the help window, then open it again using the top-right **Help** button and, separately,
+   **F1**. Select **Copy URL** and paste into a browser.<br>
+   **Expected:** Each method opens or focuses the help window. The copied URL points to the InternTrack User Guide;
+   loading the website requires internet access. Close Help before continuing.
+3. Enter `clear`, followed by `list` and `listapp`.<br>
+   **Expected:** Both lists are empty, with messages suggesting `add` and `addapp` respectively. No confirmation
+   prompt appears. **Use `clear` only in the disposable test folder.**
 
-### Launch and shutdown
+### Contacts: creation, fields and duplicate detection
 
-1. Initial launch
+1. Enter the following commands, one at a time:
 
-   1. Download the release JAR into an empty, writable folder. In a terminal, change to that folder and run `java -version` to confirm Java 25.
+   ```text
+   add n/Ada Tester c/Example Labs r/Recruiter e/ada@example.com p/+65 9123-4567 w/Career Fair
+   add n/Ben Tester c/Other Labs r/Engineer e/ben@example.com p/92345678
+   list
+   ```
 
-   1. Run `java -jar addressbook.jar` (use the downloaded file's actual name if different).<br>
-      Expected: The GUI opens with sample contacts and creates `preferences.json`. After adding a contact, its saved data is available in `data/addressbook.json`.
+   **Expected:** Contacts opens with two contacts: Ada at index `1` and Ben at index `2`. Ada's stored phone is
+   `+6591234567` and where-met detail is `Career Fair`. Ben has no where-met detail. Both contacts start with
+   address `Not provided`, no tags and no remark. The list message reports two contacts.
+2. Enter `add n/ADA TESTER c/Third Labs r/Manager e/ADA@example.com p/93456789`.<br>
+   **Expected:** A duplicate-contact error. There are still two contacts; Ada's existing details are unchanged.
+3. Enter `add n/Missing Email c/Example Labs r/Recruiter p/94567890`.<br>
+   **Expected:** A missing-required-field error. No contact is created. The failed input remains available to correct.
 
-1. Saving window preferences
+### Contacts: editing, tags, remarks and search
 
-   1. Resize the window to an optimal size. Move the window to a different location. Close the window.
+1. Enter `edit 1 c/Updated Labs r/Hiring Manager a/NUS Computing w/LinkedIn t/recruiter t/alumni`.<br>
+   **Expected:** Ada's company, role, address and where-met detail are replaced, with tags `recruiter` and `alumni`.
+   Name, email and phone are unchanged. The full Contacts list is shown.
+2. Enter `edit 1 t/referrer`, then `edit 1 w/ t/`.<br>
+   **Expected:** The first command replaces both old tags with `referrer`. The second removes the where-met detail
+   and all tags. Neither command changes Ada's other fields.
+3. Enter `edit 1 p/123`, then `edit 2 n/Ada Tester e/ada@example.com`.<br>
+   **Expected:** The first command reports an invalid phone; the second reports a duplicate contact. Neither changes
+   the saved contacts. `list` still shows Ada and Ben with their previous details.
+4. Enter `find Ada`, then `remark 1 r/Met at university fair`.<br>
+   **Expected:** Ada receives that remark, while her role remains `Hiring Manager`. The full Contacts list is restored
+   and the search indicator disappears.
+5. Enter `find Ada`, then `remark 1 r/first r/second`.<br>
+   **Expected:** The repeated prefix is rejected; Ada's remark remains `Met at university fair`.
+6. Enter `remark 1 r/`, then `find Ada`.<br>
+   **Expected:** Ada's remark is removed and hidden on the card. The search returns Ada only, with
+   `Filtered by: Ada` displayed above the results.
+7. Select **Applications**, then **Contacts** in the sidebar.<br>
+   **Expected:** The contact filter and indicator remain in effect. Switching pages does not clear them.
+8. Enter `find UPDATED engineer`.<br>
+   **Expected:** Both contacts appear: Ada matches her company and Ben matches his role. Matching is case-insensitive
+   and uses OR across keywords and contact fields.
+9. Enter `find Ad`, then `find nobodymatchesmanualtest`, then `list`.<br>
+   **Expected:** Each search produces an empty list, because `Ad` is not the full word `Ada` and the other keyword
+   matches no field. `list` restores both contacts and removes the filter indicator.
 
-   1. Relaunch with `java -jar addressbook.jar`.<br>
-       Expected: The most recent window size and location are retained.
+### Applications: creation, fields, status and validation
 
-### Contact role, remark, and quick search
+1. Enter these commands separately:
 
-1. In a fresh app folder, run `add n/Manual Tester c/Example r/Recruiter e/manual@example.com p/91234567 w/Career Fair`.<br>
-   Expected: The contact is added and the Contacts view opens. The card shows `Role: Recruiter`.
+   ```text
+   addapp n/QA Intern c/Example Labs d/Applied online dt/2026-10-28
+   addapp n/Graduate Engineer c/Other Labs d/Alumni referral dt/2026-10-29 s/interviewing
+   listapp
+   ```
 
-1. Run `find Manual`, then `remark 1 r/Met at fair`.<br>
-   Expected: The matching contact receives the remark and the Contacts view remains visible.
+   **Expected:** Applications shows two indexed cards. QA Intern is index `1`, with date `2026-10-28` and status
+   Applied; Graduate Engineer is index `2`, with date `2026-10-29` and status Interviewing. Each card shows its name,
+   company, description, date and status, with different status colours. The message reports two applications.
+2. Enter `addapp n/qa intern c/EXAMPLE LABS d/Different description dt/2026-11-01`.<br>
+   **Expected:** A duplicate-application error despite the different description and date. Two applications remain.
+3. Enter `addapp n/Invalid Date c/Example Labs d/Date validation dt/2026-02-30`, then
+   `editapp 1 s/PENDING`.<br>
+   **Expected:** The invalid calendar date and unsupported status are rejected. No record is created or changed.
+4. Enter `editapp 1 n/QA Engineer Intern c/Updated Labs d/Interview arranged dt/2026-10-30 s/OFFERED`.<br>
+   **Expected:** All supplied fields change on the first card, which stays at index `1`. The second application
+   remains unchanged. Its company is independent of any contact's company.
+5. Enter `editapp 2 n/QA Engineer Intern c/Updated Labs`, then `editapp 1`.<br>
+   **Expected:** The duplicate application edit and the edit with no fields are rejected; both cards retain their
+   previous values.
+6. Enter `list`, then `editapp 2 d/Prepare interview notes`.<br>
+   **Expected:** The command edits Graduate Engineer, even though Contacts was open, and switches to Applications.
+   Its other fields and both contacts remain unchanged.
 
-1. Run `find Manual`, then `remark 1 r/first r/second`.<br>
-   Expected: The command is rejected for a repeated `r/` prefix; the saved remark remains `Met at fair`.
+### Overview and sidebar quick commands
 
-1. Run `find Manual`, then `remark 1 r/`.<br>
-   Expected: The remark is removed. Run `find Manual` again before using index `1`, because a successful `remark` restores the full contact list.
+Prerequisite: The two contacts and two applications above remain in the test data; application statuses are Offered
+and Interviewing.
 
-1. Clear the command box and press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux.<br>
-   Expected: The box gains focus and contains `find `. Enter `Manual` and press Enter to run the search. If the box already contains text, the shortcut preserves it and moves the caret to the end.
+1. Select **Overview**.<br>
+   **Expected:** Active applications is `2` and Interviewing is `1`. The application table shows both applications.
+   Contact cards appear in reverse Contacts order (Ben before Ada). Scroll as needed to inspect the content.
+   Use Contacts list indexes, rather than Overview numbers, for contact commands.
+2. Type `draft input` in the command box, then select the sidebar **addapp** quick command. Repeat with **add**.<br>
+   **Expected:** Each button replaces the draft with its command word and a trailing space, focuses the box and
+   positions the caret at the end. No record is added until a complete command is submitted. The current view stays open.
+3. Empty the box and select the **find** quick command. Then replace its text with `list` and select **find** again.<br>
+   **Expected:** The empty box becomes `find `; the non-empty `list` text is preserved. Both actions focus the command
+   box without running a command. Clear the draft before continuing.
 
-### Application list
+### Weekly application calendar
 
-1. Run `addapp n/QA Intern c/Example d/Applied online dt/2026-10-28`, then `listapp`.<br>
-   Expected: The Applications view shows one record with status `APPLIED`.
+1. Select **Calendar**. Use the arrows to reach **26/10 – 01/11**, the week starting 26 October 2026.<br>
+   **Expected:** All seven days, Monday through Sunday, remain visible. Graduate Engineer appears on Thursday
+   29 October and QA Engineer Intern on Friday 30 October. Empty days show `No applications`. Cards show name,
+   company and status; these dates represent application dates, not interview appointments.
+2. Enter `editapp 1 dt/2026-10-31 s/REJECTED` while Calendar is open.<br>
+   **Expected:** Calendar stays open on the same week. QA Engineer Intern moves from Friday to Saturday and shows
+   REJECTED. Graduate Engineer is unchanged.
+3. Enter `addapp n/Calendar Tester c/Calendar Labs d/Manual calendar check dt/2026-10-28 s/WITHDRAWN`.<br>
+   **Expected:** Calendar stays open and adds Calendar Tester to Wednesday. This is application index `3` in the
+   Applications list; calendar cards do not provide the indexes for application commands.
+4. Enter `deleteapp 3` while Calendar is open.<br>
+   **Expected:** The Wednesday card disappears without leaving the current week. The other two applications remain.
+5. Navigate forward one week, then back; navigate to the week starting 28 December 2026; finally select **Today**.<br>
+   **Expected:** The arrows change the displayed week. The first week without test applications has no application
+   cards. The year-crossing range shows `28/12/2026 – 03/01/2027`. Today returns to the computer's current week and
+   highlights today's column; test applications appear only if their dates fall within that week.
+6. Select **Overview**.<br>
+   **Expected:** Active applications is now `1` and Interviewing is `1`: Rejected is excluded from the active count.
+   The Withdrawn application was deleted. Use the sidebar to return to either list.
 
-1. Run `editapp 1 s/INTERVIEWING`, then `listapp`.<br>
-   Expected: The same application remains at index `1`, now with status `INTERVIEWING`.
+### Keyboard search and command history
 
-1. Run `deleteapp 1`, then `listapp`.<br>
-   Expected: The application list is empty.
+1. Clear the command box. Press **Cmd+F** on macOS or **Ctrl+F** on Windows/Linux, type `Ada` after the prepared
+   `find ` and press Enter.<br>
+   **Expected:** The shortcut focuses the box and inserts `find `; submitting the command opens Contacts with only Ada.
+2. Type `list` without submitting and press the same shortcut.<br>
+   **Expected:** The existing text is preserved and the caret moves to its end. Press Enter to restore both contacts.
+3. Enter `listapp`, then `notacommand`. Replace the rejected input with `unfinished draft` without submitting it.
+   Press Up twice, then Down twice.<br>
+   **Expected:** Up recalls `notacommand`, then `listapp`; Down returns to `notacommand`, then restores
+   `unfinished draft`. Invalid commands are included in history. Clear the draft before continuing.
 
-### Deleting a person
+### Saving, shutdown, backup and recovery
 
-1. Deleting a person while all persons are being shown
+Prerequisite: Two contacts and two applications remain. Ada has no where-met detail, tags or remark. QA Engineer
+Intern has date `2026-10-31` and status Rejected; Graduate Engineer is Interviewing.
 
-   1. Prerequisites: List all persons using the `list` command, with multiple persons in the list.
+1. Resize and reposition the main window, enter `exit`, then relaunch the same JAR from the same test folder.<br>
+   **Expected:** The app closes and reopens; window size and position are retained. `list` and `listapp` show the
+   same records and edited values. A new app session does not retain the previous command history.
+2. Close the app using the window's close button. Copy `data/addressbook.json` to a backup outside the test
+   folder, then relaunch and enter `clear`.<br>
+   **Expected:** Window-close shutdown works; `clear` empties both lists immediately. Exit again, replace
+   `data/addressbook.json` with the backup and relaunch.<br>
+   **Expected after restore:** Both contacts and both applications return with their saved values. Follow the
+   [UG backup instructions](UserGuide.md#backing-up-and-restoring-data) when transferring the file to another computer.
+3. Optional save-failure test: with the app closed and a backup preserved, make the test data file or folder
+   non-writable using your OS's file permissions. Relaunch and run
+   `addapp n/Permission Test c/Test Labs d/Should not save dt/2026-10-29`.<br>
+   **Expected, if the OS denies the write:** A save-permission error is shown and the new application is rolled back;
+   `listapp` still contains only the previous two records. Restore write permissions before continuing. This test
+   is not meaningful if your OS account can override the permissions.
+4. Optional invalid-file recovery test: close the app, preserve the valid backup and replace the contents of the
+   test `data/addressbook.json` with `not valid JSON`. Relaunch.<br>
+   **Expected:** Both lists start empty; the invalid file is not immediately replaced by a read-only `list` or
+   `listapp`. Close the app and restore the valid backup before continuing. Do not run a record-changing command
+   until you have preserved any data you need.
 
-   1. Test case: `delete 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+### Deletion, invalid indexes and final cleanup
 
-   1. Test case: `delete 0`<br>
-      Expected: No person is deleted. The status message shows error details.
+Prerequisite: Restore the valid backup from the preceding section, if needed, so there are two contacts and two
+applications. The following commands intentionally remove test records.
 
-   1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
-
-### Saving data
-
-1. Add a contact and an application, then exit using `exit`. Relaunch the same JAR from the same folder.<br>
-   Expected: `list` and `listapp` show the records created before exit. The records are stored in `data/addressbook.json`.
+1. Enter `list`, then `delete 0`; enter `listapp`, then `deleteapp 99` and `deleteapp 1 2`.<br>
+   **Expected:** Each invalid command reports an error without deleting any record. The last command rejects
+   multiple indexes rather than deleting either application.
+2. Enter `find Ben`, then `delete 1`.<br>
+   **Expected:** Only Ben is deleted. Contacts opens with no matching results and the Ben filter remains active.
+   Enter `list`: Ada is now index `1`. Both applications remain.
+3. Enter `listapp`, then `deleteapp 2`, then `deleteapp 1`, then `listapp`.<br>
+   **Expected:** Graduate Engineer is removed first and QA Engineer Intern remains at index `1`; after deleting it,
+   the list is empty and suggests `addapp`. Ada remains in Contacts.
+4. Enter `clear`, then `list` and `listapp`, then `exit`.<br>
+   **Expected:** All remaining test records are removed, both lists are empty and the app exits. Relaunching from
+   this test folder keeps the saved empty lists rather than recreating the sample contacts.
