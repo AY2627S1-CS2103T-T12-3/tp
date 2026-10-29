@@ -88,6 +88,28 @@ public class JsonAddressBookStorageTest {
     }
 
     @Test
+    public void readAddressBook_nullPersonEntry_throwsDataLoadingException() throws IOException {
+        Path filePath = testFolder.resolve("NullPersonAddressBook.json");
+        Files.writeString(filePath, """
+                {"persons":[null],"applications":[]}
+                """);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+
+        assertThrows(DataLoadingException.class, storage::readAddressBook);
+    }
+
+    @Test
+    public void readAddressBook_nullApplicationEntry_throwsDataLoadingException() throws IOException {
+        Path filePath = testFolder.resolve("NullApplicationAddressBook.json");
+        Files.writeString(filePath, """
+                {"persons":[],"applications":[null]}
+                """);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+
+        assertThrows(DataLoadingException.class, storage::readAddressBook);
+    }
+
+    @Test
     public void readAndSaveAddressBook_allInOrder_success() throws Exception {
         Path filePath = testFolder.resolve("TempAddressBook.json");
         AddressBook original = getTypicalAddressBook();
