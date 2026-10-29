@@ -93,7 +93,7 @@ The `UI` component,
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
 * depends on some classes in the `Model` component because it displays `Person` objects from the model.
 
-The weekly application calendar is an `ApplicationCalendarPanel` that `MainWindow` shows through its **Application calendar** menu item. The panel keeps the Monday that starts the selected week and redraws the header range and seven day columns whenever the user moves to the previous or next week. Each column lists the applications whose application date falls on that day, showing the role and company, or a placeholder if there are none. The range omits the year unless the week spans two years. The sequence diagram below shows this flow.
+The weekly application calendar is an `ApplicationCalendarPanel` that `MainWindow` displays when the user selects **Calendar** in the sidebar. The panel keeps the Monday that starts the selected week and redraws the header range and seven day columns whenever the user moves to the previous or next week. Each column lists the applications whose application date falls on that day, showing the role and company, or a placeholder if there are none. The range omits the year unless the week spans two years. The sequence diagram below shows this flow.
 
 <img src="images/ApplicationCalendarSequenceDiagram.png" width="650" />
 
