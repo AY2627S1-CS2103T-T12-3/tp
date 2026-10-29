@@ -114,6 +114,11 @@ public class ContactContainsKeywordsPredicateTest {
         // A contact without optional fields or tags is handled safely
         predicate = new ContactContainsKeywordsPredicate(List.of("Google", "Recruiter"));
         assertFalse(predicate.test(new PersonBuilder().withName("Alice").build()));
+
+        // A synthetic legacy address is not searchable, but a supplied address remains searchable.
+        predicate = new ContactContainsKeywordsPredicate(List.of("provided"));
+        assertFalse(predicate.test(new PersonBuilder().withAddress(Address.LEGACY_DEFAULT_VALUE).build()));
+        assertTrue(predicate.test(new PersonBuilder().withAddress("Provided by the candidate").build()));
     }
 
     @Test

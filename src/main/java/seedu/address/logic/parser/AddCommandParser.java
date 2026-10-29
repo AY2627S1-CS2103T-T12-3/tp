@@ -29,7 +29,7 @@ import seedu.address.model.person.WhereMet;
  */
 public class AddCommandParser implements Parser<AddCommand> {
 
-    private static final Address LEGACY_DEFAULT_ADDRESS = new Address("Not provided");
+    private static final Address LEGACY_DEFAULT_ADDRESS = new Address(Address.LEGACY_DEFAULT_VALUE);
 
     /**
      * Parses the given {@code String} of arguments in the context of the AddCommand

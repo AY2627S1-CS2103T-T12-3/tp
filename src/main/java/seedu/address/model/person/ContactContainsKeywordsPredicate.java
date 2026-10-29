@@ -34,10 +34,15 @@ public class ContactContainsKeywordsPredicate implements Predicate<Person> {
                 || person.getRole().map(role -> StringUtil.containsWordIgnoreCase(role.value, keyword)).orElse(false)
                 || person.getWhereMet().map(whereMet -> StringUtil.containsWordIgnoreCase(whereMet.value, keyword))
                         .orElse(false)
-                || StringUtil.containsWordIgnoreCase(person.getAddress().value, keyword)
+                || containsAddressKeyword(person, keyword)
                 || StringUtil.containsWordIgnoreCase(person.getRemark().value, keyword)
                 || person.getTags().stream()
                         .anyMatch(tag -> StringUtil.containsWordIgnoreCase(tag.tagName, keyword));
+    }
+
+    private boolean containsAddressKeyword(Person person, String keyword) {
+        return !Address.LEGACY_DEFAULT_VALUE.equals(person.getAddress().value)
+                && StringUtil.containsWordIgnoreCase(person.getAddress().value, keyword);
     }
 
     @Override
