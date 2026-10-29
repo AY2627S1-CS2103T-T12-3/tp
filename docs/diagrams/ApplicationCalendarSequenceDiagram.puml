@@ -13,9 +13,10 @@ box Model MODEL_COLOR_T1
 participant "applications:\nObservableList" as Applications MODEL_COLOR
 end box
 
-User -> MainWindow : selects "Application calendar"
+User -> MainWindow : selects Calendar in sidebar
 activate MainWindow
-MainWindow -> MainWindow : showListPanel(applicationCalendarPanel)
+MainWindow -> MainWindow : showApplicationCalendar()
+MainWindow -> MainWindow : showListPanel(calendarPage)
 deactivate MainWindow
 
 User -> CalendarPanel : clicks previous / next week
