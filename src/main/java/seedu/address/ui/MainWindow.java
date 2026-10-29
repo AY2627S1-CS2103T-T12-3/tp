@@ -15,6 +15,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import seedu.address.MainApp;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Logic;
@@ -93,6 +94,7 @@ public class MainWindow extends UiPart<Stage> {
         this.dataFilePath = dataFilePath;
 
         // Configure the UI
+        primaryStage.setTitle("InternTrack " + MainApp.VERSION);
         setWindowDefaultSize(logic.getGuiSettings());
 
         setAccelerators();
