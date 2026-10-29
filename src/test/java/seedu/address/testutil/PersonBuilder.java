@@ -31,7 +31,7 @@ public class PersonBuilder {
     private Email email;
     private Optional<Company> company;
     private Optional<Role> role;
-    private Address address;
+    private Optional<Address> address;
     private Remark remark;
     private Optional<WhereMet> whereMet;
     private Set<Tag> tags;
@@ -45,7 +45,7 @@ public class PersonBuilder {
         email = new Email(DEFAULT_EMAIL);
         company = Optional.empty();
         role = Optional.empty();
-        address = new Address(DEFAULT_ADDRESS);
+        address = Optional.of(new Address(DEFAULT_ADDRESS));
         remark = new Remark("");
         whereMet = Optional.empty();
         tags = new HashSet<>();
@@ -60,7 +60,7 @@ public class PersonBuilder {
         email = personToCopy.getEmail();
         company = personToCopy.getCompany();
         role = personToCopy.getRole();
-        address = personToCopy.getAddress();
+        address = personToCopy.getAddressOptional();
         remark = personToCopy.getRemark();
         whereMet = personToCopy.getWhereMet();
         tags = new HashSet<>(personToCopy.getTags());
@@ -86,7 +86,13 @@ public class PersonBuilder {
      * Sets the {@code Address} of the {@code Person} that we are building.
      */
     public PersonBuilder withAddress(String address) {
-        this.address = new Address(address);
+        this.address = Optional.of(new Address(address));
+        return this;
+    }
+
+    /** Removes the {@code Address} of the {@code Person} that we are building. */
+    public PersonBuilder withoutAddress() {
+        this.address = Optional.empty();
         return this;
     }
 

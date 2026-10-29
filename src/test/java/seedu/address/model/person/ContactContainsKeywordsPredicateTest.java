@@ -115,9 +115,10 @@ public class ContactContainsKeywordsPredicateTest {
         predicate = new ContactContainsKeywordsPredicate(List.of("Google", "Recruiter"));
         assertFalse(predicate.test(new PersonBuilder().withName("Alice").build()));
 
-        // A synthetic legacy address is not searchable, but a supplied address remains searchable.
+        // An absent address is not searchable, but an explicitly supplied legacy-placeholder value is searchable.
         predicate = new ContactContainsKeywordsPredicate(List.of("provided"));
-        assertFalse(predicate.test(new PersonBuilder().withAddress(Address.LEGACY_DEFAULT_VALUE).build()));
+        assertFalse(predicate.test(new PersonBuilder().withoutAddress().build()));
+        assertTrue(predicate.test(new PersonBuilder().withAddress(Address.LEGACY_DEFAULT_VALUE).build()));
         assertTrue(predicate.test(new PersonBuilder().withAddress("Provided by the candidate").build()));
     }
 

@@ -127,6 +127,45 @@ public class JsonAddressBookStorageTest {
     }
 
     @Test
+    public void readAndSaveAddressBook_preservesAddressPresence() throws Exception {
+        Path filePath = testFolder.resolve("AddressPresenceAddressBook.json");
+        AddressBook original = new AddressBook();
+        original.addPerson(new PersonBuilder(ALICE).withoutAddress().build());
+        original.addPerson(new PersonBuilder(ALICE).withName("Alicia Yeoh").withEmail("alicia@example.com")
+                .withAddress("Not provided").build());
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+
+        storage.saveAddressBook(original, filePath);
+        AddressBook readBack = new AddressBook(storage.readAddressBook(filePath).get());
+
+        assertEquals(original, readBack);
+        assertFalse(readBack.getPersonList().get(0).getAddressOptional().isPresent());
+        assertEquals("Not provided", readBack.getPersonList().get(1).getAddressOptional().get().value);
+    }
+
+    @Test
+    public void read_legacyPlaceholderAddress_treatsAddressAsAbsent() throws Exception {
+        Path filePath = testFolder.resolve("LegacyPlaceholderAddressBook.json");
+        Files.writeString(filePath, """
+                {
+                  "persons": [{
+                    "name": "Alex Yeoh",
+                    "phone": "87438807",
+                    "email": "alexyeoh@example.com",
+                    "address": "Not provided",
+                    "tags": []
+                  }],
+                  "applications": []
+                }
+                """);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+
+        ReadOnlyAddressBook readBack = storage.readAddressBook(filePath).get();
+
+        assertFalse(readBack.getPersonList().get(0).getAddressOptional().isPresent());
+    }
+
+    @Test
     public void readAndSaveAddressBook_withWhereMet_preservesWhereMet() throws Exception {
         Path filePath = testFolder.resolve("WhereMetAddressBook.json");
         AddressBook original = new AddressBook();
