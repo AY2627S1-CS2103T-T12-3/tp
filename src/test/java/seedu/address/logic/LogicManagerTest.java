@@ -29,6 +29,7 @@ import javafx.collections.ObservableList;
 import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.logic.commands.EditApplicationCommand;
 import seedu.address.logic.commands.ListApplicationCommand;
@@ -139,6 +140,22 @@ public class LogicManagerTest {
 
         assertEquals(DisplayedList.CONTACTS, findResult.getDisplayedList());
         assertEquals(List.of(AMY), logic.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_editFilteredContact_nextIndexCommandTargetsSameContact() throws Exception {
+        model.addPerson(AMY);
+        logic.execute("find Amy");
+
+        CommandResult editResult = logic.execute("edit 1 a/42 Alpha Street");
+
+        assertEquals(ContactSearchAction.UNCHANGED, editResult.getContactSearchAction());
+        assertEquals(1, logic.getFilteredPersonList().size());
+        logic.execute("remark 1 r/Follow up");
+
+        Person editedPerson = logic.getPersonList().get(0);
+        assertEquals("42 Alpha Street", editedPerson.getAddress().value);
+        assertEquals("Follow up", editedPerson.getRemark().value);
     }
 
     @Test

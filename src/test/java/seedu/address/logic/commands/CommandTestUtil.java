@@ -129,7 +129,7 @@ public class CommandTestUtil {
     public static void assertCommandSuccess(EditCommand command, Model actualModel, String expectedMessage,
             Model expectedModel) {
         CommandResult expectedCommandResult = new CommandResult(expectedMessage,
-                CommandResult.DisplayedList.CONTACTS, CommandResult.ContactSearchAction.CLEAR, "");
+                CommandResult.DisplayedList.CONTACTS, CommandResult.ContactSearchAction.UNCHANGED, "");
         assertCommandSuccess(command, actualModel, expectedCommandResult, expectedModel);
     }
 

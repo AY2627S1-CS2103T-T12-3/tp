@@ -244,7 +244,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * Punctuation at the start or end of a word is ignored; for example, `Google` matches the company `Google, Inc.`.
 * Contacts matching at least one keyword are returned (an `OR` search); for example, `Google Recruiter` returns contacts whose company contains `Google` or whose role contains `Recruiter`.
 * Contacts without optional company, role, or where-met details can still be found using their other fields.
-* The contact list shows `Filtered by: KEYWORDS` above the results. This indicator stays visible when you navigate away from Contacts and return. It clears when `list`, `add`, `edit`, or `remark` resets the contact filter.
+* The contact list shows `Filtered by: KEYWORDS` above the results. This indicator stays visible when you navigate away from Contacts and return. Editing a contact keeps the filter active; if the edited details no longer match, that contact disappears from the results. The filter clears when `list`, `add`, or `remark` resets it.
 
 Examples:
 * `find John` returns `john` and `John Doe`
