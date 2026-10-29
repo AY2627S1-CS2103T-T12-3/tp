@@ -47,8 +47,15 @@ public class ApplicationCalendarPanel extends VBox {
         nextWeekButton.setAccessibleText("Next week");
         nextWeekButton.setOnAction(event -> changeWeek(1));
 
+        Button todayButton = new Button("Today");
+        todayButton.getStyleClass().add("calendar-today-button");
+        todayButton.setOnAction(event -> {
+            weekStart = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            renderWeek();
+        });
+
         dateRangeLabel.getStyleClass().add("calendar-range-label");
-        HBox header = new HBox(16, previousWeekButton, dateRangeLabel, nextWeekButton);
+        HBox header = new HBox(12, previousWeekButton, dateRangeLabel, nextWeekButton, todayButton);
         header.getStyleClass().add("calendar-header");
         header.setAlignment(Pos.CENTER);
 
@@ -56,10 +63,14 @@ public class ApplicationCalendarPanel extends VBox {
         ScrollPane weekScrollPane = new ScrollPane(weekColumns);
         weekScrollPane.getStyleClass().add("calendar-scroll-pane");
         weekScrollPane.setFitToHeight(true);
-        weekScrollPane.setFitToWidth(false);
-        weekScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        weekScrollPane.setFitToWidth(true);
+        weekScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         weekScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         VBox.setVgrow(weekScrollPane, Priority.ALWAYS);
+        weekScrollPane.viewportBoundsProperty().addListener((observable, oldBounds, bounds) -> {
+            double columnWidth = Math.max(0, (bounds.getWidth() - 6 * weekColumns.getSpacing()) / 7);
+            weekColumns.getChildren().forEach(column -> ((VBox) column).setPrefWidth(columnWidth));
+        });
 
         getChildren().addAll(header, weekScrollPane);
         applications.addListener((ListChangeListener<Application>) change -> renderWeek());
@@ -87,16 +98,21 @@ public class ApplicationCalendarPanel extends VBox {
 
     private VBox createDayColumn(LocalDate date) {
         String weekday = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
-        Label dayHeading = new Label(weekday.toUpperCase(Locale.getDefault()) + "  "
+        Label dayHeading = new Label(weekday.toUpperCase(Locale.getDefault()) + "\n"
                 + DAY_MONTH_FORMAT.format(date));
         dayHeading.getStyleClass().add("calendar-day-heading");
+        dayHeading.setWrapText(true);
 
         VBox dayColumn = new VBox(8);
         dayColumn.getStyleClass().add("calendar-day-column");
-        dayColumn.setPadding(new Insets(10));
-        dayColumn.setMinWidth(135);
-        dayColumn.setPrefWidth(170);
+        dayColumn.setPadding(new Insets(6));
+        dayColumn.setMinWidth(0);
+        dayColumn.setPrefWidth(Math.max(0, (weekColumns.getWidth() - 6 * weekColumns.getSpacing()) / 7));
         HBox.setHgrow(dayColumn, Priority.ALWAYS);
+        if (date.equals(LocalDate.now())) {
+            dayColumn.getStyleClass().add("calendar-today-column");
+            dayHeading.setAccessibleText("Today, " + dayHeading.getText());
+        }
         dayColumn.getChildren().add(dayHeading);
 
         boolean hasApplication = false;
@@ -109,6 +125,7 @@ public class ApplicationCalendarPanel extends VBox {
         if (!hasApplication) {
             Label emptyDay = new Label("No applications");
             emptyDay.getStyleClass().add("calendar-empty-day");
+            emptyDay.setWrapText(true);
             dayColumn.getChildren().add(emptyDay);
         }
         return dayColumn;
@@ -123,9 +140,14 @@ public class ApplicationCalendarPanel extends VBox {
         company.getStyleClass().add("calendar-application-company");
         company.setWrapText(true);
 
-        VBox card = new VBox(4, role, company);
+        Label status = new Label(application.getStatus().name());
+        status.getStyleClass().addAll("calendar-application-status", "application-status-"
+                + application.getStatus().name().toLowerCase(Locale.ROOT));
+        status.setWrapText(true);
+
+        VBox card = new VBox(4, role, company, status);
         card.getStyleClass().add("calendar-application-card");
-        card.setPadding(new Insets(9));
+        card.setPadding(new Insets(6));
         return card;
     }
 }

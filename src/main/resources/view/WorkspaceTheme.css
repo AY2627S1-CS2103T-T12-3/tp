@@ -569,6 +569,13 @@
     -fx-background-color: #dcecf8;
 }
 
+.calendar-today-button {
+    -fx-background-color: #dcecf8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #263b58;
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+}
+
 .calendar-scroll-pane,
 .calendar-scroll-pane > .viewport {
     -fx-background-color: transparent;
@@ -580,6 +587,12 @@
     -fx-background-color: #f8fafc;
     -fx-border-color: #e1e8f1;
     -fx-border-width: 1;
+}
+
+.calendar-today-column {
+    -fx-background-color: #eaf3ff;
+    -fx-border-color: #4b87d1;
+    -fx-border-width: 2;
 }
 
 .calendar-day-heading {
@@ -610,6 +623,17 @@
     -fx-font-size: 11px;
     -fx-text-fill: #527c78;
 }
+
+.calendar-application-status {
+    -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
+    -fx-font-size: 10px;
+}
+
+.calendar-application-status.application-status-applied { -fx-text-fill: #2e75b6; }
+.calendar-application-status.application-status-interviewing { -fx-text-fill: #6f42c1; }
+.calendar-application-status.application-status-offered { -fx-text-fill: #22863a; }
+.calendar-application-status.application-status-rejected { -fx-text-fill: #c0392b; }
+.calendar-application-status.application-status-withdrawn { -fx-text-fill: #a66a00; }
 
 .app-root .scroll-bar {
     -fx-background-color: #eef3f9;
