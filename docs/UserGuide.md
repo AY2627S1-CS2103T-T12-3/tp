@@ -175,9 +175,9 @@ Examples:
 
 ### Viewing application dates in the weekly calendar
 
-Choose **View → Application calendar** to see applications arranged by their recorded application date for the current week. The date range appears at the top in `dd/mm – dd/mm` format. Use the left and right arrow buttons to move between weeks. Each day remains visible when it has no applications. Weeks that cross into a new year show the year on both dates.
+Choose **Calendar** in the sidebar to see applications arranged by their recorded application date for the current week. All seven days are visible. The date range appears at the top in `dd/mm – dd/mm` format. Use the left and right arrow buttons to move between weeks, or **Today** to return to the current week. Today's column is highlighted. Each application card shows its name, company, and status. Each day remains visible when it has no applications. Weeks that cross into a new year show the year on both dates.
 
-Choose **View → Contacts** or **View → Applications** to return to either list.
+Choose **Contacts** or **Applications** in the sidebar to return to either list.
 
 ### Listing all contacts: `list`
 
