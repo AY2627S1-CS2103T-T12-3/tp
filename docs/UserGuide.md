@@ -12,14 +12,14 @@ InternTrack is a **desktop application for tracking internship and graduate-role
 
 ## Quick start
 
-1. Ensure that Java `25` or later is installed on your computer.<br>
+1. Ensure that Java `25` is installed on your computer. Run `java -version` in a terminal to check.<br>
    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-1. Download the latest InternTrack JAR from the [GitHub releases page](https://github.com/AY2627S1-CS2103T-T12-3/tp/releases).
+1. Download the latest InternTrack JAR from the [GitHub releases page](https://github.com/AY2627S1-CS2103T-T12-3/tp/releases). On an Apple Silicon Mac using an arm64 Java installation, choose `addressbook-mac-arm64.jar`. On an Intel Mac, Windows, or Linux, choose `addressbook.jar`.
 
 1. Copy the JAR file to the folder you want to use as InternTrack's _home folder_.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar` (or `java -jar addressbook-mac-arm64.jar` if you downloaded the Apple Silicon version).<br>
    A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
    ![InternTrack contact list](images/listContactsResult.png)
 
@@ -45,6 +45,8 @@ InternTrack is a **desktop application for tracking internship and graduate-role
 Type `guide` in the command box and press Enter to open guided entry. Choose **Contact** or **Application** with the arrow keys, then press Enter. Enter each requested field and press Enter or choose **Next** to continue. Use **Back** to correct an earlier answer. For application status, use Up/Down to choose one of the listed statuses and press Enter. Choose **Add** to submit through the same validation as the normal `add` or `addapp` command. **Cancel** or Esc closes the guide without adding anything.
 
 Press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux to focus the command box. If it is empty, InternTrack prepares `find ` for you; existing text is preserved and the caret moves to the end. Press Enter after entering the search keywords to run the command.
+
+In the command box, press **Up** to recall earlier commands and **Down** to move toward newer ones. Moving past the newest command restores the text you were typing. History lasts for the current app session and includes commands that returned an error, so you can edit and retry them.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -177,9 +179,9 @@ Examples:
 
 ### Viewing application dates in the weekly calendar
 
-Choose **View → Application calendar** to see applications arranged by their recorded application date for the current week. The date range appears at the top in `dd/mm – dd/mm` format. Use the left and right arrow buttons to move between weeks. Each day remains visible when it has no applications. Weeks that cross into a new year show the year on both dates.
+Choose **Calendar** in the sidebar to see applications arranged by their recorded application date for the current week. All seven days are visible. The date range appears at the top in `dd/mm – dd/mm` format. Use the left and right arrow buttons to move between weeks, or **Today** to return to the current week. Today's column is highlighted. Each application card shows its name, company, and status. Each day remains visible when it has no applications. Weeks that cross into a new year show the year on both dates.
 
-Choose **View → Contacts** or **View → Applications** to return to either list.
+Choose **Contacts** or **Applications** in the sidebar to return to either list.
 
 ### Listing all contacts: `list`
 
@@ -239,11 +241,12 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
-* The search considers names, phone numbers, email addresses, companies, roles, where-met details, addresses, remarks, and tags.
+* The search considers names, phone numbers, email addresses, companies, roles, where-met details, supplied addresses, remarks, and tags. A missing address shown as `Not provided` is not searched; an address explicitly set to `Not provided` is searchable.
 * Only full words match; for example, `Han` does not match `Hans`.
 * Punctuation at the start or end of a word is ignored; for example, `Google` matches the company `Google, Inc.`.
 * Contacts matching at least one keyword are returned (an `OR` search); for example, `Google Recruiter` returns contacts whose company contains `Google` or whose role contains `Recruiter`.
 * Contacts without optional company, role, or where-met details can still be found using their other fields.
+* The contact list shows `Filtered by: KEYWORDS` above the results. This indicator stays visible when you navigate away from Contacts and return. It clears when `list`, `add`, `edit`, or `remark` resets the contact filter.
 
 Examples:
 * `find John` returns `john` and `John Doe`

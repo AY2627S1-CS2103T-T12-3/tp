@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -36,7 +37,8 @@ public class AddCommandIntegrationTest {
         expectedModel.addPerson(validPerson);
 
         CommandResult expectedResult = new CommandResult(
-                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(validPerson)), DisplayedList.CONTACTS);
+                String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(validPerson)), DisplayedList.CONTACTS,
+                ContactSearchAction.CLEAR, "");
         assertCommandSuccess(new AddCommand(validPerson), model, expectedResult, expectedModel);
     }
 

@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.model.Model;
 import seedu.address.model.person.ContactContainsKeywordsPredicate;
@@ -23,9 +24,21 @@ public class FindCommand extends Command {
             + "Example: " + COMMAND_WORD + " alice bob charlie";
 
     private final ContactContainsKeywordsPredicate predicate;
+    private final String searchTerm;
 
     public FindCommand(ContactContainsKeywordsPredicate predicate) {
+        this(predicate, String.join(" ", predicate.getKeywords()));
+    }
+
+    /** Creates a {@code FindCommand} with a predicate and displayable search terms. */
+    public FindCommand(ContactContainsKeywordsPredicate predicate, String searchTerm) {
         this.predicate = predicate;
+        this.searchTerm = requireNonNull(searchTerm);
+    }
+
+    /** Returns the normalized search terms shown in the contact list. */
+    public String getSearchTerm() {
+        return searchTerm;
     }
 
     @Override
@@ -34,7 +47,7 @@ public class FindCommand extends Command {
         model.updateFilteredPersonList(predicate);
         return new CommandResult(
                 String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, model.getFilteredPersonList().size()),
-                DisplayedList.CONTACTS);
+                DisplayedList.CONTACTS, ContactSearchAction.SET, searchTerm);
     }
 
     @Override

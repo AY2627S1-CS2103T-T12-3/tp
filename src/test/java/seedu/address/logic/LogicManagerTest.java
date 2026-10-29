@@ -19,6 +19,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,6 +142,18 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_searchAddressPlaceholder_distinguishesAbsentAndSuppliedAddress() throws Exception {
+        logic.execute("add n/Alex c/Acme r/Developer e/alex@example.com p/91234567 w/Fair");
+        logic.execute("find provided");
+        assertEquals(List.of(), logic.getFilteredPersonList());
+
+        logic.execute("list");
+        logic.execute("edit 1 a/Not provided");
+        logic.execute("find provided");
+        assertEquals(1, logic.getFilteredPersonList().size());
+    }
+
+    @Test
     public void execute_findFromApplicationList_switchesToMatchingContacts() throws Exception {
         model.addPerson(AMY);
         CommandResult listApplicationResult = logic.execute(ListApplicationCommand.COMMAND_WORD);
@@ -203,6 +216,49 @@ public class LogicManagerTest {
     public void execute_storageThrowsAdException_throwsCommandException() {
         assertCommandFailureForExceptionFromStorage(DUMMY_AD_EXCEPTION, String.format(
                 LogicManager.FILE_OPS_PERMISSION_ERROR_FORMAT, DUMMY_AD_EXCEPTION.getMessage()));
+    }
+
+    @Test
+    public void execute_readOnlyCommands_succeedWithoutSaving() throws Exception {
+        model.addPerson(AMY);
+        JsonAddressBookStorage readOnlyStorage = new JsonAddressBookStorage(addressBookFilePath) {
+            @Override
+            public void saveAddressBook(ReadOnlyAddressBook addressBook) throws IOException {
+                throw DUMMY_AD_EXCEPTION;
+            }
+        };
+        logic = new LogicManager(model, new StorageManager(readOnlyStorage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("ReadOnlyUserPrefs.json"))));
+
+        assertEquals(DisplayedList.CONTACTS, logic.execute("list").getDisplayedList());
+        assertEquals(DisplayedList.CONTACTS, logic.execute("find Amy").getDisplayedList());
+        assertEquals(List.of(AMY), logic.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_failedSave_restoresModelBeforeLaterSuccessfulSave() throws Exception {
+        AtomicInteger saveAttempts = new AtomicInteger();
+        JsonAddressBookStorage failingOnceStorage = new JsonAddressBookStorage(addressBookFilePath) {
+            @Override
+            public void saveAddressBook(ReadOnlyAddressBook addressBook) throws IOException {
+                if (saveAttempts.getAndIncrement() == 0) {
+                    throw DUMMY_AD_EXCEPTION;
+                }
+                super.saveAddressBook(addressBook);
+            }
+        };
+        logic = new LogicManager(model, new StorageManager(failingOnceStorage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("FailingOnceUserPrefs.json"))));
+        String failedAdd = AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY
+                + COMPANY_DESC_AMY + ROLE_DESC_AMY + WHERE_MET_DESC_AMY;
+
+        assertThrows(CommandException.class, () -> logic.execute(failedAdd));
+        assertEquals(List.of(), logic.getPersonList());
+
+        logic.execute("add n/Bob Example c/Example r/Recruiter e/bob@example.com p/91234567");
+        ReadOnlyAddressBook saved = new JsonAddressBookStorage(addressBookFilePath).readAddressBook().orElseThrow();
+        assertEquals(1, saved.getPersonList().size());
+        assertEquals("Bob Example", saved.getPersonList().get(0).getName().fullName);
     }
 
     @Test
@@ -294,10 +350,7 @@ public class LogicManagerTest {
         // Triggers the saveAddressBook method by executing an add command
         String addCommand = AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY + EMAIL_DESC_AMY
                 + COMPANY_DESC_AMY + ROLE_DESC_AMY + WHERE_MET_DESC_AMY;
-        Person expectedPerson = new PersonBuilder(AMY).withCompany("Google").withRole("SWE Recruiter")
-                .withWhereMet("Career fair 2026").withAddress("Not provided").withTags().build();
         ModelManager expectedModel = new ModelManager();
-        expectedModel.addPerson(expectedPerson);
         assertCommandFailure(addCommand, CommandException.class, expectedMessage, expectedModel);
     }
 
@@ -363,6 +416,7 @@ public class LogicManagerTest {
     public void execute_invalidApplicationCommands_preserveMemoryAndSavedFile() throws Exception {
         model.addApplication(SOFTWARE_ENGINEER_INTERN);
         model.addApplication(PRODUCT_MANAGER_INTERN);
+        new JsonAddressBookStorage(addressBookFilePath).saveAddressBook(model.getAddressBook());
         logic.execute("listapp");
         String savedData = Files.readString(addressBookFilePath);
         for (String command : List.of("editapp 0 d/Updated", "editapp 1", "editapp 1 dt/2026-02-30",

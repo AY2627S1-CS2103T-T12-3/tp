@@ -17,6 +17,12 @@ title: Developer Guide
 
 Refer to the guide [_Setting up and getting started_](SettingUp.md).
 
+For releases, build the standard JAR with `./gradlew shadowJar`. Build the Apple Silicon JAR with
+`./gradlew shadowJar -PmacJavaFxClassifier=mac-aarch64`; this produces
+`build/libs/addressbook-mac-arm64.jar`. Publish both JARs and run each with a Java 25 installation
+that does not bundle JavaFX on its target Mac architecture. A JavaFX-bundled JDK can mask an
+incorrect native library in the JAR, so verify the actual released artifacts with a clean JavaFX cache.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Design**
@@ -135,7 +141,7 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
-Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values are skipped. The activity diagram summarizes this matching logic.
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
 
 <img src="images/ContactSearchActivityDiagram.png" width="650" />
 
@@ -421,19 +427,45 @@ testers are expected to do more *exploratory* testing.
 
 1. Initial launch
 
-   1. Download the JAR file and copy it into an empty folder.
+   1. Download the release JAR into an empty, writable folder. In a terminal, change to that folder and run `java -version` to confirm Java 25.
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+   1. Run `java -jar addressbook.jar` (use the downloaded file's actual name if different).<br>
+      Expected: The GUI opens with sample contacts and creates `preferences.json`. After adding a contact, its saved data is available in `data/addressbook.json`.
 
 1. Saving window preferences
 
    1. Resize the window to an optimal size. Move the window to a different location. Close the window.
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
+   1. Relaunch with `java -jar addressbook.jar`.<br>
        Expected: The most recent window size and location are retained.
 
-1. _{ more test cases …​ }_
+### Contact role, remark, and quick search
+
+1. In a fresh app folder, run `add n/Manual Tester c/Example r/Recruiter e/manual@example.com p/91234567 w/Career Fair`.<br>
+   Expected: The contact is added and the Contacts view opens. The card shows `Role: Recruiter`.
+
+1. Run `find Manual`, then `remark 1 r/Met at fair`.<br>
+   Expected: The matching contact receives the remark and the Contacts view remains visible.
+
+1. Run `find Manual`, then `remark 1 r/first r/second`.<br>
+   Expected: The command is rejected for a repeated `r/` prefix; the saved remark remains `Met at fair`.
+
+1. Run `find Manual`, then `remark 1 r/`.<br>
+   Expected: The remark is removed. Run `find Manual` again before using index `1`, because a successful `remark` restores the full contact list.
+
+1. Clear the command box and press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux.<br>
+   Expected: The box gains focus and contains `find `. Enter `Manual` and press Enter to run the search. If the box already contains text, the shortcut preserves it and moves the caret to the end.
+
+### Application list
+
+1. Run `addapp n/QA Intern c/Example d/Applied online dt/2026-10-28`, then `listapp`.<br>
+   Expected: The Applications view shows one record with status `APPLIED`.
+
+1. Run `editapp 1 s/INTERVIEWING`, then `listapp`.<br>
+   Expected: The same application remains at index `1`, now with status `INTERVIEWING`.
+
+1. Run `deleteapp 1`, then `listapp`.<br>
+   Expected: The application list is empty.
 
 ### Deleting a person
 
@@ -450,12 +482,7 @@ testers are expected to do more *exploratory* testing.
    1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
       Expected: Similar to previous.
 
-1. _{ more test cases …​ }_
-
 ### Saving data
 
-1. Dealing with missing/corrupted data files
-
-   1. _{Explain how to simulate missing or corrupted data files and state the expected behavior.}_
-
-1. _{ more test cases …​ }_
+1. Add a contact and an application, then exit using `exit`. Relaunch the same JAR from the same folder.<br>
+   Expected: `list` and `listapp` show the records created before exit. The records are stored in `data/addressbook.json`.

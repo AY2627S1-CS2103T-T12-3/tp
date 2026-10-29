@@ -114,6 +114,12 @@ public class ContactContainsKeywordsPredicateTest {
         // A contact without optional fields or tags is handled safely
         predicate = new ContactContainsKeywordsPredicate(List.of("Google", "Recruiter"));
         assertFalse(predicate.test(new PersonBuilder().withName("Alice").build()));
+
+        // An absent address is not searchable, but an explicitly supplied legacy-placeholder value is searchable.
+        predicate = new ContactContainsKeywordsPredicate(List.of("provided"));
+        assertFalse(predicate.test(new PersonBuilder().withoutAddress().build()));
+        assertTrue(predicate.test(new PersonBuilder().withAddress(Address.LEGACY_DEFAULT_VALUE).build()));
+        assertTrue(predicate.test(new PersonBuilder().withAddress("Provided by the candidate").build()));
     }
 
     @Test

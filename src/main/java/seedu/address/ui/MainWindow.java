@@ -15,10 +15,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import seedu.address.MainApp;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.Logic;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
 import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -93,6 +95,7 @@ public class MainWindow extends UiPart<Stage> {
         this.dataFilePath = dataFilePath;
 
         // Configure the UI
+        primaryStage.setTitle("InternTrack " + MainApp.VERSION);
         setWindowDefaultSize(logic.getGuiSettings());
 
         setAccelerators();
@@ -264,9 +267,16 @@ public class MainWindow extends UiPart<Stage> {
             logger.info("Result: " + commandResult.getFeedbackToUser());
             resultDisplay.setFeedbackToUser(commandResult.getFeedbackToUser());
 
+            if (commandResult.getContactSearchAction() == ContactSearchAction.SET) {
+                personListPanel.setActiveSearchTerm(commandResult.getContactSearchTerm());
+            } else if (commandResult.getContactSearchAction() == ContactSearchAction.CLEAR) {
+                personListPanel.setActiveSearchTerm("");
+            }
+
             if (commandResult.getDisplayedList() == DisplayedList.CONTACTS) {
                 showContacts();
-            } else if (commandResult.getDisplayedList() == DisplayedList.APPLICATIONS) {
+            } else if (commandResult.getDisplayedList() == DisplayedList.APPLICATIONS
+                    && !(isCalendarVisible() && isApplicationMutation(commandText))) {
                 showApplications();
             }
 
@@ -288,6 +298,14 @@ public class MainWindow extends UiPart<Stage> {
 
     private void showListPanel(Node panel) {
         personListPanelPlaceholder.getChildren().setAll(panel);
+    }
+
+    private boolean isCalendarVisible() {
+        return personListPanelPlaceholder.getChildren().contains(calendarPage);
+    }
+
+    private static boolean isApplicationMutation(String commandText) {
+        return commandText.trim().matches("^(addapp|editapp|deleteapp)(\\s.*)?$");
     }
 
     private void setActiveNavigation(Button activeButton) {
