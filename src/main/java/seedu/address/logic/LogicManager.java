@@ -12,6 +12,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.application.Application;
 import seedu.address.model.person.Person;
@@ -55,6 +56,8 @@ public class LogicManager implements Logic {
         }
         logger.fine("Executing command: " + command);
 
+        // OpenAI Codex assisted mao455 with the save and rollback logic and tests for #118 and #119.
+        AddressBook beforeCommand = new AddressBook(model.getAddressBook());
         try {
             commandResult = command.execute(model);
         } catch (CommandException ce) {
@@ -62,12 +65,19 @@ public class LogicManager implements Logic {
             throw ce;
         }
 
+        // Read-only commands may change the visible list, but should not require write permission.
+        if (model.getAddressBook().equals(beforeCommand)) {
+            return commandResult;
+        }
+
         try {
             storage.saveAddressBook(model.getAddressBook());
         } catch (AccessDeniedException e) {
+            model.setAddressBook(beforeCommand);
             logger.warning("No permission to save data file: " + e.getMessage());
             throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
         } catch (IOException ioe) {
+            model.setAddressBook(beforeCommand);
             logger.warning("Failed to save data file: " + ioe.getMessage());
             throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
         }
