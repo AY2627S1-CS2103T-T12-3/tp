@@ -7,6 +7,7 @@ import java.util.List;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.ContactContainsKeywordsPredicate;
+import seedu.address.model.person.Phone;
 
 /**
  * Parses input arguments and creates a new FindCommand object
@@ -26,8 +27,12 @@ public class FindCommandParser implements Parser<FindCommand> {
         }
 
         String[] keywords = trimmedArgs.split("\\s+");
+        List<String> searchKeywords = List.of(keywords);
+        if (Phone.isValidPhone(trimmedArgs)) {
+            searchKeywords = List.of(new Phone(trimmedArgs).value);
+        }
 
-        return new FindCommand(new ContactContainsKeywordsPredicate(List.of(keywords)), String.join(" ", keywords));
+        return new FindCommand(new ContactContainsKeywordsPredicate(searchKeywords), String.join(" ", keywords));
     }
 
 }

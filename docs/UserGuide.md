@@ -251,6 +251,7 @@ Examples:
 * `find Google` returns contacts whose company contains `Google`
 * `find Recruiter` returns contacts whose role contains `Recruiter`
 * `find 85355255` returns contacts whose phone number is `85355255`
+* `find +65 9123-4567` returns contacts whose phone number is `+6591234567`
 * `find LinkedIn` returns contacts whose where-met details contain `LinkedIn`
 * `find alex david` returns matching contacts such as `Alex Yeoh` and `David Li`.
 
