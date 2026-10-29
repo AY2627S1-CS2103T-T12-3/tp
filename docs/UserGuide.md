@@ -56,8 +56,6 @@ Use the left sidebar to switch between these views:
 - **Active applications** includes applications with status `APPLIED`, `INTERVIEWING` or `OFFERED`. Applications with status `REJECTED` or `WITHDRAWN` are excluded. An `OFFERED` application still counts as active.
 - **Interviewing** includes only applications with status `INTERVIEWING`. These applications also count towards **Active applications**.
 
-<!-- Screenshot slot: overview.png. Insert after this table once an actual current-version screenshot is available. See UG_REVIEW.md. -->
-
 The **COMMAND BOX** accepts one command at a time. Press **Enter** to run it; the message below reports success or explains what needs correcting. A failed command stays in the box so you can edit and retry it.
 
 Under **QUICK COMMANDS**, selecting **addapp** or **add** replaces the command-box text with `addapp ` or `add `. Complete the fields and press Enter; selecting the button alone does not create a record. **find** focuses the box and inserts `find ` only if it is blank; existing text is preserved. These buttons prepare commands without changing the current view.
@@ -102,7 +100,7 @@ In the command box, press **Up** to recall earlier commands and **Down** to move
   For example, `help 123` is interpreted as `help`.
 
 - If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
-  </div>
+    </div>
 
 ### Viewing help: `help`
 
@@ -215,8 +213,6 @@ Examples:
 
 - `listapp` shows all saved applications.
 - Run `list` to return to the contact list.
-
-<!-- Screenshot slot: listApplicationsResult.png. Insert an actual Applications screenshot here; see UG_REVIEW.md. -->
 
 ### Viewing application dates in the weekly calendar
 
