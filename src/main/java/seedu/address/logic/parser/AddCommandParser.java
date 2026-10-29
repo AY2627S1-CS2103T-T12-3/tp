@@ -6,6 +6,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WHERE_MET;
 
 import java.util.Optional;
@@ -27,6 +28,8 @@ import seedu.address.model.person.WhereMet;
  * Parses input arguments and creates a new AddCommand object
  */
 public class AddCommandParser implements Parser<AddCommand> {
+    static final String MESSAGE_TAG_NOT_SUPPORTED = "Tags are not supported by add. Add the contact first, "
+            + "then use edit INDEX t/TAG.";
 
     /**
      * Parses the given {@code String} of arguments in the context of the AddCommand
@@ -35,7 +38,11 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     public AddCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_COMPANY, PREFIX_ROLE,
-                PREFIX_EMAIL, PREFIX_PHONE, PREFIX_WHERE_MET);
+                PREFIX_EMAIL, PREFIX_PHONE, PREFIX_WHERE_MET, PREFIX_TAG);
+
+        if (argMultimap.getValue(PREFIX_TAG).isPresent()) {
+            throw new ParseException(MESSAGE_TAG_NOT_SUPPORTED);
+        }
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_COMPANY, PREFIX_ROLE, PREFIX_EMAIL, PREFIX_PHONE)
                 || !argMultimap.getPreamble().isEmpty()) {

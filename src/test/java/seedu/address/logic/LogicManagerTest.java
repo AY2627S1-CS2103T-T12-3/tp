@@ -143,6 +143,18 @@ public class LogicManagerTest {
     }
 
     @Test
+    public void execute_invalidAddWithTag_thenCorrectedAdd() throws Exception {
+        String invalidAdd = "add n/Bob c/Acme r/Dev e/b@x.com p/91234567 w/Fair t/friend";
+        assertThrows(ParseException.class, () -> logic.execute(invalidAdd));
+        assertEquals(0, logic.getPersonList().size());
+
+        logic.execute("add n/Bob c/Acme r/Dev e/b@x.com p/91234567 w/Fair");
+
+        assertEquals(1, logic.getPersonList().size());
+        assertEquals("Fair", logic.getPersonList().get(0).getWhereMet().orElseThrow().value);
+    }
+
+    @Test
     public void execute_editFilteredContact_nextIndexCommandTargetsSameContact() throws Exception {
         model.addPerson(AMY);
         logic.execute("find Amy");

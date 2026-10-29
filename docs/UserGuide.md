@@ -126,7 +126,7 @@ Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER [w/WHERE_MET]`
 - `EMAIL` must have the form `local-part@domain`, such as `john@example.com`. The local part accepts ASCII letters, digits and `+ _ . -`, with letters or digits at both ends and no consecutive special characters. Domain labels use ASCII letters and digits, separated by single hyphens if needed; labels are separated by dots and the final label has at least two characters. Invalid input produces a detailed error message.
 - `PHONE_NUMBER` must contain 7 to 15 digits, with an optional leading `+`. Spaces and hyphens can separate digits; they are removed when the phone number is stored.
 - Two contacts with the same name and email address are considered duplicates, ignoring letter case.
-- New contacts start with address `Not provided`, no remark and no tags. Use `edit` to set an address or tags, and `remark` to add a note. The `add` command does not accept address or tag fields.
+- New contacts start with address `Not provided`, no remark and no tags. The `add` command does not accept address or tag fields. After adding a contact, use `edit INDEX a/ADDRESS` or `edit INDEX t/TAG` to set them, and `remark INDEX r/REMARK` to add a note.
 - After a contact is added, InternTrack shows all contacts and clears any active search filter.
 
 Examples:
