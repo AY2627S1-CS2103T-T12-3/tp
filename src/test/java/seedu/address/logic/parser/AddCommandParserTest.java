@@ -19,6 +19,7 @@ import static seedu.address.logic.commands.CommandTestUtil.PREAMBLE_NON_EMPTY;
 import static seedu.address.logic.commands.CommandTestUtil.PREAMBLE_WHITESPACE;
 import static seedu.address.logic.commands.CommandTestUtil.ROLE_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.ROLE_DESC_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.TAG_DESC_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_COMPANY_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ROLE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WHERE_MET_BOB;
@@ -28,6 +29,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ROLE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_WHERE_MET;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -162,6 +164,15 @@ public class AddCommandParserTest {
         Person expectedPerson = new PersonBuilder(getExpectedPerson()).withoutWhereMet().build();
         assertParseSuccess(parser, NAME_DESC_BOB + COMPANY_DESC_BOB + ROLE_DESC_BOB + EMAIL_DESC_BOB
                 + PHONE_DESC_BOB, new AddCommand(expectedPerson));
+    }
+
+    @Test
+    public void parse_tagPrefix_failure() {
+        String validContact = NAME_DESC_BOB + COMPANY_DESC_BOB + ROLE_DESC_BOB + EMAIL_DESC_BOB + PHONE_DESC_BOB
+                + WHERE_MET_DESC_BOB;
+
+        assertParseFailure(parser, validContact + TAG_DESC_FRIEND, AddCommandParser.MESSAGE_TAG_NOT_SUPPORTED);
+        assertParseFailure(parser, validContact + " " + PREFIX_TAG, AddCommandParser.MESSAGE_TAG_NOT_SUPPORTED);
     }
 
     @Test
