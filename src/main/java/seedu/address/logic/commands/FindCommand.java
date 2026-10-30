@@ -35,6 +35,7 @@ public class FindCommand extends Command {
      * Creates a find command using the predicate's keywords as the displayed search term.
      *
      * @throws IllegalArgumentException if the resulting search term is blank
+     * @throws NullPointerException if the predicate is null
      */
     public FindCommand(ContactContainsKeywordsPredicate predicate) {
         this(requireNonNull(predicate), String.join(" ", predicate.getKeywords()));
@@ -44,6 +45,7 @@ public class FindCommand extends Command {
      * Creates a {@code FindCommand} with a predicate and displayable search terms.
      *
      * @throws IllegalArgumentException if the search term is blank
+     * @throws NullPointerException if the predicate or search term is null
      */
     public FindCommand(ContactContainsKeywordsPredicate predicate, String searchTerm) {
         this.predicate = requireNonNull(predicate);
@@ -51,7 +53,7 @@ public class FindCommand extends Command {
         checkArgument(!this.searchTerm.isBlank(), MESSAGE_SEARCH_TERM_CANNOT_BE_BLANK);
     }
 
-    /** Returns the normalized search terms shown in the contact list. */
+    /** Returns the search terms shown in the contact list. */
     public String getSearchTerm() {
         return searchTerm;
     }

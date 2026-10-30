@@ -57,9 +57,10 @@ public class CommandResult {
     }
 
     /**
-     * Constructs a result that also updates the active contact search indicator.
+     * Constructs a result that specifies how to handle the active contact search indicator.
      *
      * @throws IllegalArgumentException if a SET action has a blank term, or another action has a non-empty term
+     * @throws NullPointerException if any argument is null
      */
     public CommandResult(String feedbackToUser, DisplayedList displayedList,
             ContactSearchAction contactSearchAction, String contactSearchTerm) {
