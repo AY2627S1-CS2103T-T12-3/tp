@@ -12,14 +12,14 @@ InternTrack helps **university Computing students track internship and graduate-
 
 ## Quick start
 
-1. Ensure that Java `25` is installed on your computer. Run `java -version` in a terminal to check.<br>
-   **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
+1. Set up JDK `25` according to the [course's Java setup requirements](https://nus-cs2103-ay2627-s1.github.io/website/admin/programmingLanguages.html). Run `java -version` in the terminal you will use to launch InternTrack to verify the active version.<br>
+   **Mac users:** Follow the [course-recommended Mac installation guide](https://se-education.org/guides/tutorials/javaInstallationMac.html) and use the exact Azul JDK + JavaFX distribution it specifies. Having another Java `25` installation is not sufficient.
 
-1. Download the latest InternTrack JAR from the [GitHub releases page](https://github.com/AY2627S1-CS2103T-T12-3/tp/releases). On an Apple Silicon Mac using an arm64 Java installation, choose `addressbook-mac-arm64.jar`. On an Intel Mac, Windows, or Linux, choose `addressbook.jar`.
+1. Download `addressbook.jar` from the latest release on the [GitHub releases page](https://github.com/AY2627S1-CS2103T-T12-3/tp/releases).
 
 1. Create an empty folder that you can write to and copy the JAR into it. This will be your InternTrack _home folder_. The app needs permission to create its data and settings files there; avoid read-only folders.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar "addressbook.jar"` (or `java -jar "addressbook-mac-arm64.jar"` for the Apple Silicon version). If your downloaded file has a different name, use that exact name inside the quotes. Launch from the terminal: double-clicking may not work on some systems or may use a different Java version.<br>
+1. In the terminal where you verified Java `25`, `cd` to the folder containing the JAR file and run `java -jar "addressbook.jar"`. If your downloaded file has a different name, use that exact name inside the quotes. Launch from the terminal: double-clicking may not work on some systems or may use a different Java version.<br>
    The app opens on **Overview**. A new home folder starts with six sample contacts and no applications. On subsequent launches, the app loads the records saved in that home folder.
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
@@ -366,7 +366,7 @@ Certain edits can also cause InternTrack to behave in unexpected ways (e.g., if 
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install Java 25 and download the appropriate JAR on the other computer. Follow [Backing up and restoring data](#backing-up-and-restoring-data) to copy the data into the new home folder, then launch from that folder.
+**A**: Follow [Quick start](#quick-start) to set up the course-required JDK and download `addressbook.jar` on the other computer. Follow [Backing up and restoring data](#backing-up-and-restoring-data) to copy the data into the new home folder, then launch from that folder.
 
 **Q**: Why is an application missing from Calendar?<br>
 **A**: Calendar shows only the selected week, using the application's recorded application date. Run `listapp` to check its date, then return to Calendar and navigate to that week.
