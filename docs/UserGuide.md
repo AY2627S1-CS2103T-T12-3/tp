@@ -253,7 +253,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS
 - `ADDRESS` can be any non-blank text. `TAG` must contain only ASCII letters and digits, with no spaces, for example `recruiter` or `careerFair2026`.
 - Empty values are rejected except for `w/` and `t/`, as described below. Company, role, address, name, email and phone cannot be cleared with an empty prefix.
 - An edit cannot give a contact the same name and email as another contact, ignoring letter case.
-- A successful edit shows all contacts and clears any active search filter. Applications are unaffected.
+- A successful edit opens Contacts and preserves any active search filter. If the edited contact no longer matches the search keywords, it disappears from the filtered results. Run `list` to show all contacts. Applications are unaffected.
 - When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
 - To remove all of a person's tags, enter `t/` without a tag after it.
 - To remove a person's where-met detail, enter `w/` without a value after it.
