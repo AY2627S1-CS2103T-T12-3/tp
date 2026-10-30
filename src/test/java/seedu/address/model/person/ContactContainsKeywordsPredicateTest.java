@@ -3,7 +3,9 @@ package seedu.address.model.person;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.testutil.Assert.assertThrows;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,41 @@ import org.junit.jupiter.api.Test;
 import seedu.address.testutil.PersonBuilder;
 
 public class ContactContainsKeywordsPredicateTest {
+
+    @Test
+    public void constructor_rejectsNullKeywordsOrNullKeyword() {
+        assertThrows(NullPointerException.class, () -> new ContactContainsKeywordsPredicate(null));
+
+        List<String> keywordsWithNull = new ArrayList<>(List.of("Alice"));
+        keywordsWithNull.add(null);
+        assertThrows(NullPointerException.class, () -> new ContactContainsKeywordsPredicate(keywordsWithNull));
+    }
+
+    @Test
+    public void constructor_copiesKeywords() {
+        List<String> keywords = new ArrayList<>(List.of("Alice"));
+        ContactContainsKeywordsPredicate predicate = new ContactContainsKeywordsPredicate(keywords);
+
+        keywords.set(0, "Bob");
+
+        assertEquals(List.of("Alice"), predicate.getKeywords());
+        assertTrue(predicate.test(new PersonBuilder().withName("Alice Smith").build()));
+        assertFalse(predicate.test(new PersonBuilder().withName("Bob Smith").build()));
+    }
+
+    @Test
+    public void getKeywords_returnsUnmodifiableList() {
+        ContactContainsKeywordsPredicate predicate = new ContactContainsKeywordsPredicate(List.of("Alice"));
+
+        assertThrows(UnsupportedOperationException.class, () -> predicate.getKeywords().add("Bob"));
+    }
+
+    @Test
+    public void test_rejectsNullPerson() {
+        ContactContainsKeywordsPredicate predicate = new ContactContainsKeywordsPredicate(List.of("Alice"));
+
+        assertThrows(NullPointerException.class, () -> predicate.test(null));
+    }
 
     @Test
     public void equals() {
@@ -29,6 +66,7 @@ public class ContactContainsKeywordsPredicateTest {
         ContactContainsKeywordsPredicate firstPredicateCopy =
                 new ContactContainsKeywordsPredicate(firstPredicateKeywordList);
         assertTrue(firstPredicate.equals(firstPredicateCopy));
+        assertEquals(firstPredicate.hashCode(), firstPredicateCopy.hashCode());
 
         // different types -> returns false
         assertFalse(firstPredicate.equals(1));

@@ -92,6 +92,14 @@ public class JsonAdaptedPersonTest {
     }
 
     @Test
+    public void toModelType_legacyAddressWithoutPresenceFlag_preservesAddress() throws Exception {
+        JsonAdaptedPerson legacyPerson = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null, null, null,
+                VALID_ADDRESS, "", VALID_TAGS);
+
+        assertEquals(new Address(VALID_ADDRESS), legacyPerson.toModelType().getAddressOptional().orElseThrow());
+    }
+
+    @Test
     public void toModelType_invalidWhereMet_throwsIllegalValueException() {
         JsonAdaptedPerson person = new JsonAdaptedPerson(VALID_NAME, VALID_PHONE, VALID_EMAIL, null, null,
                 INVALID_WHERE_MET, VALID_ADDRESS, "", VALID_TAGS);

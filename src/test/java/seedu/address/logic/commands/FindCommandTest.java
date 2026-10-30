@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_PERSONS_LISTED_OVERVIEW;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.CARL;
 import static seedu.address.testutil.TypicalPersons.ELLE;
@@ -43,6 +44,10 @@ public class FindCommandTest {
         // same values -> returns true
         FindCommand findFirstCommandCopy = new FindCommand(firstPredicate);
         assertTrue(findFirstCommand.equals(findFirstCommandCopy));
+        assertEquals(findFirstCommand.hashCode(), findFirstCommandCopy.hashCode());
+
+        // same matching predicate but different displayed search term -> returns false
+        assertFalse(findFirstCommand.equals(new FindCommand(firstPredicate, "first term")));
 
         // different types -> returns false
         assertFalse(findFirstCommand.equals(1));
@@ -55,9 +60,24 @@ public class FindCommandTest {
     }
 
     @Test
-    public void execute_zeroKeywords_noPersonFound() {
+    public void constructor_rejectsNullPredicate() {
+        assertThrows(NullPointerException.class, () -> new FindCommand(null));
+        assertThrows(NullPointerException.class, () -> new FindCommand(null, "search term"));
+    }
+
+    @Test
+    public void constructor_rejectsBlankSearchTerm() {
+        ContactContainsKeywordsPredicate predicate = new ContactContainsKeywordsPredicate(List.of("keyword"));
+        ContactContainsKeywordsPredicate emptyPredicate = new ContactContainsKeywordsPredicate(List.of());
+
+        assertThrows(IllegalArgumentException.class, () -> new FindCommand(predicate, " "));
+        assertThrows(IllegalArgumentException.class, () -> new FindCommand(emptyPredicate));
+    }
+
+    @Test
+    public void execute_noMatches_noPersonFound() {
         String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 0);
-        ContactContainsKeywordsPredicate predicate = preparePredicate(" ");
+        ContactContainsKeywordsPredicate predicate = preparePredicate("no-match");
         FindCommand command = new FindCommand(predicate);
         expectedModel.updateFilteredPersonList(predicate);
         assertCommandSuccess(command, model, expectedMessage, expectedModel);
@@ -89,7 +109,8 @@ public class FindCommandTest {
     public void toStringMethod() {
         ContactContainsKeywordsPredicate predicate = new ContactContainsKeywordsPredicate(List.of("keyword"));
         FindCommand findCommand = new FindCommand(predicate);
-        String expected = FindCommand.class.getCanonicalName() + "{predicate=" + predicate + "}";
+        String expected = FindCommand.class.getCanonicalName() + "{predicate=" + predicate
+                + ", searchTerm=keyword}";
         assertEquals(expected, findCommand.toString());
     }
 

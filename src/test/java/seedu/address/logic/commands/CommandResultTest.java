@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static seedu.address.testutil.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +41,15 @@ public class CommandResultTest {
 
         // different displayedList value -> returns false
         assertFalse(commandResult.equals(new CommandResult("feedback", DisplayedList.APPLICATIONS)));
+
+        CommandResult searchResult = new CommandResult("Found contacts", DisplayedList.CONTACTS,
+                ContactSearchAction.SET, "Ada");
+        assertTrue(searchResult.equals(new CommandResult("Found contacts", DisplayedList.CONTACTS,
+                ContactSearchAction.SET, "Ada")));
+        assertFalse(searchResult.equals(new CommandResult("Found contacts", DisplayedList.CONTACTS,
+                ContactSearchAction.SET, "Grace")));
+        assertFalse(searchResult.equals(new CommandResult("Found contacts", DisplayedList.CONTACTS,
+                ContactSearchAction.CLEAR, "")));
     }
 
     @Test
@@ -61,6 +71,12 @@ public class CommandResultTest {
         // different displayedList value -> returns different hashcode
         assertNotEquals(commandResult.hashCode(),
                 new CommandResult("feedback", DisplayedList.APPLICATIONS).hashCode());
+
+        CommandResult searchResult = new CommandResult("Found contacts", DisplayedList.CONTACTS,
+                ContactSearchAction.SET, "Ada");
+        CommandResult searchResultCopy = new CommandResult("Found contacts", DisplayedList.CONTACTS,
+                ContactSearchAction.SET, "Ada");
+        assertEquals(searchResult.hashCode(), searchResultCopy.hashCode());
     }
 
     @Test
@@ -81,5 +97,15 @@ public class CommandResultTest {
 
         assertEquals(ContactSearchAction.SET, commandResult.getContactSearchAction());
         assertEquals("Ada Lovelace", commandResult.getContactSearchTerm());
+    }
+
+    @Test
+    public void constructor_invalidContactSearchState_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> new CommandResult("Found contacts",
+                DisplayedList.CONTACTS, ContactSearchAction.SET, ""));
+        assertThrows(IllegalArgumentException.class, () -> new CommandResult("Listed contacts",
+                DisplayedList.CONTACTS, ContactSearchAction.CLEAR, "Ada"));
+        assertThrows(IllegalArgumentException.class, () -> new CommandResult("Unchanged search",
+                DisplayedList.CONTACTS, ContactSearchAction.UNCHANGED, "Ada"));
     }
 }

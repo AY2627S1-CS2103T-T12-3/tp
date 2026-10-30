@@ -162,7 +162,9 @@ public class EditApplicationCommandTest {
         descriptor.setName(SOFTWARE_ENGINEER_INTERN.getName());
         EditApplicationCommand command = new EditApplicationCommand(Index.fromOneBased(1), descriptor);
         assertTrue(command.equals(command));
-        assertTrue(command.equals(new EditApplicationCommand(Index.fromOneBased(1), descriptor)));
+        EditApplicationCommand commandCopy = new EditApplicationCommand(Index.fromOneBased(1), descriptor);
+        assertTrue(command.equals(commandCopy));
+        assertEquals(command.hashCode(), commandCopy.hashCode());
         assertFalse(command.equals(new EditApplicationCommand(Index.fromOneBased(2), descriptor)));
         assertFalse(command.equals(new EditApplicationCommand(Index.fromOneBased(1), new EditApplicationDescriptor())));
         assertFalse(command.equals(null));

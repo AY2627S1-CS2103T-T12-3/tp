@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
 
 import java.util.Objects;
 
@@ -24,6 +25,9 @@ public class CommandResult {
         SET,
         CLEAR
     }
+
+    private static final String MESSAGE_INVALID_CONTACT_SEARCH_STATE =
+            "Contact search term must be non-empty only when the action is SET.";
 
     private final String feedbackToUser;
 
@@ -52,7 +56,12 @@ public class CommandResult {
         this(feedbackToUser, showHelp, exit, displayedList, ContactSearchAction.UNCHANGED, "");
     }
 
-    /** Constructs a result that also updates the active contact search indicator. */
+    /**
+     * Constructs a result that specifies how to handle the active contact search indicator.
+     *
+     * @throws IllegalArgumentException if a SET action has a blank term, or another action has a non-empty term
+     * @throws NullPointerException if any argument is null
+     */
     public CommandResult(String feedbackToUser, DisplayedList displayedList,
             ContactSearchAction contactSearchAction, String contactSearchTerm) {
         this(feedbackToUser, false, false, displayedList, contactSearchAction, contactSearchTerm);
@@ -66,6 +75,7 @@ public class CommandResult {
         this.displayedList = requireNonNull(displayedList);
         this.contactSearchAction = requireNonNull(contactSearchAction);
         this.contactSearchTerm = requireNonNull(contactSearchTerm);
+        validateContactSearchState(this.contactSearchAction, this.contactSearchTerm);
     }
 
     /**
@@ -81,6 +91,12 @@ public class CommandResult {
      */
     public CommandResult(String feedbackToUser, DisplayedList displayedList) {
         this(feedbackToUser, false, false, displayedList);
+    }
+
+    private static void validateContactSearchState(ContactSearchAction action, String searchTerm) {
+        boolean isSetAction = action == ContactSearchAction.SET;
+        checkArgument(isSetAction ? !searchTerm.isBlank() : searchTerm.isEmpty(),
+                MESSAGE_INVALID_CONTACT_SEARCH_STATE);
     }
 
     public String getFeedbackToUser() {

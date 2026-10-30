@@ -27,16 +27,28 @@ public class EditApplicationCommandParser implements Parser<EditApplicationComma
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenizeWithFreeText(args, PREFIX_DESCRIPTION,
                 PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE, PREFIX_STATUS);
 
-        Index index;
+        Index index = parseIndex(argMultimap.getPreamble());
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE,
+                PREFIX_STATUS);
+        EditApplicationDescriptor descriptor = parseDescriptor(argMultimap);
+        if (!descriptor.isAnyFieldEdited()) {
+            throw new ParseException(EditApplicationCommand.MESSAGE_NOT_EDITED);
+        }
+        return new EditApplicationCommand(index, descriptor);
+    }
+
+    /** Parses the index, reporting errors with the edit application command format. */
+    private Index parseIndex(String preamble) throws ParseException {
         try {
-            index = ParserUtil.parseIndex(argMultimap.getPreamble());
+            return ParserUtil.parseIndex(preamble);
         } catch (ParseException pe) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
                     EditApplicationCommand.MESSAGE_USAGE), pe);
         }
+    }
 
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_COMPANY, PREFIX_DESCRIPTION, PREFIX_DATE,
-                PREFIX_STATUS);
+    /** Parses the supplied optional fields into an edit descriptor. */
+    private EditApplicationDescriptor parseDescriptor(ArgumentMultimap argMultimap) throws ParseException {
         EditApplicationDescriptor descriptor = new EditApplicationDescriptor();
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
             descriptor.setName(ParserUtil.parseApplicationName(argMultimap.getValue(PREFIX_NAME).get()));
@@ -53,9 +65,6 @@ public class EditApplicationCommandParser implements Parser<EditApplicationComma
         if (argMultimap.getValue(PREFIX_STATUS).isPresent()) {
             descriptor.setStatus(ParserUtil.parseApplicationStatus(argMultimap.getValue(PREFIX_STATUS).get()));
         }
-        if (!descriptor.isAnyFieldEdited()) {
-            throw new ParseException(EditApplicationCommand.MESSAGE_NOT_EDITED);
-        }
-        return new EditApplicationCommand(index, descriptor);
+        return descriptor;
     }
 }
