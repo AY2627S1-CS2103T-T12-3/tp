@@ -1,10 +1,9 @@
 package seedu.address.commons.util;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -46,7 +45,7 @@ public class JsonUtil {
      *
      * @param filePath cannot be null.
      * @param classOfObjectToDeserialize JSON file has to correspond to the structure in the class given here.
-     * @throws DataLoadingException if loading of the JSON file failed.
+     * @throws DataLoadingException if loading failed or the file contains a null JSON root.
      */
     public static <T> Optional<T> readJsonFile(
             Path filePath, Class<T> classOfObjectToDeserialize) throws DataLoadingException {
@@ -61,6 +60,10 @@ public class JsonUtil {
 
         try {
             jsonFile = deserializeObjectFromJsonFile(filePath, classOfObjectToDeserialize);
+
+            if (jsonFile == null) {
+                throw new IOException("JSON file " + filePath + " contains null instead of an object.");
+            }
         } catch (IOException e) {
             logger.warning("Error reading from jsonFile file " + filePath + ": " + e);
             throw new DataLoadingException(e);
