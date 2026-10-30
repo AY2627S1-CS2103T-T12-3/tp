@@ -158,22 +158,27 @@ class JsonAdaptedPerson {
         }
         final Optional<WhereMet> modelWhereMet = Optional.ofNullable(whereMet).map(WhereMet::new);
 
+        Optional<Address> modelAddressOptional = restoreAddress();
+        final Remark modelRemark = new Remark(remark);
+
+        final Set<Tag> modelTags = new HashSet<>(personTags);
+        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelRole, modelWhereMet,
+                modelAddressOptional, modelRemark, modelTags);
+    }
+
+    /** Restores the address, interpreting the legacy placeholder when no presence flag was saved. */
+    private Optional<Address> restoreAddress() throws IllegalValueException {
         if (address == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
         }
         if (!Address.isValidAddress(address)) {
             throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
         }
-        final Address modelAddress = new Address(address);
-        final boolean hasAddress = addressProvided != null
+        Address modelAddress = new Address(address);
+        boolean hasAddress = addressProvided != null
                 ? addressProvided
                 : !Address.LEGACY_DEFAULT_VALUE.equals(address);
-        final Remark modelRemark = new Remark(remark);
-
-        final Set<Tag> modelTags = new HashSet<>(personTags);
-        Optional<Address> modelAddressOptional = hasAddress ? Optional.of(modelAddress) : Optional.empty();
-        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelRole, modelWhereMet,
-                modelAddressOptional, modelRemark, modelTags);
+        return hasAddress ? Optional.of(modelAddress) : Optional.empty();
     }
 
 }

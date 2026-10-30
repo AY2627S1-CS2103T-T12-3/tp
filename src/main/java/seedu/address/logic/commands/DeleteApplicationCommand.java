@@ -62,6 +62,11 @@ public class DeleteApplicationCommand extends Command {
     }
 
     @Override
+    public int hashCode() {
+        return Integer.hashCode(targetIndex.getZeroBased());
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("targetIndex", targetIndex)

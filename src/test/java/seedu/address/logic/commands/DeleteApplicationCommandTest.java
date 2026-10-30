@@ -62,7 +62,9 @@ public class DeleteApplicationCommandTest {
     public void equals() {
         DeleteApplicationCommand command = new DeleteApplicationCommand(Index.fromOneBased(1));
         assertTrue(command.equals(command));
-        assertTrue(command.equals(new DeleteApplicationCommand(Index.fromOneBased(1))));
+        DeleteApplicationCommand commandCopy = new DeleteApplicationCommand(Index.fromOneBased(1));
+        assertTrue(command.equals(commandCopy));
+        assertEquals(command.hashCode(), commandCopy.hashCode());
         assertFalse(command.equals(new DeleteApplicationCommand(Index.fromOneBased(2))));
         assertFalse(command.equals(null));
         assertFalse(command.equals(1));

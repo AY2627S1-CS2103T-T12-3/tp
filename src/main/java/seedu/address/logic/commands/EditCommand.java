@@ -138,6 +138,11 @@ public class EditCommand extends Command {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(index.getZeroBased(), editPersonDescriptor);
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("index", index)
@@ -292,6 +297,11 @@ public class EditCommand extends Command {
                     && isWhereMetCleared == otherEditPersonDescriptor.isWhereMetCleared
                     && Objects.equals(address, otherEditPersonDescriptor.address)
                     && Objects.equals(tags, otherEditPersonDescriptor.tags);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, phone, email, company, role, whereMet, isWhereMetCleared, address, tags);
         }
 
         @Override

@@ -1,5 +1,7 @@
 package seedu.address.model.person;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -12,16 +14,25 @@ import seedu.address.commons.util.ToStringBuilder;
 public class ContactContainsKeywordsPredicate implements Predicate<Person> {
     private final List<String> keywords;
 
+    /**
+     * Creates a predicate that matches contacts against the given keywords.
+     *
+     * @param keywords search terms to match; must not be null or contain null values
+     */
     public ContactContainsKeywordsPredicate(List<String> keywords) {
-        this.keywords = keywords;
+        this.keywords = List.copyOf(requireNonNull(keywords));
     }
 
+    /**
+     * Returns the immutable keywords used by this predicate.
+     */
     public List<String> getKeywords() {
         return keywords;
     }
 
     @Override
     public boolean test(Person person) {
+        requireNonNull(person);
         return keywords.stream().anyMatch(keyword -> containsKeyword(person, keyword));
     }
 
@@ -53,6 +64,11 @@ public class ContactContainsKeywordsPredicate implements Predicate<Person> {
         }
 
         return keywords.equals(otherContactContainsKeywordsPredicate.keywords);
+    }
+
+    @Override
+    public int hashCode() {
+        return keywords.hashCode();
     }
 
     @Override

@@ -23,6 +23,7 @@ public class EditPersonDescriptorTest {
         // same values -> returns true
         EditPersonDescriptor descriptorWithSameValues = new EditPersonDescriptor(DESC_AMY);
         assertTrue(DESC_AMY.equals(descriptorWithSameValues));
+        assertEquals(DESC_AMY.hashCode(), descriptorWithSameValues.hashCode());
 
         // same object -> returns true
         assertTrue(DESC_AMY.equals(DESC_AMY));

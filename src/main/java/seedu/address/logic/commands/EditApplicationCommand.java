@@ -107,6 +107,11 @@ public class EditApplicationCommand extends Command {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(index.getZeroBased(), editApplicationDescriptor);
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("index", index)
@@ -198,6 +203,11 @@ public class EditApplicationCommand extends Command {
                     && Objects.equals(description, otherDescriptor.description)
                     && Objects.equals(date, otherDescriptor.date)
                     && status == otherDescriptor.status;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, company, description, date, status);
         }
 
         @Override
