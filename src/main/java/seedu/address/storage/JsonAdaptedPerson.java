@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -109,7 +111,25 @@ class JsonAdaptedPerson {
      * @throws IllegalValueException if there were any data constraints violated in the adapted person.
      */
     public Person toModelType() throws IllegalValueException {
-        final List<Tag> personTags = new ArrayList<>();
+        Set<Tag> modelTags = restoreTags();
+        Name modelName = restoreRequired(name, Name.class, Name::isValidName, Name::new, Name.MESSAGE_CONSTRAINTS);
+        Phone modelPhone = restoreRequired(phone, Phone.class, Phone::isValidPhone, Phone::new,
+                Phone.MESSAGE_CONSTRAINTS);
+        Email modelEmail = restoreRequired(email, Email.class, Email::isValidEmail, Email::new,
+                Email.MESSAGE_CONSTRAINTS);
+        Optional<Company> modelCompany = restoreOptional(company, value -> Company.isValidCompany(
+                Company.normalize(value)), Company::new, Company.MESSAGE_CONSTRAINTS);
+        Optional<Role> modelRole = restoreOptional(role, Role::isValidRole, Role::new, Role.MESSAGE_CONSTRAINTS);
+        Optional<WhereMet> modelWhereMet = restoreOptional(whereMet, WhereMet::isValidWhereMet, WhereMet::new,
+                WhereMet.MESSAGE_CONSTRAINTS);
+        Optional<Address> modelAddress = restoreAddress();
+        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelRole, modelWhereMet,
+                modelAddress, new Remark(remark), modelTags);
+    }
+
+    /** Restores tags and rejects missing tag entries. */
+    private Set<Tag> restoreTags() throws IllegalValueException {
+        List<Tag> personTags = new ArrayList<>();
         for (JsonAdaptedTag tag : tags) {
             // OpenAI Codex assisted mao455 with this null-tag recovery fix and its regression test.
             if (tag == null) {
@@ -118,63 +138,37 @@ class JsonAdaptedPerson {
             }
             personTags.add(tag.toModelType());
         }
+        return new HashSet<>(personTags);
+    }
 
-        if (name == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Name.class.getSimpleName()));
+    /** Validates and restores a required field, reporting missing and invalid values separately. */
+    private <T> T restoreRequired(String value, Class<T> type, Predicate<String> isValid,
+            Function<String, T> create, String constraints) throws IllegalValueException {
+        if (value == null) {
+            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, type.getSimpleName()));
         }
-        if (!Name.isValidName(name)) {
-            throw new IllegalValueException(Name.MESSAGE_CONSTRAINTS);
+        if (!isValid.test(value)) {
+            throw new IllegalValueException(constraints);
         }
-        final Name modelName = new Name(name);
+        return create.apply(value);
+    }
 
-        if (phone == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Phone.class.getSimpleName()));
+    /** Validates and restores an optional field when it is present. */
+    private <T> Optional<T> restoreOptional(String value, Predicate<String> isValid,
+            Function<String, T> create, String constraints) throws IllegalValueException {
+        if (value == null) {
+            return Optional.empty();
         }
-        if (!Phone.isValidPhone(phone)) {
-            throw new IllegalValueException(Phone.MESSAGE_CONSTRAINTS);
+        if (!isValid.test(value)) {
+            throw new IllegalValueException(constraints);
         }
-        final Phone modelPhone = new Phone(phone);
-
-        if (email == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
-        }
-        if (!Email.isValidEmail(email)) {
-            throw new IllegalValueException(Email.MESSAGE_CONSTRAINTS);
-        }
-        final Email modelEmail = new Email(email);
-
-        if (company != null && !Company.isValidCompany(Company.normalize(company))) {
-            throw new IllegalValueException(Company.MESSAGE_CONSTRAINTS);
-        }
-        final Optional<Company> modelCompany = Optional.ofNullable(company).map(Company::new);
-
-        if (role != null && !Role.isValidRole(role)) {
-            throw new IllegalValueException(Role.MESSAGE_CONSTRAINTS);
-        }
-        final Optional<Role> modelRole = Optional.ofNullable(role).map(Role::new);
-
-        if (whereMet != null && !WhereMet.isValidWhereMet(whereMet)) {
-            throw new IllegalValueException(WhereMet.MESSAGE_CONSTRAINTS);
-        }
-        final Optional<WhereMet> modelWhereMet = Optional.ofNullable(whereMet).map(WhereMet::new);
-
-        Optional<Address> modelAddressOptional = restoreAddress();
-        final Remark modelRemark = new Remark(remark);
-
-        final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelCompany, modelRole, modelWhereMet,
-                modelAddressOptional, modelRemark, modelTags);
+        return Optional.of(create.apply(value));
     }
 
     /** Restores the address, interpreting the legacy placeholder when no presence flag was saved. */
     private Optional<Address> restoreAddress() throws IllegalValueException {
-        if (address == null) {
-            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Address.class.getSimpleName()));
-        }
-        if (!Address.isValidAddress(address)) {
-            throw new IllegalValueException(Address.MESSAGE_CONSTRAINTS);
-        }
-        Address modelAddress = new Address(address);
+        Address modelAddress = restoreRequired(address, Address.class, Address::isValidAddress, Address::new,
+                Address.MESSAGE_CONSTRAINTS);
         boolean hasAddress = addressProvided != null
                 ? addressProvided
                 : !Address.LEGACY_DEFAULT_VALUE.equals(address);
