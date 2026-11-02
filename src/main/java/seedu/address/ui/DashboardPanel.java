@@ -16,7 +16,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -110,7 +109,6 @@ public class DashboardPanel extends VBox {
         TableView<Application> applicationTable = new TableView<>(applications);
         applicationTable.getStyleClass().add("dashboard-application-table");
         applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        applicationTable.addEventHandler(ScrollEvent.SCROLL, event -> event.consume());
         applicationTable.setPlaceholder(createPlaceholder("No applications yet. Use addapp to create one."));
         applicationTable.getColumns().add(createRoleColumn());
         applicationTable.getColumns().add(createCompanyColumn());
@@ -139,7 +137,6 @@ public class DashboardPanel extends VBox {
         contactCardsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         contactCardsScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         contactCardsScrollPane.setPannable(true);
-        contactCardsScrollPane.addEventHandler(ScrollEvent.SCROLL, event -> event.consume());
         contactCardsScrollPane.setMinViewportHeight(CONTACT_CARD_HEIGHT);
         contactCardsScrollPane.setPrefViewportHeight(CONTACT_CARD_HEIGHT);
 

@@ -80,7 +80,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 ![Structure of the UI Component](images/UiClassDiagram.png)
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, `ApplicationListPanel`, `ApplicationCalendarPanel`, `DashboardPanel`, and `StatusBarFooter`. `MainWindow`, `CommandBox`, `ResultDisplay`, `StatusBarFooter`, `HelpWindow`, `PersonListPanel`, `ApplicationListPanel`, and the card classes inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts. `ApplicationCalendarPanel`, `DashboardPanel`, and `WorkspaceListPanel` extend the JavaFX `VBox` directly instead. `WorkspaceListPanel`, which wraps the contacts, applications, and calendar views in a consistently styled page, is omitted from the diagram for clarity.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
@@ -147,7 +147,7 @@ The `Model` component,
 `add` creates a contact without a supplied address; `getAddress()` returns the `Not provided` placeholder for display
 when the optional is empty. `edit` can supply or replace a non-blank address, but cannot clear it with an empty `a/`.
 
-Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active and replaces its empty-list placeholder with a message suggesting `list`, so an empty search result is not mistaken for an empty contact list. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
 
 <img src="images/ContactSearchActivityDiagram.png" width="650" />
 
@@ -510,7 +510,8 @@ beyond the cases below.
    and uses OR across keywords and contact fields.
 9. Enter `find Ad`, then `find nobodymatchesmanualtest`, then `list`.<br>
    **Expected:** Each search produces an empty list, because `Ad` is not the full word `Ada` and the other keyword
-   matches no field. `list` restores both contacts and removes the filter indicator.
+   matches no field. The empty list says that no contacts match the current search and suggests `list`, rather
+   than suggesting `add`. `list` restores both contacts and removes the filter indicator.
 
 ### Applications: creation, fields, status and validation
 
@@ -539,6 +540,11 @@ beyond the cases below.
 6. Enter `list`, then `editapp 2 d/Prepare interview notes`.<br>
    **Expected:** The command edits Graduate Engineer, even though Contacts was open, and switches to Applications.
    Its other fields and both contacts remain unchanged.
+7. Enter `addapp n/SWE Intern c/ACME (Singapore) d/Parentheses check dt/2026-11-04`, then
+   `addapp n/SWE Intern c/ACME [Singapore] d/Brackets check dt/2026-11-04`.<br>
+   **Expected:** The first application is added with the company `ACME (Singapore)`. The second is rejected because
+   square brackets are not permitted in company names. Delete the SWE Intern application with `deleteapp` and its
+   index so that two applications remain.
 
 ### Overview and sidebar quick commands
 
