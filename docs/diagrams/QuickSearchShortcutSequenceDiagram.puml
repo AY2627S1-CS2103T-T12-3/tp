@@ -15,7 +15,7 @@ User -> KeyEvent : presses Cmd+F / Ctrl+F
 KeyEvent -> MainWindow : KEY_PRESSED
 activate MainWindow
 MainWindow -> MainWindow : isQuickSearchShortcut(event)
-MainWindow -> CommandBox : focusForQuickSearch()
+MainWindow -> CommandBox : focusForQuickSearch(false)
 activate CommandBox
 CommandBox -> TextField : getText()
 TextField --> CommandBox : currentText
@@ -28,7 +28,6 @@ end
 
 CommandBox -> TextField : requestFocus()
 CommandBox -> TextField : positionCaret(text.length())
-TextField --> CommandBox : focus and caret at end
 deactivate CommandBox
 MainWindow -> KeyEvent : consume()
 deactivate MainWindow

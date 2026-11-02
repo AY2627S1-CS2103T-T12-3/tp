@@ -1,0 +1,37 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+box UI UI_COLOR_T1
+participant ":MainWindow" as ui UI_COLOR
+participant ":PersonListPanel" as panel UI_COLOR
+end box
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as logic LOGIC_COLOR
+participant ":AddressBookParser" as dispatcher LOGIC_COLOR
+participant ":FindCommandParser" as parser LOGIC_COLOR
+participant "find:FindCommand" as command LOGIC_COLOR
+end box
+box Model MODEL_COLOR_T1
+participant "model:Model" as model MODEL_COLOR
+end box
+ui -> logic : execute("find alex")
+activate logic
+logic -> dispatcher : parseCommand("find alex")
+dispatcher -> parser : parse("alex")
+create command
+parser -> command : create with predicate and search term
+parser --> dispatcher : find
+dispatcher --> logic : find
+logic -> command : execute(model)
+activate command
+command -> model : updateFilteredPersonList(predicate)
+model --> command
+command -> model : getFilteredPersonList()
+model --> command : matching contacts
+command --> logic : result (CONTACTS, SET, "alex")
+deactivate command
+logic --> ui : result
+deactivate logic
+ui -> panel : setActiveSearchTerm("alex")
+note over ui, panel : MainWindow also displays the Contacts page.
+@enduml
