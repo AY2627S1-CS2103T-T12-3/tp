@@ -9,7 +9,9 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* _{List the sources of reused or adapted ideas, code, documentation, and third-party libraries here, with links to the originals.}_
+* Based on [AddressBook-Level3](https://se-education.org/addressbook-level3/) by the SE-EDU initiative.
+* Libraries used: [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), [JUnit5](https://github.com/junit-team/junit5).
+* AI tools: team members used AI assistants (e.g. Claude Code) to help write and review code, tests and documentation, including the PPP of Alexander Seah (`docs/team/bedminer1.md`). All AI-assisted output was reviewed and edited by the team member who committed it.
 
 --------------------------------------------------------------------------------------------------------------------
 
