@@ -46,7 +46,7 @@ Use the left sidebar to switch between these views:
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Overview**     | A summary of applications and contacts, with the counts explained below. Below are an application table and contact cards, with contacts in reverse list order. Scroll to see more content. |
 | **Applications** | Indexed application cards. Run `listapp` before choosing an index for `editapp` or `deleteapp`.                                                                                             |
-| **Contacts**     | Indexed contact cards, including any active `find` filter. Run `list` to remove the filter.                                                                                                 |
+| **Contacts**     | Indexed contact cards, including any active `find` filter. If no contacts match the filter, the panel says so and suggests `list`. Run `list` to remove the filter.                         |
 | **Calendar**     | Applications grouped by their application dates in a Monday-to-Sunday weekly calendar. See [Viewing application dates](#viewing-application-dates-in-the-weekly-calendar).                  |
 
 **Overview application counts:**
