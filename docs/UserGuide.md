@@ -119,7 +119,7 @@ Adds a professional contact to InternTrack.
 Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER [w/WHERE_MET]`
 
 - All fields except `WHERE_MET` are required.
-- `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
+- `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' - ( )`, and must not exceed 100 characters.
 - `ROLE` is the role the person holds, such as `SWE Recruiter`. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 - `WHERE_MET` is optional and describes how or where you met the person. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 200 characters.
 - `NAME` may contain Unicode letters, digits, spaces, hyphens, and apostrophes. It must contain at least one letter or digit and be no longer than 100 characters. Leading and trailing whitespace is removed, and internal whitespace is reduced to one space.
@@ -143,7 +143,7 @@ Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`
 
 - `n/`, `c/`, `d/` and `dt/` are required; `s/` is optional. `dt/` records the date you applied, rather than an interview date or deadline.
 - `NAME` is the role or position title. It must not be blank, contain control characters, or exceed 100 characters.
-- `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
+- `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' - ( )`, and must not exceed 100 characters.
 - `DESCRIPTION` records relevant application details. It must not be blank or exceed 500 characters.
 - `DESCRIPTION` can contain short text that looks like a field, such as `n/a`, `s/o` or `c/o`. A prefix followed by a single letter is kept as part of the description, so to set a one-letter field, place it before `d/`.
 - `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format, from `2000-01-01` to `2099-12-31`. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.

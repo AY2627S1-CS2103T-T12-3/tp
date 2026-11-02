@@ -505,6 +505,11 @@ beyond the cases below.
 6. Enter `list`, then `editapp 2 d/Prepare interview notes`.<br>
    **Expected:** The command edits Graduate Engineer, even though Contacts was open, and switches to Applications.
    Its other fields and both contacts remain unchanged.
+7. Enter `addapp n/SWE Intern c/ACME (Singapore) d/Parentheses check dt/2026-11-04`, then
+   `addapp n/SWE Intern c/ACME [Singapore] d/Brackets check dt/2026-11-04`.<br>
+   **Expected:** The first application is added with the company `ACME (Singapore)`. The second is rejected because
+   square brackets are not permitted in company names. Delete the SWE Intern application with `deleteapp` and its
+   index so that two applications remain.
 
 ### Overview and sidebar quick commands
 
