@@ -80,7 +80,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 ![Structure of the UI Component](images/UiClassDiagram.png)
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, `ApplicationListPanel`, `ApplicationCalendarPanel`, `DashboardPanel`, and `StatusBarFooter`. `MainWindow`, `CommandBox`, `ResultDisplay`, `StatusBarFooter`, `HelpWindow`, `PersonListPanel`, `ApplicationListPanel`, and the card classes inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts. `ApplicationCalendarPanel`, `DashboardPanel`, and `WorkspaceListPanel` extend the JavaFX `VBox` directly instead. `WorkspaceListPanel`, which wraps the contacts, applications, and calendar views in a consistently styled page, is omitted from the diagram for clarity.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
@@ -143,6 +143,10 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
+`Person` stores its address as an `Optional<Address>`, giving the association a multiplicity of `0..1`.
+`add` creates a contact without a supplied address; `getAddress()` returns the `Not provided` placeholder for display
+when the optional is empty. `edit` can supply or replace a non-blank address, but cannot clear it with an empty `a/`.
+
 Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active and replaces its empty-list placeholder with a message suggesting `list`, so an empty search result is not mistaken for an empty contact list. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
 
 <img src="images/ContactSearchActivityDiagram.png" width="650" />
@@ -175,89 +179,115 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
-### \[Proposed\] Undo/redo feature
+### Saving changes safely
 
-#### Proposed Implementation
+After a command successfully changes contacts or applications in memory, InternTrack attempts to save those records
+before returning a successful result to the UI. After parsing a valid command and before executing it, `LogicManager`
+copies the current `AddressBook` so that it can restore the contact and application records in memory if saving throws
+an `IOException`.
 
-The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
+The saving flow is as follows:
 
-* `VersionedAddressBook#commit()` — Saves the current address book state in its history.
-* `VersionedAddressBook#undo()` — Restores the previous address book state from its history.
-* `VersionedAddressBook#redo()` — Restores a previously undone address book state from its history.
+1. `LogicManager` parses the command, copies the current `AddressBook`, then executes the command.
+1. If the command did not change contacts or applications, `LogicManager` returns its `CommandResult` without writing
+   the data file. For example, `list` and `find` do not need write permission.
+1. If the command changed the records, `LogicManager` asks `Storage` to save the updated `AddressBook`.
+1. If saving succeeds, the command result is returned normally.
+1. If saving throws an `AccessDeniedException` or another `IOException`, `LogicManager` restores the copied
+   `AddressBook` through `Model#setAddressBook`, then throws a `CommandException` that the UI displays as an error.
+   The command's record changes are therefore removed from memory.
 
-These operations are exposed in the `Model` interface as `Model#commitAddressBook()`, `Model#undoAddressBook()` and `Model#redoAddressBook()` respectively.
+This rollback restores contact and application records only; it does not restore the contact filter predicate or
+other UI state. Storage writes directly to the JSON file, so this mechanism does not guarantee that the previous file
+contents survive a failure partway through writing.
 
-Given below is an example usage scenario and how the undo/redo mechanism behaves at each step.
+#### Design considerations
 
-Step 1. The user launches the application for the first time. The `VersionedAddressBook` will be initialized with the initial address book state, and the `currentStatePointer` pointing to that single address book state.
+**Aspect: Restoring in-memory records when saving fails**
 
-![UndoRedoState0](images/UndoRedoState0.png)
+* **Alternative 1 (current choice):** Copy the complete `AddressBook` before executing a command and restore that
+  copy if saving fails.
+  * Pros: Command classes remain focused on their domain operation; record changes share the same handling of save
+    errors; a failed save does not leave those changes in memory or return a successful command result to the UI.
+  * Cons: Each command creates a copy of the records, which uses more memory as the data set grows.
 
-Step 2. The user executes `delete 5` command to delete the 5th person in the address book. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the address book after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted address book state.
+* **Alternative 2:** Save a change before applying it to the `Model`.
+  * Pros: Does not need to restore an in-memory copy after a failed save.
+  * Cons: Commands would need a separate staged representation of every change, or would need to be replayed after
+    saving. This duplicates command logic and makes validation and error handling harder to keep consistent.
 
-![UndoRedoState1](images/UndoRedoState1.png)
+### Multi-field contact search and active filters
 
-Step 3. The user executes `add n/David …​` to add a new person. The `add` command also calls `Model#commitAddressBook()`, causing another modified address book state to be saved into the `addressBookStateList`.
+The `find` command filters the existing contact list rather than building a separate search-result collection.
+`edit`, `delete`, and `remark` resolve indexes against this filtered Contacts list, even when another page is open.
+The numbers on Overview are not indexes into this list.
 
-![UndoRedoState2](images/UndoRedoState2.png)
+The search flow is as follows:
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If a command fails its execution, it will not call `Model#commitAddressBook()`, so the address book state will not be saved into the `addressBookStateList`.
+1. `FindCommandParser` rejects a blank query and splits a valid query into whitespace-separated keywords. If the
+   complete query is a valid phone number, it also adds the normalized phone number to the search keywords so that a
+   formatted query can match a stored phone number without separators.
+1. `FindCommand` passes `ContactContainsKeywordsPredicate` to `Model#updateFilteredPersonList`.
+1. The predicate checks every keyword against the name, phone, email, company, role, where-met detail, supplied
+   address, remark, and tags. A contact is retained when any keyword has a case-insensitive, full-word match in any
+   of those fields. `StringUtil` ignores punctuation at the beginning or end of a word while matching.
+1. `FindCommand` returns a `CommandResult` that requests the Contacts view and sets the active search term.
+   `MainWindow` forwards that term to `PersonListPanel`, which displays the persistent `Filtered by:` indicator.
 
-</div>
+The `FilteredList<Person>` remains backed by the model's contact list. After successful `edit` and `delete` commands,
+the active predicate remains in place and the search action leaves the indicator unchanged. The filtered list reflects
+the updated records automatically. After `list`, `add`, or `remark` completes successfully, the show-all predicate is
+active and the UI receives a clear search action, which removes the indicator.
 
-Step 4. The user now decides that adding the person was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous address book state, and restores the address book to that state.
+The predicate is updated during command execution, but `MainWindow` updates the indicator only after `Logic` returns
+a successful result. If saving an `add` or `remark` fails, the records are restored while the show-all predicate remains
+active; the previous indicator is not cleared because the successful result is not returned. `list` can reset both to
+the unfiltered state.
 
-![UndoRedoState3](images/UndoRedoState3.png)
+#### Design considerations
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index 0, pointing to the initial AddressBook state, then there are no previous AddressBook states to restore. The `undo` command uses `Model#canUndoAddressBook()` to check if this is the case. If so, it will return an error to the user rather
-than attempting to perform the undo.
+**Aspect: Search scope**
 
-</div>
+* **Alternative 1 (current choice):** Match any keyword against every contact field.
+  * Pros: A user can locate a recruiter using whatever detail they remember, such as a company, tag, email, or
+    where-met note. The same predicate also gives predictable OR behaviour for multiple keywords.
+  * Cons: A broad keyword can return more contacts than a name-only search, and results are not ranked.
 
-The following sequence diagram shows how an undo operation goes through the `Logic` component:
+* **Alternative 2:** Search names only, or require every keyword to match.
+  * Pros: Produces a narrower result list.
+  * Cons: Does not support the product's goal of retrieving professional contacts from partial job-search context.
 
-![UndoSequenceDiagram](images/UndoSequenceDiagram-Logic.png)
+### Weekly application calendar
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `UndoCommand` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram.
+`ApplicationCalendarPanel` receives the live `ObservableList<Application>` from `Logic`. It stores the Monday of the
+currently displayed week in `weekStart`; the previous and next controls move this date by one week, while **Today**
+resets it to the Monday of the computer's current week.
 
-</div>
+`renderWeek` rebuilds the seven day columns for the selected Monday through Sunday range. For each day, it iterates
+over the current application list, parses each recorded application date, and adds a card when the date matches that
+day. A card displays the application's role, company, and status; a day with no matching applications receives a
+`No applications` placeholder. The header omits years within a single year and shows both years for a week that spans
+two years.
 
-Similarly, how an undo operation goes through the `Model` component is shown below:
+The panel registers a `ListChangeListener` on the application list. Any add, edit, or delete therefore re-renders the
+currently selected week without maintaining a second, potentially stale date-grouped collection. When Calendar is
+visible, `MainWindow` also keeps it visible after a successful `addapp`, `editapp`, or `deleteapp`, so the refreshed
+week is shown immediately.
 
-![UndoSequenceDiagram](images/UndoSequenceDiagram-Model.png)
+#### Design considerations
 
-The `redo` command does the opposite — it calls `Model#redoAddressBook()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the address book to that state.
+**Aspect: Updating the calendar after an application change**
 
-<div markdown="span" class="alert alert-info">:information_source: **Note:** If the `currentStatePointer` is at index `addressBookStateList.size() - 1`, pointing to the latest address book state, then there are no undone AddressBook states to restore. The `redo` command uses `Model#canRedoAddressBook()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
+* **Alternative 1 (current choice):** Rebuild the seven visible day columns from the live application list whenever
+  that list changes.
+  * Pros: Date edits, status edits, additions, and deletions use one update path; the displayed week cannot retain a
+    stale card or cached date group.
+  * Cons: Rendering iterates over the application list once per visible day.
 
-</div>
-
-Step 5. The user then decides to execute the command `list`. Commands that do not modify the address book, such as `list`, will usually not call `Model#commitAddressBook()`, `Model#undoAddressBook()` or `Model#redoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
-
-![UndoRedoState4](images/UndoRedoState4.png)
-
-Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all address book states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David …​` command. This is the behavior that most modern desktop applications follow.
-
-![UndoRedoState5](images/UndoRedoState5.png)
-
-The following activity diagram summarizes what happens when a user executes a new command:
-
-<img src="images/CommitActivityDiagram.png" width="250" />
-
-#### Design considerations:
-
-**Aspect: How undo & redo execute:**
-
-* **Alternative 1 (current choice):** Saves the entire address book.
-  * Pros: Easy to implement.
-  * Cons: May have performance issues in terms of memory usage.
-
-* **Alternative 2:** Individual command knows how to undo/redo by
-  itself.
-  * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
-  * Cons: We must ensure that the implementation of each individual command is correct.
-
-_{more aspects and alternatives to be added}_
+* **Alternative 2:** Maintain a cached mapping from dates to application cards.
+  * Pros: Could reduce repeated date comparisons for a large application list.
+  * Cons: Every application mutation would have to update both the model and the cache correctly, including date
+    changes and rollback after a failed save.
 
 --------------------------------------------------------------------------------------------------------------------
 
