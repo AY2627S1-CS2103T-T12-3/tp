@@ -44,7 +44,7 @@ MainWindow -right-> Logic
 MainWindow *-down-> "1" CommandBox
 MainWindow *-down-> "1" ResultDisplay
 MainWindow *-down-> "1" StatusBarFooter
-MainWindow -down-> "0..1" HelpWindow
+MainWindow -down-> "1" HelpWindow
 MainWindow *-down-> "1" PersonListPanel
 MainWindow *-down-> "1" ApplicationListPanel
 MainWindow *-down-> "1" ApplicationCalendarPanel

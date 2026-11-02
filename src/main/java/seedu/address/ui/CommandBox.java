@@ -51,8 +51,9 @@ public class CommandBox extends UiPart<Region> {
     /**
      * Focuses the command field and prepares it for a contact search.
      */
-    void focusForQuickSearch() {
-        commandTextField.setText(getQuickSearchText(commandTextField.getText()));
+    void focusForQuickSearch(boolean replaceText) {
+        String searchText = replaceText ? FIND_COMMAND_PREFIX : getQuickSearchText(commandTextField.getText());
+        commandTextField.setText(searchText);
         commandTextField.requestFocus();
         commandTextField.positionCaret(commandTextField.getText().length());
     }

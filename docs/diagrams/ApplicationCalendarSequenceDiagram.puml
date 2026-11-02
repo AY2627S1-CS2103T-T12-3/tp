@@ -32,8 +32,10 @@ loop for each of the 7 days in the week
     activate CalendarPanel
     CalendarPanel -> Applications : iterate applications
     Applications --> CalendarPanel : applications
-    opt application date equals date
-        CalendarPanel -> CalendarPanel : createApplicationCard(application)\n(role and company)
+    loop for each application
+        opt application date equals date
+            CalendarPanel -> CalendarPanel : createApplicationCard(application)\n(role, company and status)
+        end
     end
     opt no application on date
         CalendarPanel -> CalendarPanel : add "No applications" label
@@ -44,7 +46,7 @@ deactivate CalendarPanel
 deactivate CalendarPanel
 
 note over CalendarPanel, Applications
-renderWeek() also runs whenever the application list changes,
-because the panel registers a ListChangeListener on it.
+Today resets weekStart to the current week. The selected week
+is retained across page switches; list changes trigger renderWeek().
 end note
 @enduml

@@ -1,80 +1,29 @@
 @startuml
 !include style.puml
-skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
-
-package "Model" as ModelPackage <<Rectangle>> {
-    class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
-    class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
-    class "<<interface>>\nModel" as Model
-
-    class AddressBook
-    class ModelManager
-    class UserPrefs
-
-    class UniquePersonList
-    class Person
-    class Name
-    class Phone
-    class Email
-    class Address
-    class Company
-    class Role
-    class WhereMet
-    class Remark
-    class Tag
-
-    class UniqueApplicationList
-    class Application
-    class ApplicationName
-    class ApplicationDate
-    class Description
-    class "<<enumeration>>\nApplicationStatus" as ApplicationStatus
+package "Model" as ModelPackage {
+class "<<interface>>\nModel" as Model
+class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
+class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
+class ModelManager
+class AddressBook
+class UserPrefs
+class UniquePersonList
+class UniqueApplicationList
+class Person
+class Application
 }
-
-AddressBook ..|> ReadOnlyAddressBook
 ModelManager ..|> Model
+AddressBook ..|> ReadOnlyAddressBook
 UserPrefs ..|> ReadOnlyUserPrefs
-
 Model ..> ReadOnlyAddressBook
 Model ..> ReadOnlyUserPrefs
 ModelManager *--> "1" AddressBook
 ModelManager *--> "1" UserPrefs
-ModelManager --> "0..* filtered" Person
-
+ModelManager --> "0..*" Person : filtered contacts
 AddressBook *--> "1" UniquePersonList
 AddressBook *--> "1" UniqueApplicationList
 UniquePersonList --> "0..*" Person
 UniqueApplicationList --> "0..*" Application
-
-Person *--> "1" Name
-Person *--> "1" Phone
-Person *--> "1" Email
-Person *--> "0..1" Address
-Person *--> "0..1" Company
-Person *--> "0..1" Role
-Person *--> "0..1" WhereMet
-Person *--> "1" Remark
-Person *--> "0..*" Tag
-
-Application *--> "1" ApplicationName
-Application *--> "1" Company
-Application *--> "1" Description
-Application *--> "1" ApplicationDate
-Application --> "1" ApplicationStatus : status
-
-' Keep application and person value objects on separate rows for readability.
-ApplicationName -[hidden]right-> ApplicationDate
-ApplicationDate -[hidden]right-> Description
-Description -[hidden]right-> ApplicationStatus
-ApplicationStatus -[hidden]down-> Name
-Name -[hidden]right-> Phone
-Phone -[hidden]right-> Email
-Email -[hidden]right-> Address
-Address -[hidden]right-> Company
-Company -[hidden]right-> Role
-Role -[hidden]right-> WhereMet
-WhereMet -[hidden]right-> Remark
-Remark -[hidden]right-> Tag
 @enduml
