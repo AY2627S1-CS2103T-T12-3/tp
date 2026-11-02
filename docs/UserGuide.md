@@ -58,7 +58,7 @@ Use the left sidebar to switch between these views:
 
 The **COMMAND BOX** accepts one command at a time. Press **Enter** to run it; the message below reports success or explains what needs correcting. A failed command stays in the box so you can edit and retry it.
 
-Under **QUICK COMMANDS**, selecting **addapp** or **add** replaces the command-box text with `addapp ` or `add `. Complete the fields and press Enter; selecting the button alone does not create a record. **find** focuses the box and inserts `find ` only if it is blank; existing text is preserved. These buttons prepare commands without changing the current view.
+Under **QUICK COMMANDS**, selecting **addapp**, **add**, or **find** replaces the command-box text with `addapp `, `add `, or `find ` respectively. Complete the fields and press Enter; selecting a button alone does not create a record or change the current view.
 
 **Choose indexes from the correct list.** Contact commands (`edit`, `remark`, `delete`) use the current Contacts list, including its search filter, even while you are viewing another page. Application commands (`editapp`, `deleteapp`) use the Applications list. Overview numbers are not contact-command indexes, because Overview displays contacts in a different order. Open the appropriate list and check the record before changing or deleting it.
 

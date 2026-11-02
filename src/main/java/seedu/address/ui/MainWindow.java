@@ -113,7 +113,7 @@ public class MainWindow extends UiPart<Stage> {
                 handleHelp();
                 event.consume();
             } else if (isQuickSearchShortcut(event) && commandBox != null) {
-                commandBox.focusForQuickSearch();
+                commandBox.focusForQuickSearch(false);
                 event.consume();
             }
         });
@@ -253,7 +253,7 @@ public class MainWindow extends UiPart<Stage> {
     /** Focuses the command box and prepares a contact search. */
     @FXML
     public void prepareContactSearch() {
-        commandBox.focusForQuickSearch();
+        commandBox.focusForQuickSearch(true);
     }
 
     /**
