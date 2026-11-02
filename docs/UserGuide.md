@@ -51,7 +51,7 @@ Use the left sidebar to switch between these views:
 
 **Overview application counts:**
 
-<p align="center" style="text-align: center; margin: 0 0 12px; line-height: 1.4;"><img src="images/overview-cropped.png" alt="Overview with application counts, application table and professional contacts" width="900" style="max-width: 100%; vertical-align: bottom;"><br><em>Overview summarises active applications, interviewing applications and professional contacts.</em></p>
+<p align="center" style="text-align: center; margin: 0 0 12px; line-height: 1.4;"><img src="images/overview-cropped.png" alt="Overview showing application counts and part of the application table" width="900" style="max-width: 100%; vertical-align: bottom;"><br><em>Overview shows application counts and an application table; scroll down to see contacts.</em></p>
 
 - **Active applications** includes applications with status `APPLIED`, `INTERVIEWING` or `OFFERED`. Applications with status `REJECTED` or `WITHDRAWN` are excluded. An `OFFERED` application still counts as active.
 - **Interviewing** includes only applications with status `INTERVIEWING`. These applications also count towards **Active applications**.
@@ -95,7 +95,7 @@ In the command box, press **Up** to recall earlier commands and **Down** to move
 
 - Prefixed fields can be in any order. For commands that use `INDEX`, keep the index immediately after the command word and before the fields.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
-  For `addapp` and `editapp`, place `d/DESCRIPTION` last to avoid the description-text exception explained under [Adding an application](#adding-an-application-addapp).
+  For `addapp` and `editapp`, place `d/DESCRIPTION` last to avoid the field-order ambiguity explained under [Adding an application](#adding-an-application-addapp). Prefix-like text inside the description may still be interpreted as a field.
 
 - Extraneous parameters for commands that take no parameters, such as `help`, `list`, `listapp`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
@@ -145,7 +145,8 @@ Format: `addapp n/NAME c/COMPANY dt/YYYY-MM-DD [s/STATUS] d/DESCRIPTION`
 - `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' - ( )`, and must not exceed 100 characters.
 - `DESCRIPTION` records relevant application details. It must not be blank or exceed 500 characters.
 - `DESCRIPTION` can contain short text that looks like a field, such as `n/a`, `s/o` or `c/o`. Within the description, a recognised prefix immediately followed by one letter and then a non-letter/digit character (such as a space or punctuation), or the end of the command, is kept as description text. This also affects longer values beginning with a one-letter word.
-- Place `d/DESCRIPTION` last to avoid that ambiguity. For example, `editapp 1 d/Updated n/A Engineer` changes the description to `Updated n/A Engineer` and leaves the application name unchanged. Use `editapp 1 n/A Engineer d/Updated` to update both fields.
+- Place `d/DESCRIPTION` last to avoid that field-order ambiguity. For example, `editapp 1 d/Updated n/A Engineer` changes the description to `Updated n/A Engineer` and leaves the application name unchanged. Use `editapp 1 n/A Engineer d/Updated` to update both fields.
+- Placing `d/` last does not prevent every prefix inside the description from being parsed as a field. For example, `editapp 1 d/Applied s/OFFERED` sets the description to `Applied` and changes the status to `OFFERED`. Reword text that would be parsed as another field, such as `s/OFFERED`; there is no escape syntax for this case.
 - `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format, from `2000-01-01` to `2099-12-31`. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
 - `STATUS` is optional. If omitted, the application is created with the `APPLIED` status.
 - The accepted status values are `APPLIED`, `INTERVIEWING`, `OFFERED`, `REJECTED`, and `WITHDRAWN`. Status values are case-insensitive.
@@ -206,6 +207,8 @@ Format: `listapp`
 
 ![Applications list showing indexes, application details and status colours](images/listApplicationsResult.png)
 
+The command box clears after a successful command; the command text shown in the image illustrates the command used.
+
 - Each application card shows its Name, Company, Description, Date, and Status. Status text uses a different colour for each status.
 - The result box shows how many applications are listed.
 - If you have no applications, InternTrack tells you so and suggests using `addapp` to add one.
@@ -254,6 +257,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/
 - At least one of the optional fields must be provided.
 - Supplied values replace existing values; omitted fields remain unchanged. Contact name, company, role, email, phone and where-met values follow the rules under [Adding a contact](#adding-a-contact-add).
 - `ADDRESS` can be any non-blank text. `TAG` must contain only ASCII letters and digits, with no spaces, for example `recruiter` or `careerFair2026`.
+- Names containing `/`, such as `a/l`, are not supported. Do not enter `edit 1 n/Tan a/l Lim`: InternTrack interprets `a/` as an address prefix, which can replace the contact’s address with `l Lim` and set the name to `Tan`. Use a name without `/`, for example `Tan al Lim`, and check the displayed contact after editing.
 - Empty values are rejected except for `w/` and `t/`, as described below. Company, role, address, name, email and phone cannot be cleared with an empty prefix.
 - To set or replace an address, use `edit INDEX a/ADDRESS`, for example `edit 1 a/NUS Computing`. Omitting `a/` preserves the existing address. There is no command to remove a supplied address: `edit 1 a/` is rejected, and `edit 1 a/Not provided` stores the literal text `Not provided` as an address rather than clearing it. That explicitly supplied text can be found with `find Not` or `find provided`.
 - An edit cannot give a contact the same name and email as another contact, ignoring letter case.
@@ -310,6 +314,8 @@ Examples:
 - `find alex david` returns matching contacts such as `Alex Yeoh` and `David Li`.
 
 If no contacts match, the list is empty. Run `list` to show all contacts again. Search applies to contacts only; it does not search applications.
+
+The command box clears after a successful search; the command text shown in the image illustrates the search. The red outlines highlight parts of the example.
 
 <p align="center" style="text-align: center; margin: 0 0 12px;"><img src="images/findContactsResult.png" alt="Results of find Google Recruiter, with the active filter and matching company and role fields highlighted" width="900" style="max-width: 100%;"></p>
 
