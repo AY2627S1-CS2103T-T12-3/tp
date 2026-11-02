@@ -60,6 +60,7 @@ public class ApplicationCalendarPanel extends VBox {
         header.setAlignment(Pos.CENTER);
 
         weekColumns.setFillHeight(true);
+        weekColumns.setMinHeight(USE_PREF_SIZE);
         ScrollPane weekScrollPane = new ScrollPane(weekColumns);
         weekScrollPane.getStyleClass().add("calendar-scroll-pane");
         weekScrollPane.setFitToHeight(true);
