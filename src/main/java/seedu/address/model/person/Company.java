@@ -12,25 +12,27 @@ public class Company {
     public static final int MAX_LENGTH = 100;
 
     public static final String MESSAGE_CONSTRAINTS = "Company names should not be blank, may only contain letters, "
-            + "digits, spaces, and & . , ' -, and must not exceed " + MAX_LENGTH + " characters.";
+            + "digits, spaces, and & . , ' - ( ), and must not exceed " + MAX_LENGTH + " characters.";
 
     /*
      * The first character of the company must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.
      */
-    public static final String VALIDATION_REGEX = "[\\p{L}\\p{N}&.,'-][\\p{L}\\p{N}&.,' -]*";
+    public static final String VALIDATION_REGEX = "[\\p{L}\\p{N}&.,'()-][\\p{L}\\p{N}&.,'() -]*";
 
     public final String value;
 
     /**
      * Constructs a {@code Company}.
+     * Repeated internal whitespace is reduced to one space.
      *
      * @param company A valid company name.
      */
     public Company(String company) {
         requireNonNull(company);
-        checkArgument(isValidCompany(company), MESSAGE_CONSTRAINTS);
-        value = company;
+        String normalizedCompany = normalize(company);
+        checkArgument(isValidCompany(normalizedCompany), MESSAGE_CONSTRAINTS);
+        value = normalizedCompany;
     }
 
     /**
@@ -38,6 +40,14 @@ public class Company {
      */
     public static boolean isValidCompany(String test) {
         return test.length() <= MAX_LENGTH && test.matches(VALIDATION_REGEX);
+    }
+
+    /**
+     * Returns {@code company} with leading and trailing whitespace removed
+     * and repeated internal whitespace reduced to one space.
+     */
+    public static String normalize(String company) {
+        return company.trim().replaceAll("\\s{2,}", " ");
     }
 
     @Override

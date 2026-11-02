@@ -12,11 +12,14 @@ import seedu.address.logic.commands.AddApplicationCommand;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
+import seedu.address.logic.commands.DeleteApplicationCommand;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.EditApplicationCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
+import seedu.address.logic.commands.ListApplicationCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.RemarkCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -56,12 +59,15 @@ public class AddressBookParser {
         return switch (commandWord) {
             case AddCommand.COMMAND_WORD -> new AddCommandParser().parse(arguments);
             case AddApplicationCommand.COMMAND_WORD -> new AddApplicationCommandParser().parse(arguments);
+            case EditApplicationCommand.COMMAND_WORD -> new EditApplicationCommandParser().parse(arguments);
+            case DeleteApplicationCommand.COMMAND_WORD -> new DeleteApplicationCommandParser().parse(arguments);
             case EditCommand.COMMAND_WORD -> new EditCommandParser().parse(arguments);
             case DeleteCommand.COMMAND_WORD -> new DeleteCommandParser().parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
             case RemarkCommand.COMMAND_WORD -> new RemarkCommandParser().parse(arguments);
             case ListCommand.COMMAND_WORD -> new ListCommand();
+            case ListApplicationCommand.COMMAND_WORD -> new ListApplicationCommand();
             case ExitCommand.COMMAND_WORD -> new ExitCommand();
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
             default -> {

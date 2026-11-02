@@ -3,18 +3,26 @@
 skinparam arrowThickness 1.1
 skinparam arrowColor UI_COLOR_T4
 skinparam classBackgroundColor UI_COLOR
+skinparam class<<VBox>> {
+    BackgroundColor #FFFFFF
+    BorderColor UI_COLOR
+    FontColor UI_COLOR
+}
 
 package UI <<Rectangle>>{
 Class "<<interface>>\nUi" as Ui
-Class "{abstract}\nUiPart" as UiPart
 Class UiManager
 Class MainWindow
 Class HelpWindow
 Class ResultDisplay
+Class CommandBox
+Class StatusBarFooter
 Class PersonListPanel
 Class PersonCard
-Class StatusBarFooter
-Class CommandBox
+Class ApplicationListPanel
+Class ApplicationCard
+Class DashboardPanel <<VBox>>
+Class ApplicationCalendarPanel <<VBox>>
 }
 
 package Model <<Rectangle>> {
@@ -28,33 +36,39 @@ Class HiddenLogic #FFFFFF
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> Ui
 
-UiManager .left.|> Ui
+UiManager .up.|> Ui
 UiManager -down-> "1" MainWindow
-MainWindow *-down->  "1" CommandBox
+UiManager -right-> Logic
+MainWindow -right-> Logic
+
+MainWindow *-down-> "1" CommandBox
 MainWindow *-down-> "1" ResultDisplay
-MainWindow *-down-> "1" PersonListPanel
 MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "0..1" HelpWindow
+MainWindow -down-> "1" HelpWindow
+MainWindow *-down-> "1" PersonListPanel
+MainWindow *-down-> "1" ApplicationListPanel
+MainWindow *-down-> "1" ApplicationCalendarPanel
+MainWindow *-down-> "1" DashboardPanel
 
 PersonListPanel -down-> "*" PersonCard
+ApplicationListPanel -down-> "*" ApplicationCard
 
-MainWindow -left-|> UiPart
 
-ResultDisplay --|> UiPart
-CommandBox --|> UiPart
-PersonListPanel --|> UiPart
-PersonCard --|> UiPart
-StatusBarFooter --|> UiPart
-HelpWindow --|> UiPart
+HelpWindow -[hidden]right- ResultDisplay
+ResultDisplay -[hidden]right- CommandBox
+CommandBox -[hidden]right- StatusBarFooter
+StatusBarFooter -[hidden]right- PersonListPanel
+PersonListPanel -[hidden]right- ApplicationListPanel
+ApplicationListPanel -[hidden]right- ApplicationCalendarPanel
+ApplicationCalendarPanel -[hidden]right- DashboardPanel
 
 PersonCard ..> Model
-UiManager -right-> Logic
-MainWindow -left-> Logic
+ApplicationCard ..> Model
+ApplicationCalendarPanel ..> Model
+DashboardPanel ..> Model
 
-PersonListPanel -[hidden]left- HelpWindow
-HelpWindow -[hidden]left- CommandBox
-CommandBox -[hidden]left- ResultDisplay
-ResultDisplay -[hidden]left- StatusBarFooter
-
-MainWindow -[hidden]-|> UiPart
+legend bottom right
+MainWindow and the green parts below it extend UiPart.
+White boxes extend JavaFX VBox directly.
+end legend
 @enduml

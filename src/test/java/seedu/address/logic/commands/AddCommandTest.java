@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
@@ -41,6 +42,7 @@ public class AddCommandTest {
 
         assertEquals(String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(validPerson)),
                 commandResult.getFeedbackToUser());
+        assertEquals(DisplayedList.CONTACTS, commandResult.getDisplayedList());
         assertEquals(List.of(validPerson), modelStub.personsAdded);
     }
 
@@ -135,6 +137,16 @@ public class AddCommandTest {
 
         @Override
         public void deletePerson(Person target) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void setApplication(Application target, Application editedApplication) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void deleteApplication(Application target) {
             throw new AssertionError("This method should not be called.");
         }
 

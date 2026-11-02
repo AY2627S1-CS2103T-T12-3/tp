@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
@@ -11,14 +12,23 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.Person;
 
 /**
- * Panel containing the list of persons.
+ * Panel containing the list of contacts.
  */
 public class PersonListPanel extends UiPart<Region> {
+    public static final String EMPTY_LIST_MESSAGE = "No contacts to show. Use the add command to add a contact.";
+    public static final String NO_MATCHING_CONTACTS_MESSAGE =
+            "No contacts match the current search. Use the list command to show all contacts.";
+
     private static final String FXML = "PersonListPanel.fxml";
     private final Logger logger = LogsCenter.getLogger(PersonListPanel.class);
 
     @FXML
     private ListView<Person> personListView;
+
+    @FXML
+    private Label activeSearchLabel;
+
+    private final Label placeholder;
 
     /**
      * Creates a {@code PersonListPanel} with the given {@code ObservableList}.
@@ -27,6 +37,28 @@ public class PersonListPanel extends UiPart<Region> {
         super(FXML);
         personListView.setItems(personList);
         personListView.setCellFactory(listView -> new PersonListViewCell());
+        placeholder = createPlaceholder();
+        personListView.setPlaceholder(placeholder);
+    }
+
+    private static Label createPlaceholder() {
+        Label placeholder = new Label(EMPTY_LIST_MESSAGE);
+        placeholder.getStyleClass().add("empty-list-placeholder");
+        return placeholder;
+    }
+
+    /** Returns the message shown when the contact list is empty, depending on whether a search is active. */
+    static String getEmptyListMessage(boolean hasSearchTerm) {
+        return hasSearchTerm ? NO_MATCHING_CONTACTS_MESSAGE : EMPTY_LIST_MESSAGE;
+    }
+
+    /** Updates the persistent indicator for the currently active contact search. */
+    public void setActiveSearchTerm(String searchTerm) {
+        boolean hasSearchTerm = !searchTerm.isEmpty();
+        activeSearchLabel.setText(hasSearchTerm ? "Filtered by: " + searchTerm : "");
+        activeSearchLabel.setVisible(hasSearchTerm);
+        activeSearchLabel.setManaged(hasSearchTerm);
+        placeholder.setText(getEmptyListMessage(hasSearchTerm));
     }
 
     /**

@@ -17,8 +17,10 @@ import seedu.address.model.application.Application;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
 import seedu.address.model.application.Description;
+import seedu.address.model.application.exceptions.ApplicationNotFoundException;
+import seedu.address.model.application.exceptions.DuplicateApplicationException;
 import seedu.address.model.person.Company;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.ContactContainsKeywordsPredicate;
 import seedu.address.testutil.AddressBookBuilder;
 
 public class ModelManagerTest {
@@ -123,7 +125,7 @@ public class ModelManagerTest {
 
         // different filteredList -> returns false
         String[] keywords = ALICE.getName().fullName.split("\\s+");
-        modelManager.updateFilteredPersonList(new NameContainsKeywordsPredicate(List.of(keywords)));
+        modelManager.updateFilteredPersonList(new ContactContainsKeywordsPredicate(List.of(keywords)));
         assertFalse(modelManager.equals(new ModelManager(addressBook, userPrefs)));
 
         // resets modelManager to initial state for upcoming tests
@@ -133,5 +135,37 @@ public class ModelManagerTest {
         UserPrefs differentUserPrefs = new UserPrefs();
         differentUserPrefs.setGuiSettings(new GuiSettings(1, 2, 3, 4));
         assertFalse(modelManager.equals(new ModelManager(addressBook, differentUserPrefs)));
+    }
+
+    @Test
+    public void setAndDeleteApplication_updatesAddressBookAndPreservesContactFilter() {
+        modelManager.addApplication(SOFTWARE_ENGINEER_INTERN);
+        modelManager.addPerson(ALICE);
+        modelManager.updateFilteredPersonList(unused -> false);
+        Application updated = new Application(SOFTWARE_ENGINEER_INTERN.getName(), SOFTWARE_ENGINEER_INTERN.getCompany(),
+                new Description("Interview scheduled."), new ApplicationDate("2026-10-15"));
+
+        modelManager.setApplication(SOFTWARE_ENGINEER_INTERN, updated);
+        assertEquals(List.of(updated), modelManager.getAddressBook().getApplicationList());
+        modelManager.deleteApplication(updated);
+        assertTrue(modelManager.getAddressBook().getApplicationList().isEmpty());
+        assertEquals(List.of(ALICE), modelManager.getAddressBook().getPersonList());
+        assertTrue(modelManager.getFilteredPersonList().isEmpty());
+    }
+
+    @Test
+    public void setAndDeleteApplication_invalidArguments_throwWithoutChanges() {
+        modelManager.addApplication(SOFTWARE_ENGINEER_INTERN);
+        Application missing = new Application(new ApplicationName("Graduate Engineer"), new Company("Other Corp"),
+                new Description("Applied online."), new ApplicationDate("2026-10-15"));
+        assertThrows(NullPointerException.class, () -> modelManager.setApplication(null, SOFTWARE_ENGINEER_INTERN));
+        assertThrows(NullPointerException.class, () -> modelManager.setApplication(SOFTWARE_ENGINEER_INTERN, null));
+        assertThrows(NullPointerException.class, () -> modelManager.deleteApplication(null));
+        assertThrows(ApplicationNotFoundException.class, () -> modelManager.deleteApplication(missing));
+        assertThrows(ApplicationNotFoundException.class, () -> modelManager.setApplication(missing, missing));
+        modelManager.addApplication(missing);
+        assertThrows(DuplicateApplicationException.class, () -> modelManager.setApplication(SOFTWARE_ENGINEER_INTERN,
+                missing));
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN, missing), modelManager.getAddressBook().getApplicationList());
     }
 }

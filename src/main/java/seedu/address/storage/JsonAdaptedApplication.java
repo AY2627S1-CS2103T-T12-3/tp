@@ -7,6 +7,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.application.Application;
 import seedu.address.model.application.ApplicationDate;
 import seedu.address.model.application.ApplicationName;
+import seedu.address.model.application.ApplicationStatus;
 import seedu.address.model.application.Description;
 import seedu.address.model.person.Company;
 
@@ -21,17 +22,20 @@ class JsonAdaptedApplication {
     private final String company;
     private final String description;
     private final String date;
+    private final String status;
 
     /**
      * Constructs a {@code JsonAdaptedApplication} with the given application details.
      */
     @JsonCreator
     public JsonAdaptedApplication(@JsonProperty("name") String name, @JsonProperty("company") String company,
-            @JsonProperty("description") String description, @JsonProperty("date") String date) {
+            @JsonProperty("description") String description, @JsonProperty("date") String date,
+            @JsonProperty("status") String status) {
         this.name = name;
         this.company = company;
         this.description = description;
         this.date = date;
+        this.status = status;
     }
 
     /**
@@ -42,6 +46,7 @@ class JsonAdaptedApplication {
         company = source.getCompany().value;
         description = source.getDescription().value;
         date = source.getDate().value;
+        status = source.getStatus().name();
     }
 
     /**
@@ -62,7 +67,7 @@ class JsonAdaptedApplication {
         if (company == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Company.class.getSimpleName()));
         }
-        if (!Company.isValidCompany(company)) {
+        if (!Company.isValidCompany(Company.normalize(company))) {
             throw new IllegalValueException(Company.MESSAGE_CONSTRAINTS);
         }
         final Company modelCompany = new Company(company);
@@ -85,6 +90,17 @@ class JsonAdaptedApplication {
         }
         final ApplicationDate modelDate = new ApplicationDate(date);
 
-        return new Application(modelName, modelCompany, modelDescription, modelDate);
+        final ApplicationStatus modelStatus;
+        if (status == null) {
+            modelStatus = ApplicationStatus.APPLIED;
+        } else {
+            try {
+                modelStatus = ApplicationStatus.fromString(status);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalValueException(ApplicationStatus.MESSAGE_CONSTRAINTS);
+            }
+        }
+
+        return new Application(modelName, modelCompany, modelDescription, modelDate, modelStatus);
     }
 }

@@ -16,6 +16,8 @@ public class Messages {
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command.";
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n%1$s";
     public static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid.";
+    public static final String MESSAGE_INVALID_APPLICATION_DISPLAYED_INDEX =
+            "The application index provided is invalid.";
     public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d person(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
@@ -43,6 +45,7 @@ public class Messages {
                 .append("; Email: ")
                 .append(person.getEmail());
         person.getCompany().ifPresent(company -> builder.append("; Company: ").append(company));
+        person.getRole().ifPresent(role -> builder.append("; Role: ").append(role));
         person.getWhereMet().ifPresent(whereMet -> builder.append("; Where met: ").append(whereMet));
         builder.append("; Address: ")
                 .append(person.getAddress())
@@ -58,7 +61,8 @@ public class Messages {
         return application.getName()
                 + "; Company: " + application.getCompany()
                 + "; Description: " + application.getDescription()
-                + "; Date: " + application.getDate();
+                + "; Date: " + application.getDate()
+                + "; Status: " + application.getStatus();
     }
 
 }

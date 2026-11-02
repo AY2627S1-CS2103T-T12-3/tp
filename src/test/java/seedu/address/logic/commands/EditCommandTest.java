@@ -8,6 +8,7 @@ import static seedu.address.logic.commands.CommandTestUtil.DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_COMPANY_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_ROLE_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_WHERE_MET_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
@@ -16,6 +17,8 @@ import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +42,7 @@ public class EditCommandTest {
 
     @Test
     public void execute_allFieldsSpecifiedUnfilteredList_success() {
-        Person editedPerson = new PersonBuilder().withCompany(VALID_COMPANY_BOB).build();
+        Person editedPerson = new PersonBuilder().withCompany(VALID_COMPANY_BOB).withRole(VALID_ROLE_BOB).build();
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder(editedPerson).build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
 
@@ -88,6 +91,64 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_whereMetCleared_removesWhereMet() {
+        Person original = new PersonBuilder(model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()))
+                .build();
+        Person editedPerson = new PersonBuilder(original).withoutWhereMet().build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptor();
+        descriptor.clearWhereMet();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(original, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_roleSpecified_preservesOtherFields() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person editedPerson = new PersonBuilder(original).withRole(VALID_ROLE_BOB).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withRole(VALID_ROLE_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(original, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_unrelatedFieldSpecified_preservesRole() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person editedPerson = new PersonBuilder(original).withPhone(VALID_PHONE_BOB).build();
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(original, editedPerson);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        assertEquals(original.getRole(), model.getFilteredPersonList().get(0).getRole());
+    }
+
+    @Test
+    public void execute_unrelatedFieldSpecified_preservesAbsentAddress() throws Exception {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person personWithoutAddress = new PersonBuilder(original).withoutAddress().build();
+        model.setPerson(original, personWithoutAddress);
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build();
+        new EditCommand(INDEX_FIRST_PERSON, descriptor).execute(model);
+
+        assertFalse(model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased())
+                .getAddressOptional().isPresent());
+    }
+
+    @Test
     public void execute_noFieldSpecifiedUnfilteredList_success() {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
         Person editedPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
@@ -111,9 +172,11 @@ public class EditCommandTest {
         String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
         expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
 
         assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        assertEquals(List.of(), model.getFilteredPersonList());
     }
 
     @Test
@@ -171,6 +234,7 @@ public class EditCommandTest {
         EditPersonDescriptor copyDescriptor = new EditPersonDescriptor(DESC_AMY);
         EditCommand commandWithSameValues = new EditCommand(INDEX_FIRST_PERSON, copyDescriptor);
         assertTrue(standardCommand.equals(commandWithSameValues));
+        assertEquals(standardCommand.hashCode(), commandWithSameValues.hashCode());
 
         // same object -> returns true
         assertTrue(standardCommand.equals(standardCommand));

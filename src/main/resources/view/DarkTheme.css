@@ -120,6 +120,12 @@
     -fx-text-fill: white;
 }
 
+.empty-list-placeholder {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+}
+
 .cell_big_label {
     -fx-font-family: "Segoe UI Semibold";
     -fx-font-size: 16px;
@@ -130,6 +136,30 @@
     -fx-font-family: "Segoe UI";
     -fx-font-size: 13px;
     -fx-text-fill: #010504;
+}
+
+.list-cell .application-status {
+    -fx-font-family: "Segoe UI Semibold";
+}
+
+.list-cell .application-status-applied {
+    -fx-text-fill: #2e75b6;
+}
+
+.list-cell .application-status-interviewing {
+    -fx-text-fill: #6f42c1;
+}
+
+.list-cell .application-status-offered {
+    -fx-text-fill: #22863a;
+}
+
+.list-cell .application-status-rejected {
+    -fx-text-fill: #c0392b;
+}
+
+.list-cell .application-status-withdrawn {
+    -fx-text-fill: #a66a00;
 }
 
 .stack-pane {

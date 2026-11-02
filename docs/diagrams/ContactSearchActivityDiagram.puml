@@ -1,0 +1,26 @@
+@startuml
+!include style.puml
+
+title Contact search matching
+
+skinparam activity {
+    BackgroundColor #FFFFFF
+    BorderColor MODEL_COLOR
+    FontColor #222222
+    DiamondBackgroundColor #FFFFFF
+    DiamondBorderColor MODEL_COLOR
+}
+skinparam conditionStyle diamond
+skinparam ArrowColor MODEL_COLOR
+skinparam ArrowFontColor #222222
+
+start
+:Receive a contact and search keywords;
+:Check keywords against supplied fields using\ncase-insensitive, full-word matching; stop at the first match;
+if (Match found?) then (yes)
+    :Include contact in filtered results;
+else (no)
+    :Exclude contact from filtered results;
+endif
+stop
+@enduml

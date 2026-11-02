@@ -8,6 +8,7 @@ import static seedu.address.testutil.Assert.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
@@ -37,8 +38,9 @@ public class AddApplicationCommandTest {
 
         CommandResult commandResult = new AddApplicationCommand(SOFTWARE_ENGINEER_INTERN).execute(model);
 
-        assertEquals(String.format(AddApplicationCommand.MESSAGE_SUCCESS, Messages.format(SOFTWARE_ENGINEER_INTERN)),
-                commandResult.getFeedbackToUser());
+        assertEquals(new CommandResult(
+                String.format(AddApplicationCommand.MESSAGE_SUCCESS, Messages.format(SOFTWARE_ENGINEER_INTERN)),
+                DisplayedList.APPLICATIONS), commandResult);
         assertTrue(model.hasApplication(SOFTWARE_ENGINEER_INTERN));
     }
 

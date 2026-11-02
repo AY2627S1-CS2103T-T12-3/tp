@@ -5,10 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import seedu.address.model.application.exceptions.ApplicationNotFoundException;
 import seedu.address.model.application.exceptions.DuplicateApplicationException;
 import seedu.address.model.person.Company;
 
@@ -118,5 +122,83 @@ public class UniqueApplicationListTest {
     @Test
     public void toStringMethod() {
         assertEquals(uniqueApplicationList.asUnmodifiableObservableList().toString(), uniqueApplicationList.toString());
+    }
+
+    @Test
+    public void setApplication_nullArguments_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> uniqueApplicationList
+                .setApplication(null, SOFTWARE_ENGINEER_INTERN));
+        assertThrows(NullPointerException.class, () -> uniqueApplicationList
+                .setApplication(SOFTWARE_ENGINEER_INTERN, null));
+    }
+
+    @Test
+    public void setApplication_missingTarget_throwsApplicationNotFoundException() {
+        uniqueApplicationList.add(SOFTWARE_ENGINEER_INTERN);
+        assertThrows(ApplicationNotFoundException.class, () -> uniqueApplicationList
+                .setApplication(PRODUCT_MANAGER_INTERN, SOFTWARE_ENGINEER_INTERN));
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN), uniqueApplicationList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setApplication_sameIdentityWithNewDetails_preservesPositionAndNotifiesObservers() {
+        uniqueApplicationList.setApplications(List.of(SOFTWARE_ENGINEER_INTERN, PRODUCT_MANAGER_INTERN));
+        Application updated = new Application(new ApplicationName("software engineer intern"),
+                new Company("tech corp"), new Description("Interview scheduled."), new ApplicationDate("2026-10-15"));
+        ObservableList<Application> observed = uniqueApplicationList.asUnmodifiableObservableList();
+        List<Application> observedContents = new ArrayList<>();
+        observed.addListener((ListChangeListener<Application>) change -> {
+            observedContents.clear();
+            observedContents.addAll(change.getList());
+        });
+
+        uniqueApplicationList.setApplication(SOFTWARE_ENGINEER_INTERN, updated);
+
+        assertEquals(List.of(updated, PRODUCT_MANAGER_INTERN), observed);
+        assertEquals(List.of(updated, PRODUCT_MANAGER_INTERN), observedContents);
+    }
+
+    @Test
+    public void setApplication_changedIdentity_preservesPosition() {
+        uniqueApplicationList.add(SOFTWARE_ENGINEER_INTERN);
+        uniqueApplicationList.setApplication(SOFTWARE_ENGINEER_INTERN, PRODUCT_MANAGER_INTERN);
+        assertEquals(List.of(PRODUCT_MANAGER_INTERN), uniqueApplicationList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setApplication_duplicateIdentity_throwsWithoutChanges() {
+        uniqueApplicationList.setApplications(List.of(SOFTWARE_ENGINEER_INTERN, PRODUCT_MANAGER_INTERN));
+        Application duplicate = new Application(new ApplicationName("product manager intern"),
+                new Company("other corp"), new Description("Different details."), new ApplicationDate("2026-10-15"));
+        assertThrows(DuplicateApplicationException.class, () -> uniqueApplicationList
+                .setApplication(SOFTWARE_ENGINEER_INTERN, duplicate));
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN, PRODUCT_MANAGER_INTERN),
+                uniqueApplicationList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void remove_nullApplication_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> uniqueApplicationList.remove(null));
+    }
+
+    @Test
+    public void remove_missingOrDifferentDetails_throwsWithoutChanges() {
+        uniqueApplicationList.add(SOFTWARE_ENGINEER_INTERN);
+        assertThrows(ApplicationNotFoundException.class, () -> uniqueApplicationList.remove(PRODUCT_MANAGER_INTERN));
+        Application sameIdentity = new Application(SOFTWARE_ENGINEER_INTERN.getName(),
+                SOFTWARE_ENGINEER_INTERN.getCompany(),
+                new Description("Different details."), SOFTWARE_ENGINEER_INTERN.getDate());
+        assertThrows(ApplicationNotFoundException.class, () -> uniqueApplicationList.remove(sameIdentity));
+        assertEquals(List.of(SOFTWARE_ENGINEER_INTERN), uniqueApplicationList.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void remove_existingApplication_updatesObservedList() {
+        uniqueApplicationList.setApplications(List.of(SOFTWARE_ENGINEER_INTERN, PRODUCT_MANAGER_INTERN));
+        ObservableList<Application> observed = uniqueApplicationList.asUnmodifiableObservableList();
+        uniqueApplicationList.remove(SOFTWARE_ENGINEER_INTERN);
+        assertEquals(List.of(PRODUCT_MANAGER_INTERN), observed);
+        uniqueApplicationList.remove(PRODUCT_MANAGER_INTERN);
+        assertTrue(observed.isEmpty());
     }
 }

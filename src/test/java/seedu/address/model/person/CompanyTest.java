@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -17,6 +18,19 @@ public class CompanyTest {
     public void constructor_invalidCompany_throwsIllegalArgumentException() {
         String invalidCompany = "";
         assertThrows(IllegalArgumentException.class, () -> new Company(invalidCompany));
+    }
+
+    @Test
+    public void constructor_repeatedInternalWhitespace_normalized() {
+        assertEquals("Tech Corp", new Company("Tech  Corp").value);
+        assertEquals("Bank of America", new Company("Bank   of  America").value);
+        assertEquals(new Company("Tech Corp"), new Company("Tech  Corp"));
+    }
+
+    @Test
+    public void constructor_overMaxLengthOnlyBeforeNormalization_accepted() {
+        String paddedCompany = "Tech" + " ".repeat(Company.MAX_LENGTH) + "Corp";
+        assertEquals("Tech Corp", new Company(paddedCompany).value);
     }
 
     @Test
@@ -41,6 +55,8 @@ public class CompanyTest {
         assertTrue(Company.isValidCompany("McDonald's")); // with apostrophe
         assertTrue(Company.isValidCompany("Rolls-Royce")); // with hyphen
         assertTrue(Company.isValidCompany("Société Générale")); // non-ASCII letters
+        assertTrue(Company.isValidCompany("ACME (Singapore)")); // with parentheses
+        assertTrue(Company.isValidCompany("(ACME) Pte. Ltd.")); // leading parenthesis
         assertTrue(Company.isValidCompany("a".repeat(Company.MAX_LENGTH))); // maximum length
     }
 

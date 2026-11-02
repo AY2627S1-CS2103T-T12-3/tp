@@ -8,6 +8,8 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
+import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -28,12 +30,28 @@ public class ListCommandTest {
 
     @Test
     public void execute_listIsNotFiltered_showsSameList() {
-        assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
+        String expectedMessage = String.format(ListCommand.MESSAGE_SUCCESS,
+                expectedModel.getFilteredPersonList().size());
+        assertCommandSuccess(new ListCommand(), model,
+                new CommandResult(expectedMessage, DisplayedList.CONTACTS, ContactSearchAction.CLEAR, ""),
+                expectedModel);
     }
 
     @Test
     public void execute_listIsFiltered_showsEverything() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
-        assertCommandSuccess(new ListCommand(), model, ListCommand.MESSAGE_SUCCESS, expectedModel);
+        String expectedMessage = String.format(ListCommand.MESSAGE_SUCCESS,
+                expectedModel.getFilteredPersonList().size());
+        assertCommandSuccess(new ListCommand(), model,
+                new CommandResult(expectedMessage, DisplayedList.CONTACTS, ContactSearchAction.CLEAR, ""),
+                expectedModel);
+    }
+
+    @Test
+    public void execute_emptyContactList_showsEmptyMessage() {
+        Model emptyModel = new ModelManager();
+        assertCommandSuccess(new ListCommand(), emptyModel,
+                new CommandResult(ListCommand.MESSAGE_EMPTY, DisplayedList.CONTACTS,
+                        ContactSearchAction.CLEAR, ""), new ModelManager());
     }
 }

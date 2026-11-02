@@ -10,6 +10,8 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
+import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
@@ -57,13 +59,14 @@ public class RemarkCommand extends Command {
         Person personToEdit = lastShownList.get(index.getZeroBased());
         Person editedPerson = new Person(
                 personToEdit.getName(), personToEdit.getPhone(), personToEdit.getEmail(),
-                personToEdit.getCompany(), personToEdit.getWhereMet(), personToEdit.getAddress(), remark,
-                personToEdit.getTags());
+                personToEdit.getCompany(), personToEdit.getRole(), personToEdit.getWhereMet(),
+                personToEdit.getAddressOptional(), remark, personToEdit.getTags());
 
         model.setPerson(personToEdit, editedPerson);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
 
-        return new CommandResult(generateSuccessMessage(editedPerson));
+        return new CommandResult(generateSuccessMessage(editedPerson), DisplayedList.CONTACTS,
+                ContactSearchAction.CLEAR, "");
     }
 
     /**

@@ -10,9 +10,9 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 public class Phone {
 
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Phone numbers should only contain digits, and should be at least 3 digits long";
-    public static final String VALIDATION_REGEX = "\\d{3,}";
+    public static final String MESSAGE_CONSTRAINTS = "Phone numbers should contain 7-15 digits, with an optional "
+            + "leading '+' for a country code. Spaces and hyphens are allowed as separators.";
+    private static final String VALIDATION_REGEX = "\\+?[0-9](?:[0-9 -]*[0-9])?";
     public final String value;
 
     /**
@@ -23,14 +23,25 @@ public class Phone {
     public Phone(String phone) {
         requireNonNull(phone);
         checkArgument(isValidPhone(phone), MESSAGE_CONSTRAINTS);
-        value = phone;
+        value = normalize(phone);
     }
 
     /**
      * Returns true if a given string is a valid phone number.
      */
     public static boolean isValidPhone(String test) {
-        return test.matches(VALIDATION_REGEX);
+        requireNonNull(test);
+        if (!test.matches(VALIDATION_REGEX)) {
+            return false;
+        }
+        String normalizedPhone = normalize(test);
+        int digitCount = normalizedPhone.length() - (normalizedPhone.startsWith("+") ? 1 : 0);
+        return digitCount >= 7 && digitCount <= 15;
+    }
+
+    /** Removes spaces and hyphens while preserving an optional leading plus sign. */
+    private static String normalize(String phone) {
+        return phone.replace(" ", "").replace("-", "");
     }
 
     @Override

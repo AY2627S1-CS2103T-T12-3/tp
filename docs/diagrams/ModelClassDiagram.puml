@@ -1,54 +1,29 @@
 @startuml
 !include style.puml
-skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
 skinparam classBackgroundColor MODEL_COLOR
-
-Package Model as ModelPackage <<Rectangle>>{
-Class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
-Class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
-Class "<<interface>>\nModel" as Model
-Class AddressBook
-Class ModelManager
-Class UserPrefs
-
-Class UniquePersonList
-Class Person
-Class Address
-Class Email
-Class Name
-Class Phone
-Class Tag
-
-Class I #FFFFFF
+package "Model" as ModelPackage {
+class "<<interface>>\nModel" as Model
+class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
+class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
+class ModelManager
+class AddressBook
+class UserPrefs
+class UniquePersonList
+class UniqueApplicationList
+class Person
+class Application
 }
-
-Class HiddenOutside #FFFFFF
-HiddenOutside ..> Model
-
-AddressBook .up.|> ReadOnlyAddressBook
-
-ModelManager .up.|> Model
-Model .right.> ReadOnlyUserPrefs
-Model .left.> ReadOnlyAddressBook
-ModelManager -left-> "1" AddressBook
-ModelManager -right-> "1" UserPrefs
-UserPrefs .up.|> ReadOnlyUserPrefs
-
+ModelManager ..|> Model
+AddressBook ..|> ReadOnlyAddressBook
+UserPrefs ..|> ReadOnlyUserPrefs
+Model ..> ReadOnlyAddressBook
+Model ..> ReadOnlyUserPrefs
+ModelManager *--> "1" AddressBook
+ModelManager *--> "1" UserPrefs
+ModelManager --> "0..*" Person : filtered contacts
 AddressBook *--> "1" UniquePersonList
-UniquePersonList --> "~* all" Person
-Person *--> Name
-Person *--> Phone
-Person *--> Email
-Person *--> Address
-Person *--> "*" Tag
-
-Person -[hidden]up--> I
-UniquePersonList -[hidden]right-> I
-
-Name -[hidden]right-> Phone
-Phone -[hidden]right-> Address
-Address -[hidden]right-> Email
-
-ModelManager --> "~* filtered" Person
+AddressBook *--> "1" UniqueApplicationList
+UniquePersonList --> "0..*" Person
+UniqueApplicationList --> "0..*" Application
 @enduml

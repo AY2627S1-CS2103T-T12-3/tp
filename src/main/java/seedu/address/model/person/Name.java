@@ -9,14 +9,10 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Name {
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Names should only contain alphanumeric characters and spaces, and should not be blank";
+    public static final int MAX_LENGTH = 100;
 
-    /*
-     * The first character of the name must not be a whitespace,
-     * otherwise " " (a blank string) becomes a valid input.
-     */
-    public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
+    public static final String MESSAGE_CONSTRAINTS = "Names should only contain letters, digits, spaces, hyphens "
+            + "and apostrophes, must contain at least one letter or digit, and must not exceed 100 characters.";
 
     public final String fullName;
 
@@ -27,15 +23,52 @@ public class Name {
      */
     public Name(String name) {
         requireNonNull(name);
-        checkArgument(isValidName(name), MESSAGE_CONSTRAINTS);
-        fullName = name;
+        String normalizedName = normalize(name);
+        checkArgument(isValidName(normalizedName), MESSAGE_CONSTRAINTS);
+        fullName = normalizedName;
     }
 
     /**
      * Returns true if a given string is a valid name.
      */
     public static boolean isValidName(String test) {
-        return test.matches(VALIDATION_REGEX);
+        requireNonNull(test);
+        String normalizedName = normalize(test);
+        if (normalizedName.isEmpty() || normalizedName.codePointCount(0, normalizedName.length()) > MAX_LENGTH) {
+            return false;
+        }
+
+        boolean hasLetterOrDigit = false;
+        for (int offset = 0; offset < normalizedName.length();) {
+            int codePoint = normalizedName.codePointAt(offset);
+            if (Character.isLetterOrDigit(codePoint)) {
+                hasLetterOrDigit = true;
+            } else if (codePoint != ' ' && codePoint != '-' && codePoint != '\'') {
+                return false;
+            }
+            offset += Character.charCount(codePoint);
+        }
+        return hasLetterOrDigit;
+    }
+
+    /** Trims leading and trailing whitespace and reduces internal runs to one space. */
+    private static String normalize(String name) {
+        StringBuilder normalized = new StringBuilder();
+        boolean pendingSpace = false;
+        for (int offset = 0; offset < name.length();) {
+            int codePoint = name.codePointAt(offset);
+            offset += Character.charCount(codePoint);
+            if (Character.isWhitespace(codePoint) || Character.isSpaceChar(codePoint)) {
+                pendingSpace = normalized.length() > 0;
+                continue;
+            }
+            if (pendingSpace) {
+                normalized.append(' ');
+                pendingSpace = false;
+            }
+            normalized.appendCodePoint(codePoint);
+        }
+        return normalized.toString();
     }
 
 

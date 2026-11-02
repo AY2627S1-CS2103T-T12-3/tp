@@ -2,11 +2,13 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.ContactContainsKeywordsPredicate;
+import seedu.address.model.person.Phone;
 
 /**
  * Parses input arguments and creates a new FindCommand object
@@ -25,9 +27,16 @@ public class FindCommandParser implements Parser<FindCommand> {
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         }
 
-        String[] nameKeywords = trimmedArgs.split("\\s+");
+        String[] keywords = trimmedArgs.split("\\s+");
+        List<String> searchKeywords = new ArrayList<>(List.of(keywords));
+        if (Phone.isValidPhone(trimmedArgs)) {
+            String normalizedPhone = new Phone(trimmedArgs).value;
+            if (!searchKeywords.contains(normalizedPhone)) {
+                searchKeywords.add(normalizedPhone);
+            }
+        }
 
-        return new FindCommand(new NameContainsKeywordsPredicate(List.of(nameKeywords)));
+        return new FindCommand(new ContactContainsKeywordsPredicate(searchKeywords), String.join(" ", keywords));
     }
 
 }

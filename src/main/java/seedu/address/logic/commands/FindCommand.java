@@ -1,29 +1,61 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.AppUtil.checkArgument;
+
+import java.util.Objects;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.CommandResult.ContactSearchAction;
+import seedu.address.logic.commands.CommandResult.DisplayedList;
 import seedu.address.model.Model;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.ContactContainsKeywordsPredicate;
 
 /**
- * Finds and lists all persons in the address book whose name contains any of the argument keywords.
+ * Finds and lists all contacts with any argument keyword in any contact field.
  * Keyword matching is case insensitive.
  */
 public class FindCommand extends Command {
 
     public static final String COMMAND_WORD = "find";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons whose names contain any of "
+    public static final String MESSAGE_USAGE = COMMAND_WORD
+            + ": Finds all contacts whose fields contain any of "
             + "the specified keywords (case-insensitive) and displays them as a list with index numbers.\n"
             + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
             + "Example: " + COMMAND_WORD + " alice bob charlie";
 
-    private final NameContainsKeywordsPredicate predicate;
+    private static final String MESSAGE_SEARCH_TERM_CANNOT_BE_BLANK = "Search term must not be blank.";
 
-    public FindCommand(NameContainsKeywordsPredicate predicate) {
-        this.predicate = predicate;
+    private final ContactContainsKeywordsPredicate predicate;
+    private final String searchTerm;
+
+    /**
+     * Creates a find command using the predicate's keywords as the displayed search term.
+     *
+     * @throws IllegalArgumentException if the resulting search term is blank
+     * @throws NullPointerException if the predicate is null
+     */
+    public FindCommand(ContactContainsKeywordsPredicate predicate) {
+        this(requireNonNull(predicate), String.join(" ", predicate.getKeywords()));
+    }
+
+    /**
+     * Creates a {@code FindCommand} with a predicate and displayable search terms.
+     *
+     * @throws IllegalArgumentException if the search term is blank
+     * @throws NullPointerException if the predicate or search term is null
+     */
+    public FindCommand(ContactContainsKeywordsPredicate predicate, String searchTerm) {
+        this.predicate = requireNonNull(predicate);
+        this.searchTerm = requireNonNull(searchTerm);
+        checkArgument(!this.searchTerm.isBlank(), MESSAGE_SEARCH_TERM_CANNOT_BE_BLANK);
+    }
+
+    /** Returns the search terms shown in the contact list. */
+    public String getSearchTerm() {
+        return searchTerm;
     }
 
     @Override
@@ -31,7 +63,8 @@ public class FindCommand extends Command {
         requireNonNull(model);
         model.updateFilteredPersonList(predicate);
         return new CommandResult(
-                String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, model.getFilteredPersonList().size()));
+                String.format(Messages.MESSAGE_PERSONS_LISTED_OVERVIEW, model.getFilteredPersonList().size()),
+                DisplayedList.CONTACTS, ContactSearchAction.SET, searchTerm);
     }
 
     @Override
@@ -45,13 +78,20 @@ public class FindCommand extends Command {
             return false;
         }
 
-        return predicate.equals(otherFindCommand.predicate);
+        return predicate.equals(otherFindCommand.predicate)
+                && searchTerm.equals(otherFindCommand.searchTerm);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(predicate, searchTerm);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("predicate", predicate)
+                .add("searchTerm", searchTerm)
                 .toString();
     }
 }

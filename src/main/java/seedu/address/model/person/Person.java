@@ -13,9 +13,12 @@ import seedu.address.model.tag.Tag;
 
 /**
  * Represents a Person in the address book.
- * Guarantees: details are present and not null, field values are validated, immutable.
+ * Guarantees: required details are present and not null, optional details may be absent, field values are validated,
+ * immutable.
  */
 public class Person {
+
+    private static final Address LEGACY_DEFAULT_ADDRESS = new Address(Address.LEGACY_DEFAULT_VALUE);
 
     // Identity fields
     private final Name name;
@@ -24,22 +27,33 @@ public class Person {
 
     // Data fields
     private final Optional<Company> company;
+    private final Optional<Role> role;
     private final Optional<WhereMet> whereMet;
-    private final Address address;
+    private final Optional<Address> address;
     private final Remark remark;
     private final Set<Tag> tags = new HashSet<>();
 
     /**
-     * Every field must be present and not null.
-     * {@code company} and {@code whereMet} may be empty if not specified.
+     * Every field must be present and not null. {@code company}, {@code role}, and {@code whereMet} may be empty if
+     * not specified.
      */
-    public Person(Name name, Phone phone, Email email, Optional<Company> company, Optional<WhereMet> whereMet,
-            Address address, Remark remark, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, company, whereMet, address, remark, tags);
+    public Person(Name name, Phone phone, Email email, Optional<Company> company, Optional<Role> role,
+            Optional<WhereMet> whereMet, Address address, Remark remark, Set<Tag> tags) {
+        this(name, phone, email, company, role, whereMet, Optional.of(address), remark, tags);
+    }
+
+    /**
+     * Every field must be present and not null. {@code company}, {@code role}, {@code whereMet}, and {@code address}
+     * may be empty if not specified.
+     */
+    public Person(Name name, Phone phone, Email email, Optional<Company> company, Optional<Role> role,
+            Optional<WhereMet> whereMet, Optional<Address> address, Remark remark, Set<Tag> tags) {
+        requireAllNonNull(name, phone, email, company, role, whereMet, address, remark, tags);
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.company = company;
+        this.role = role;
         this.whereMet = whereMet;
         this.address = address;
         this.remark = remark;
@@ -62,11 +76,20 @@ public class Person {
         return company;
     }
 
+    public Optional<Role> getRole() {
+        return role;
+    }
+
     public Optional<WhereMet> getWhereMet() {
         return whereMet;
     }
 
     public Address getAddress() {
+        return address.orElse(LEGACY_DEFAULT_ADDRESS);
+    }
+
+    /** Returns the address when it was supplied. */
+    public Optional<Address> getAddressOptional() {
         return address;
     }
 
@@ -83,7 +106,7 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name.
+     * Returns true if both persons have the same name and email, ignoring letter case.
      * This defines a weaker notion of equality between two persons.
      */
     public boolean isSamePerson(Person otherPerson) {
@@ -92,7 +115,8 @@ public class Person {
         }
 
         return otherPerson != null
-                && otherPerson.getName().equals(getName());
+                && otherPerson.getName().fullName.equalsIgnoreCase(getName().fullName)
+                && otherPerson.getEmail().value.equalsIgnoreCase(getEmail().value);
     }
 
     /**
@@ -114,6 +138,7 @@ public class Person {
                 && phone.equals(otherPerson.phone)
                 && email.equals(otherPerson.email)
                 && company.equals(otherPerson.company)
+                && role.equals(otherPerson.role)
                 && whereMet.equals(otherPerson.whereMet)
                 && address.equals(otherPerson.address)
                 && remark.equals(otherPerson.remark)
@@ -123,7 +148,7 @@ public class Person {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, company, whereMet, address, remark, tags);
+        return Objects.hash(name, phone, email, company, role, whereMet, address, remark, tags);
     }
 
     @Override
@@ -133,8 +158,9 @@ public class Person {
                 .add("phone", phone)
                 .add("email", email)
                 .add("company", company.orElse(null))
+                .add("role", role.orElse(null))
                 .add("whereMet", whereMet.orElse(null))
-                .add("address", address)
+                .add("address", getAddress())
                 .add("remark", remark)
                 .add("tags", tags)
                 .toString();

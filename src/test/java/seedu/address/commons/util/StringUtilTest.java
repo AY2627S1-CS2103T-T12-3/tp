@@ -121,6 +121,20 @@ public class StringUtilTest {
 
         // Matches multiple words in sentence
         assertTrue(StringUtil.containsWordIgnoreCase("AAA bBb ccc  bbb", "bbB"));
+
+        // Matches a sentence word with leading or trailing punctuation
+        assertTrue(StringUtil.containsWordIgnoreCase("Google, Inc.", "google"));
+        assertTrue(StringUtil.containsWordIgnoreCase("Google, Inc.", "Inc"));
+        assertTrue(StringUtil.containsWordIgnoreCase("NUS Career Fair, 2026", "fair"));
+        assertTrue(StringUtil.containsWordIgnoreCase("Career Fair (Sep)", "sep"));
+        assertTrue(StringUtil.containsWordIgnoreCase("Career Fair", "fair,")); // Query word with punctuation
+
+        // Punctuation inside a word is kept
+        assertFalse(StringUtil.containsWordIgnoreCase("alex@google.com", "google"));
+
+        // Punctuation-only words only match exactly
+        assertFalse(StringUtil.containsWordIgnoreCase("A & B", "-"));
+        assertTrue(StringUtil.containsWordIgnoreCase("A & B", "&"));
     }
 
     //---------------- Tests for getDetails --------------------------------------

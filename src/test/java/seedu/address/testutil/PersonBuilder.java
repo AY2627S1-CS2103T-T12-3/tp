@@ -11,6 +11,7 @@ import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Remark;
+import seedu.address.model.person.Role;
 import seedu.address.model.person.WhereMet;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
@@ -29,7 +30,8 @@ public class PersonBuilder {
     private Phone phone;
     private Email email;
     private Optional<Company> company;
-    private Address address;
+    private Optional<Role> role;
+    private Optional<Address> address;
     private Remark remark;
     private Optional<WhereMet> whereMet;
     private Set<Tag> tags;
@@ -42,7 +44,8 @@ public class PersonBuilder {
         phone = new Phone(DEFAULT_PHONE);
         email = new Email(DEFAULT_EMAIL);
         company = Optional.empty();
-        address = new Address(DEFAULT_ADDRESS);
+        role = Optional.empty();
+        address = Optional.of(new Address(DEFAULT_ADDRESS));
         remark = new Remark("");
         whereMet = Optional.empty();
         tags = new HashSet<>();
@@ -56,7 +59,8 @@ public class PersonBuilder {
         phone = personToCopy.getPhone();
         email = personToCopy.getEmail();
         company = personToCopy.getCompany();
-        address = personToCopy.getAddress();
+        role = personToCopy.getRole();
+        address = personToCopy.getAddressOptional();
         remark = personToCopy.getRemark();
         whereMet = personToCopy.getWhereMet();
         tags = new HashSet<>(personToCopy.getTags());
@@ -82,7 +86,13 @@ public class PersonBuilder {
      * Sets the {@code Address} of the {@code Person} that we are building.
      */
     public PersonBuilder withAddress(String address) {
-        this.address = new Address(address);
+        this.address = Optional.of(new Address(address));
+        return this;
+    }
+
+    /** Removes the {@code Address} of the {@code Person} that we are building. */
+    public PersonBuilder withoutAddress() {
+        this.address = Optional.empty();
         return this;
     }
 
@@ -110,6 +120,12 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Sets the {@code Role} of the {@code Person} that we are building. */
+    public PersonBuilder withRole(String role) {
+        this.role = Optional.of(new Role(role));
+        return this;
+    }
+
     /**
      * Sets the {@code Remark} of the {@code Person} that we are building.
      */
@@ -124,8 +140,14 @@ public class PersonBuilder {
         return this;
     }
 
+    /** Removes the {@code WhereMet} value of the person being built. */
+    public PersonBuilder withoutWhereMet() {
+        this.whereMet = Optional.empty();
+        return this;
+    }
+
     public Person build() {
-        return new Person(name, phone, email, company, whereMet, address, remark, tags);
+        return new Person(name, phone, email, company, role, whereMet, address, remark, tags);
     }
 
 }

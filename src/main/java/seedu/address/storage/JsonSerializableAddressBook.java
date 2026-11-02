@@ -22,6 +22,8 @@ class JsonSerializableAddressBook {
 
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
     public static final String MESSAGE_DUPLICATE_APPLICATION = "Applications list contains duplicate application(s).";
+    public static final String MESSAGE_NULL_PERSON = "Persons list contains a null person.";
+    public static final String MESSAGE_NULL_APPLICATION = "Applications list contains a null application.";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
     private final List<JsonAdaptedApplication> applications = new ArrayList<>();
@@ -32,7 +34,9 @@ class JsonSerializableAddressBook {
     @JsonCreator
     public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
             @JsonProperty("applications") List<JsonAdaptedApplication> applications) {
-        this.persons.addAll(persons);
+        if (persons != null) {
+            this.persons.addAll(persons);
+        }
         if (applications != null) {
             this.applications.addAll(applications);
         }
@@ -58,6 +62,9 @@ class JsonSerializableAddressBook {
     public AddressBook toModelType() throws IllegalValueException {
         AddressBook addressBook = new AddressBook();
         for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
+            if (jsonAdaptedPerson == null) {
+                throw new IllegalValueException(MESSAGE_NULL_PERSON);
+            }
             Person person = jsonAdaptedPerson.toModelType();
             if (addressBook.hasPerson(person)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_PERSON);
@@ -65,6 +72,9 @@ class JsonSerializableAddressBook {
             addressBook.addPerson(person);
         }
         for (JsonAdaptedApplication jsonAdaptedApplication : applications) {
+            if (jsonAdaptedApplication == null) {
+                throw new IllegalValueException(MESSAGE_NULL_APPLICATION);
+            }
             Application application = jsonAdaptedApplication.toModelType();
             if (addressBook.hasApplication(application)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_APPLICATION);

@@ -93,6 +93,21 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
+     * Replaces {@code target} with {@code editedApplication}, preserving its position.
+     * The target must exist and the edited identity must not duplicate another application.
+     */
+    public void setApplication(Application target, Application editedApplication) {
+        applications.setApplication(target, editedApplication);
+    }
+
+    /**
+     * Removes the given application, which must exist in the address book.
+     */
+    public void removeApplication(Application target) {
+        applications.remove(target);
+    }
+
+    /**
      * Replaces the given person {@code target} in the list with {@code editedPerson}.
      * {@code target} must exist in the address book.
      * The person identity of {@code editedPerson} must not be the same as another existing person in the address book.
