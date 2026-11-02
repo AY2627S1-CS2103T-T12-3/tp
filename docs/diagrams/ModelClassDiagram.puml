@@ -5,6 +5,7 @@ skinparam classBackgroundColor MODEL_COLOR
 package "Model" as ModelPackage {
 class "<<interface>>\nModel" as Model
 class "<<interface>>\nReadOnlyAddressBook" as ReadOnlyAddressBook
+class "<<interface>>\nReadOnlyUserPrefs" as ReadOnlyUserPrefs
 class ModelManager
 class AddressBook
 class UserPrefs
@@ -15,6 +16,9 @@ class Application
 }
 ModelManager ..|> Model
 AddressBook ..|> ReadOnlyAddressBook
+UserPrefs ..|> ReadOnlyUserPrefs
+Model ..> ReadOnlyAddressBook
+Model ..> ReadOnlyUserPrefs
 ModelManager *--> "1" AddressBook
 ModelManager *--> "1" UserPrefs
 ModelManager --> Person : filtered contacts
