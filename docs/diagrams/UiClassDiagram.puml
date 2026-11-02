@@ -3,23 +3,30 @@
 skinparam arrowThickness 1.1
 skinparam arrowColor UI_COLOR_T4
 skinparam classBackgroundColor UI_COLOR
+skinparam packageStyle rectangle
 
 package UI <<Rectangle>>{
 Class "<<interface>>\nUi" as Ui
 Class "{abstract}\nUiPart" as UiPart
 Class UiManager
 Class MainWindow
-Class HelpWindow
+
+package "Command and feedback" <<Rectangle>> {
+Class CommandBox
 Class ResultDisplay
+Class StatusBarFooter
+Class HelpWindow
+}
+
+package "Pages shown in the main area" <<Rectangle>> {
+Class DashboardPanel
+Class WorkspaceListPanel
 Class PersonListPanel
 Class PersonCard
 Class ApplicationListPanel
 Class ApplicationCard
 Class ApplicationCalendarPanel
-Class DashboardPanel
-Class WorkspaceListPanel
-Class StatusBarFooter
-Class CommandBox
+}
 }
 
 package Model <<Rectangle>> {
@@ -33,43 +40,37 @@ Class HiddenLogic #FFFFFF
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> Ui
 
-UiManager .left.|> Ui
+UiManager .up.|> Ui
 UiManager -down-> "1" MainWindow
-MainWindow *-down->  "1" CommandBox
+UiManager -right-> Logic
+MainWindow -right-> Logic
+
+MainWindow *-down-> "1" CommandBox
 MainWindow *-down-> "1" ResultDisplay
+MainWindow *-down-> "1" StatusBarFooter
+MainWindow --> "0..1" HelpWindow
+
+MainWindow *-down-> "1" DashboardPanel
+MainWindow *-down-> "3" WorkspaceListPanel
 MainWindow *-down-> "1" PersonListPanel
 MainWindow *-down-> "1" ApplicationListPanel
 MainWindow *-down-> "1" ApplicationCalendarPanel
-MainWindow *-down-> "1" DashboardPanel
-MainWindow *-down-> "3" WorkspaceListPanel
-MainWindow *-down-> "1" StatusBarFooter
-MainWindow --> "0..1" HelpWindow
 
 PersonListPanel -down-> "*" PersonCard
 ApplicationListPanel -down-> "*" ApplicationCard
 
 MainWindow -left-|> UiPart
-
-ResultDisplay --|> UiPart
 CommandBox --|> UiPart
+ResultDisplay --|> UiPart
+StatusBarFooter --|> UiPart
+HelpWindow --|> UiPart
 PersonListPanel --|> UiPart
 PersonCard --|> UiPart
 ApplicationListPanel --|> UiPart
 ApplicationCard --|> UiPart
-StatusBarFooter --|> UiPart
-HelpWindow --|> UiPart
 
+DashboardPanel ..> Model
+ApplicationCalendarPanel ..> Model
 PersonCard ..> Model
 ApplicationCard ..> Model
-ApplicationCalendarPanel ..> Model
-DashboardPanel ..> Model
-UiManager -right-> Logic
-MainWindow -left-> Logic
-
-PersonListPanel -[hidden]left- HelpWindow
-HelpWindow -[hidden]left- CommandBox
-CommandBox -[hidden]left- ResultDisplay
-ResultDisplay -[hidden]left- StatusBarFooter
-
-MainWindow -[hidden]-|> UiPart
 @enduml
