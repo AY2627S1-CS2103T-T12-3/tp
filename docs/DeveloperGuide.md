@@ -179,8 +179,8 @@ This section describes some noteworthy details on how certain features are imple
 
 After a command successfully changes contacts or applications in memory, InternTrack attempts to save those records
 before returning a successful result to the UI. After parsing a valid command and before executing it, `LogicManager`
-copies the current `AddressBook` so that an unsuccessful disk write cannot leave the in-memory records different from
-the saved records.
+copies the current `AddressBook` so that it can restore the contact and application records in memory if saving throws
+an `IOException`.
 
 The saving flow is as follows:
 
@@ -191,22 +191,99 @@ The saving flow is as follows:
 1. If saving succeeds, the command result is returned normally.
 1. If saving throws an `AccessDeniedException` or another `IOException`, `LogicManager` restores the copied
    `AddressBook` through `Model#setAddressBook`, then throws a `CommandException` that the UI displays as an error.
-   The failed command therefore does not remain only in memory.
+   The command's record changes are therefore removed from memory.
+
+This rollback restores contact and application records only; it does not restore the contact filter predicate or
+other UI state. Storage writes directly to the JSON file, so this mechanism does not guarantee that the previous file
+contents survive a failure partway through writing.
 
 #### Design considerations
 
-**Aspect: Keeping memory and disk data consistent when saving fails**
+**Aspect: Restoring in-memory records when saving fails**
 
 * **Alternative 1 (current choice):** Copy the complete `AddressBook` before executing a command and restore that
   copy if saving fails.
-  * Pros: Command classes remain focused on their domain operation; every mutation receives the same rollback
-    behaviour; users do not see a successful change that disappears after a restart.
+  * Pros: Command classes remain focused on their domain operation; record changes share the same handling of save
+    errors; a failed save does not leave those changes in memory or return a successful command result to the UI.
   * Cons: Each command creates a copy of the records, which uses more memory as the data set grows.
 
 * **Alternative 2:** Save a change before applying it to the `Model`.
   * Pros: Does not need to restore an in-memory copy after a failed save.
   * Cons: Commands would need a separate staged representation of every change, or would need to be replayed after
     saving. This duplicates command logic and makes validation and error handling harder to keep consistent.
+
+### Multi-field contact search and active filters
+
+The `find` command filters the existing contact list rather than building a separate search-result collection.
+`edit`, `delete`, and `remark` resolve indexes against this filtered Contacts list, even when another page is open.
+The numbers on Overview are not indexes into this list.
+
+The search flow is as follows:
+
+1. `FindCommandParser` rejects a blank query and splits a valid query into whitespace-separated keywords. If the
+   complete query is a valid phone number, it also adds the normalized phone number to the search keywords so that a
+   formatted query can match a stored phone number without separators.
+1. `FindCommand` passes `ContactContainsKeywordsPredicate` to `Model#updateFilteredPersonList`.
+1. The predicate checks every keyword against the name, phone, email, company, role, where-met detail, supplied
+   address, remark, and tags. A contact is retained when any keyword has a case-insensitive, full-word match in any
+   of those fields. `StringUtil` ignores punctuation at the beginning or end of a word while matching.
+1. `FindCommand` returns a `CommandResult` that requests the Contacts view and sets the active search term.
+   `MainWindow` forwards that term to `PersonListPanel`, which displays the persistent `Filtered by:` indicator.
+
+The `FilteredList<Person>` remains backed by the model's contact list. After successful `edit` and `delete` commands,
+the active predicate remains in place and the search action leaves the indicator unchanged. The filtered list reflects
+the updated records automatically. After `list`, `add`, or `remark` completes successfully, the show-all predicate is
+active and the UI receives a clear search action, which removes the indicator.
+
+The predicate is updated during command execution, but `MainWindow` updates the indicator only after `Logic` returns
+a successful result. If saving an `add` or `remark` fails, the records are restored while the show-all predicate remains
+active; the previous indicator is not cleared because the successful result is not returned. `list` can reset both to
+the unfiltered state.
+
+#### Design considerations
+
+**Aspect: Search scope**
+
+* **Alternative 1 (current choice):** Match any keyword against every contact field.
+  * Pros: A user can locate a recruiter using whatever detail they remember, such as a company, tag, email, or
+    where-met note. The same predicate also gives predictable OR behaviour for multiple keywords.
+  * Cons: A broad keyword can return more contacts than a name-only search, and results are not ranked.
+
+* **Alternative 2:** Search names only, or require every keyword to match.
+  * Pros: Produces a narrower result list.
+  * Cons: Does not support the product's goal of retrieving professional contacts from partial job-search context.
+
+### Weekly application calendar
+
+`ApplicationCalendarPanel` receives the live `ObservableList<Application>` from `Logic`. It stores the Monday of the
+currently displayed week in `weekStart`; the previous and next controls move this date by one week, while **Today**
+resets it to the Monday of the computer's current week.
+
+`renderWeek` rebuilds the seven day columns for the selected Monday through Sunday range. For each day, it iterates
+over the current application list, parses each recorded application date, and adds a card when the date matches that
+day. A card displays the application's role, company, and status; a day with no matching applications receives a
+`No applications` placeholder. The header omits years within a single year and shows both years for a week that spans
+two years.
+
+The panel registers a `ListChangeListener` on the application list. Any add, edit, or delete therefore re-renders the
+currently selected week without maintaining a second, potentially stale date-grouped collection. When Calendar is
+visible, `MainWindow` also keeps it visible after a successful `addapp`, `editapp`, or `deleteapp`, so the refreshed
+week is shown immediately.
+
+#### Design considerations
+
+**Aspect: Updating the calendar after an application change**
+
+* **Alternative 1 (current choice):** Rebuild the seven visible day columns from the live application list whenever
+  that list changes.
+  * Pros: Date edits, status edits, additions, and deletions use one update path; the displayed week cannot retain a
+    stale card or cached date group.
+  * Cons: Rendering iterates over the application list once per visible day.
+
+* **Alternative 2:** Maintain a cached mapping from dates to application cards.
+  * Pros: Could reduce repeated date comparisons for a large application list.
+  * Cons: Every application mutation would have to update both the model and the cache correctly, including date
+    changes and rollback after a failed save.
 
 --------------------------------------------------------------------------------------------------------------------
 
