@@ -13,8 +13,10 @@ box Storage STORAGE_COLOR_T1
 participant "storage:Storage" as storage STORAGE_COLOR
 end box
 
-[-> logic : execute(commandText)\n[valid command parsed]
+[-> logic : execute(commandText)
 activate logic
+logic -> logic : parse commandText
+note right: The remaining flow shows a valid command.
 logic -> model : getAddressBook()
 model --> logic : current records
 logic -> logic : beforeCommand = new AddressBook(records)

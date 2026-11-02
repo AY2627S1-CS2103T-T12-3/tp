@@ -29,7 +29,7 @@ then launch the JAR from an empty, writable test folder with `java -jar "address
 
 ## **Design**
 
-The diagrams are maintained as PlantUML source files in `docs/diagrams` and use the shared `style.puml` file. To regenerate an image, run `java -jar plantuml.jar -tpng -o ../images docs/diagrams/DIAGRAM.puml` from the repository root. See the [PlantUML tutorial](https://se-education.org/guides/tutorials/plantUml.html) for setup.
+The diagrams are maintained as PlantUML source files in `docs/diagrams` and use the shared `style.puml` file. After downloading the PlantUML JAR, regenerate an image from the repository root with `java -jar /path/to/plantuml.jar -tpng -o ../images docs/diagrams/DIAGRAM.puml`, replacing the JAR path and diagram name. See the [PlantUML tutorial](https://se-education.org/guides/tutorials/plantUml.html) for setup.
 
 
 ### Architecture
@@ -151,7 +151,7 @@ The `Model` component,
 `add` creates a contact without a supplied address; `getAddress()` returns the `Not provided` placeholder for display
 when the optional is empty. `edit` can supply or replace a non-blank address, but cannot clear it with an empty `a/`.
 
-Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks keywords against supplied contact fields until a case-insensitive, full-word match is found. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active and replaces its empty-list placeholder with a message suggesting `list`, so an empty search result is not mistaken for an empty contact list. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks keywords against supplied contact fields until a case-insensitive, full-word match is found. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active and replaces its empty-list placeholder with a message suggesting `list`, so an empty search result is not mistaken for an empty contact list. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. After successful commands that reset the contact filter, the UI clears the indicator. The save-failure case is described in the implementation section. The activity diagram summarizes the matching logic.
 
 <img src="images/ContactSearchActivityDiagram.png" width="650" />
 
@@ -205,7 +205,7 @@ This rollback restores contact and application records only; it does not restore
 other UI state. Storage writes directly to the JSON file, so this mechanism does not guarantee that the previous file
 contents survive a failure partway through writing.
 
-The following sequence shows the save and rollback paths after a valid command is parsed.
+The following sequence shows the save and rollback paths for a valid command; parsing is shown at a high level.
 
 <img src="images/SaveRollbackSequenceDiagram.png" width="700" />
 
