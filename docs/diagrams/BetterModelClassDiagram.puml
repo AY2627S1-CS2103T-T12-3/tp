@@ -19,7 +19,7 @@ Person -up-> "*" Tag
 Person *--> "1" Name
 Person *--> "1" Phone
 Person *--> "1" Email
-Person *--> "1" Address
+Person *--> "0..1" Address
 Person *--> "0..1" Company
 Person *--> "0..1" Role
 Person *--> "0..1" WhereMet
