@@ -10,13 +10,14 @@ skinparam activity {
     DiamondBackgroundColor #FFFFFF
     DiamondBorderColor MODEL_COLOR
 }
+skinparam conditionStyle diamond
 skinparam ArrowColor MODEL_COLOR
 skinparam ArrowFontColor #222222
 
 start
 :Receive a contact and search keywords;
-:Check all keywords against name, phone, email, company, role,\nwhere met, address, remark, and tags using case-insensitive,\nfull-word matching;
-if (Does any keyword match any field?) then (yes)
+:Check keywords against supplied fields using\ncase-insensitive, full-word matching; stop at the first match;
+if (Match found?) then (yes)
     :Include contact in filtered results;
 else (no)
     :Exclude contact from filtered results;

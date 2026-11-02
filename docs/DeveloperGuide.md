@@ -29,10 +29,8 @@ then launch the JAR from an empty, writable test folder with `java -jar "address
 
 ## **Design**
 
-<div markdown="span" class="alert alert-primary">
+The diagrams are maintained as PlantUML source files in `docs/diagrams` and use the shared `style.puml` file. After downloading the PlantUML JAR, regenerate an image from the repository root with `java -jar /path/to/plantuml.jar -tpng -o ../images docs/diagrams/DIAGRAM.puml`, replacing the JAR path and diagram name. See the [PlantUML tutorial](https://se-education.org/guides/tutorials/plantUml.html) for setup.
 
-:bulb: **Tip:** The `.puml` files used to create diagrams are in `docs/diagrams`. Refer to the [_PlantUML Tutorial_ at se-edu/guides](https://se-education.org/guides/tutorials/plantUml.html) to learn how to create and edit diagrams.
-</div>
 
 ### Architecture
 
@@ -84,7 +82,7 @@ The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDi
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
-The sequence diagram below shows how the Cmd+F (macOS) or Ctrl+F (Windows/Linux) shortcut prepares the command field for a contact search. If the field is empty or contains only whitespace, `find ` is inserted; otherwise, the current text is preserved. The command field receives focus and the caret moves to the end. The shortcut does not execute the search; the user presses Enter to run the command.
+The sequence diagram below shows how the Cmd+F (macOS) or Ctrl+F (Windows/Linux) shortcut prepares the command field for a contact search. If the field is empty or contains only whitespace, `find ` is inserted; otherwise, the current text is preserved. The command field receives focus and the caret moves to the end. The shortcut calls `focusForQuickSearch(false)` and does not execute the search. The sidebar find button calls `focusForQuickSearch(true)` and replaces any existing text with `find `.
 
 <img src="images/QuickSearchShortcutSequenceDiagram.png" width="650" />
 
@@ -95,7 +93,7 @@ The `UI` component,
 * keeps a reference to the `Logic` component, because the `UI` relies on the `Logic` to execute commands.
 * depends on some classes in the `Model` component because it displays `Person` objects from the model.
 
-The weekly application calendar is an `ApplicationCalendarPanel` that `MainWindow` displays when the user selects **Calendar** in the sidebar. The panel keeps the Monday that starts the selected week and redraws the header range and seven day columns whenever the user moves to the previous or next week. Each column lists the applications whose application date falls on that day, showing the role and company, or a placeholder if there are none. The range omits the year unless the week spans two years. The sequence diagram below shows this flow.
+The weekly application calendar is an `ApplicationCalendarPanel` that `MainWindow` displays when the user selects **Calendar** in the sidebar. The panel keeps the Monday that starts the selected week and redraws the header range and seven day columns whenever the user moves to the previous or next week. Each column lists the applications whose application date falls on that day, showing the role, company and status, or a placeholder if there are none. The range omits the year unless the week spans two years. The sequence diagram below shows this flow.
 
 <img src="images/ApplicationCalendarSequenceDiagram.png" width="650" />
 
@@ -109,7 +107,7 @@ Here's a (partial) class diagram of the `Logic` component:
 
 The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
 
-![Interactions Inside the Logic Component for the `delete 1` Command](images/DeleteSequenceDiagram.png)
+<img src="images/DeleteSequenceDiagram.png" width="800" alt="Delete command sequence in Logic" />
 
 <div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `DeleteCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram.
 </div>
@@ -119,7 +117,7 @@ How the `Logic` component works:
 1. When `Logic` is called upon to execute a command, the command is passed to an `AddressBookParser` object, which in turn creates a parser that matches the command (e.g., `DeleteCommandParser`) and uses it to parse the command.
 1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteCommand`) which is executed by the `LogicManager`.
 1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
-   Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
+   For deletion, the command resolves the index against the filtered contact list before passing the selected person to the model.
 1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
@@ -127,13 +125,19 @@ Here are the other classes in `Logic` (omitted from the class diagram above) tha
 <img src="images/ParserClasses.png" width="600"/>
 
 How the parsing works:
-* When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddCommandParser`). The parser uses the other classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddCommand`). The `AddressBookParser` returns that object as a `Command` object.
+* When called upon to parse a user command, the `AddressBookParser` class creates an `XYZCommandParser` (`XYZ` is a placeholder for the specific command name, e.g., `AddCommandParser`). A command parser uses the relevant helper classes shown above to parse the user command and create an `XYZCommand` object (e.g., `AddCommand`). Different parsers use different helpers. The `AddressBookParser` returns that object as a `Command` object.
 * All `XYZCommandParser` classes, such as `AddCommandParser` and `DeleteCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
 **API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
 <img src="images/ModelClassDiagram.png" width="900" />
+
+The following partial diagrams show the fields of contacts and applications.
+
+<img src="images/PersonDomainDiagram.png" width="800" alt="Contact fields and multiplicities" />
+
+<img src="images/ApplicationDomainDiagram.png" width="650" alt="Application fields and multiplicities" />
 
 
 The `Model` component,
@@ -147,7 +151,7 @@ The `Model` component,
 `add` creates a contact without a supplied address; `getAddress()` returns the `Not provided` placeholder for display
 when the optional is empty. `edit` can supply or replace a non-blank address, but cannot clear it with an empty `a/`.
 
-Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active and replaces its empty-list placeholder with a message suggesting `list`, so an empty search result is not mistaken for an empty contact list. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks keywords against supplied contact fields until a case-insensitive, full-word match is found. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active and replaces its empty-list placeholder with a message suggesting `list`, so an empty search result is not mistaken for an empty contact list. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. After successful commands that reset the contact filter, the UI clears the indicator. The save-failure case is described in the implementation section. The activity diagram summarizes the matching logic.
 
 <img src="images/ContactSearchActivityDiagram.png" width="650" />
 
@@ -201,6 +205,10 @@ This rollback restores contact and application records only; it does not restore
 other UI state. Storage writes directly to the JSON file, so this mechanism does not guarantee that the previous file
 contents survive a failure partway through writing.
 
+The following sequence shows the save and rollback paths for a valid command; parsing is shown at a high level.
+
+<img src="images/SaveRollbackSequenceDiagram.png" width="700" />
+
 #### Design considerations
 
 **Aspect: Restoring in-memory records when saving fails**
@@ -228,11 +236,15 @@ The search flow is as follows:
    complete query is a valid phone number, it also adds the normalized phone number to the search keywords so that a
    formatted query can match a stored phone number without separators.
 1. `FindCommand` passes `ContactContainsKeywordsPredicate` to `Model#updateFilteredPersonList`.
-1. The predicate checks every keyword against the name, phone, email, company, role, where-met detail, supplied
+1. The predicate checks keywords against the name, phone, email, company, role, where-met detail, supplied
    address, remark, and tags. A contact is retained when any keyword has a case-insensitive, full-word match in any
    of those fields. `StringUtil` ignores punctuation at the beginning or end of a word while matching.
 1. `FindCommand` returns a `CommandResult` that requests the Contacts view and sets the active search term.
    `MainWindow` forwards that term to `PersonListPanel`, which displays the persistent `Filtered by:` indicator.
+
+The following sequence illustrates a successful `find alex`; the matching activity diagram above focuses on the predicate.
+
+<img src="images/ContactSearchSequenceDiagram.png" width="700" alt="Sequence of a contact search" />
 
 The `FilteredList<Person>` remains backed by the model's contact list. After successful `edit` and `delete` commands,
 the active predicate remains in place and the search action leaves the indicator unchanged. The filtered list reflects
@@ -559,7 +571,7 @@ and Interviewing.
    **Expected:** Each button replaces the draft with its command word and a trailing space, focuses the box and
    positions the caret at the end. No record is added until a complete command is submitted. The current view stays open.
 3. Empty the box and select the **find** quick command. Then replace its text with `list` and select **find** again.<br>
-   **Expected:** The empty box becomes `find `; the non-empty `list` text is preserved. Both actions focus the command
+   **Expected:** Both actions replace the existing text with `find `. Both actions focus the command
    box without running a command. Clear the draft before continuing.
 
 ### Weekly application calendar

@@ -1,0 +1,16 @@
+@startuml
+!include style.puml
+skinparam arrowColor MODEL_COLOR
+skinparam classBackgroundColor MODEL_COLOR
+class Application
+class ApplicationName
+class Company
+class Description
+class ApplicationDate
+class "<<enumeration>>\nApplicationStatus" as ApplicationStatus
+Application --> "1" ApplicationName
+Application --> "1" Company
+Application --> "1" Description
+Application --> "1" ApplicationDate
+Application --> "1" ApplicationStatus
+@enduml
