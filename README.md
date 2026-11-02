@@ -31,7 +31,3 @@ send messages, or manage resumes.
 
 This project is based on the AddressBook-Level3 project created by the
 [SE-EDU initiative](https://se-education.org).
-
-Team members used AI assistants (e.g. Claude Code) to help write and review
-code, tests and documentation. All AI-assisted output was reviewed by the
-committing team member.
