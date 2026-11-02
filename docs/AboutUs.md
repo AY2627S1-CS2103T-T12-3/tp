@@ -7,15 +7,14 @@ We are a team based in the [School of Computing, National University of Singapor
 
 ## Project team
 
-
 ### Henry Lee
 
 <img src="images/henrlly.png" width="200px">
 
 [[github](https://github.com/henrlly)]
 
-* Role: Developer
-* Responsibilities: Develop features, perform quality assurance and testing,
+- Role: Developer
+- Responsibilities: Develop features, perform quality assurance and testing,
   and fix bugs
 
 ### Alexander Seah
@@ -28,7 +27,7 @@ We are a team based in the [School of Computing, National University of Singapor
 - Role: Developer
 - Responsibilities: Backend Engineer
 
-### Zhaohan Li
+### Li Zhaohan
 
 <img src="images/amyliiiii.png" width="200px">
 
@@ -36,7 +35,6 @@ We are a team based in the [School of Computing, National University of Singapor
 
 - Role: Developer
 - Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
-
 
 ### Mao Yinbo
 
@@ -47,13 +45,11 @@ We are a team based in the [School of Computing, National University of Singapor
 - Role: Developer
 - Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
 
-
 ### Vincent Lim
 
 <img src="images/viincentlim.png" width="200px">
 
 [[github](https://github.com/ViincentLim)]
-
 
 - Role: Developer
 - Responsibilities: Develop features, perform quality assurance and testing, and fix bugs
