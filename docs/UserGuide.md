@@ -12,14 +12,14 @@ InternTrack helps **university Computing students track internship and graduate-
 
 ## Quick start
 
-1. Ensure that Java `25` is installed on your computer. Run `java -version` in a terminal to check.<br>
-   **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
+1. Set up JDK `25` according to the [course's Java setup requirements](https://nus-cs2103-ay2627-s1.github.io/website/admin/programmingLanguages.html). Run `java -version` in the terminal you will use to launch InternTrack to verify the active version.<br>
+   **Mac users:** Follow the [course-recommended Mac installation guide](https://se-education.org/guides/tutorials/javaInstallationMac.html) and use the exact Azul JDK + JavaFX distribution it specifies. Having another Java `25` installation is not sufficient.
 
-1. Download the latest InternTrack JAR from the [GitHub releases page](https://github.com/AY2627S1-CS2103T-T12-3/tp/releases). On an Apple Silicon Mac using an arm64 Java installation, choose `addressbook-mac-arm64.jar`. On an Intel Mac, Windows, or Linux, choose `addressbook.jar`.
+1. Download `addressbook.jar` from the latest release on the [GitHub releases page](https://github.com/AY2627S1-CS2103T-T12-3/tp/releases).
 
 1. Create an empty folder that you can write to and copy the JAR into it. This will be your InternTrack _home folder_. The app needs permission to create its data and settings files there; avoid read-only folders.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar "addressbook.jar"` (or `java -jar "addressbook-mac-arm64.jar"` for the Apple Silicon version). If your downloaded file has a different name, use that exact name inside the quotes. Launch from the terminal: double-clicking may not work on some systems or may use a different Java version.<br>
+1. In the terminal where you verified Java `25`, `cd` to the folder containing the JAR file and run `java -jar "addressbook.jar"`. If your downloaded file has a different name, use that exact name inside the quotes. Launch from the terminal: double-clicking may not work on some systems or may use a different Java version.<br>
    The app opens on **Overview**. A new home folder starts with six sample contacts and no applications. On subsequent launches, the app loads the records saved in that home folder.
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
@@ -46,7 +46,7 @@ Use the left sidebar to switch between these views:
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Overview**     | A summary of applications and contacts, with the counts explained below. Below are an application table and contact cards, with contacts in reverse list order. Scroll to see more content. |
 | **Applications** | Indexed application cards. Run `listapp` before choosing an index for `editapp` or `deleteapp`.                                                                                             |
-| **Contacts**     | Indexed contact cards, including any active `find` filter. Run `list` to remove the filter.                                                                                                 |
+| **Contacts**     | Indexed contact cards, including any active `find` filter. If no contacts match the filter, the panel says so and suggests `list`. Run `list` to remove the filter.                         |
 | **Calendar**     | Applications grouped by their application dates in a Monday-to-Sunday weekly calendar. See [Viewing application dates](#viewing-application-dates-in-the-weekly-calendar).                  |
 
 **Overview application counts:**
@@ -64,7 +64,7 @@ Under **QUICK COMMANDS**, selecting **addapp**, **add**, or **find** replaces th
 
 ## Keyboard shortcuts
 
-Type `guide` in the command box and press Enter to open guided entry. Choose **Contact** or **Application** with the arrow keys, then press Enter. Enter each requested field and press Enter or choose **Next** to continue. Use **Back** to correct an earlier answer. For application status, use Up/Down to choose one of the listed statuses and press Enter. Choose **Add** to submit through the same validation as the normal `add` or `addapp` command. **Cancel** or Esc closes the guide without adding anything.
+Choose **Contact** or **Application** with the arrow keys, then press Enter. Enter each requested field and press Enter or choose **Next** to continue. Use **Back** to correct an earlier answer. For application status, use Up/Down to choose one of the listed statuses and press Enter. Choose **Add** to submit through the same validation as the normal `add` or `addapp` command. **Cancel** or Esc closes the guide without adding anything.
 
 Press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux to focus the command box. If it is empty, InternTrack prepares `find ` for you; existing text is preserved and the caret moves to the end. Press Enter after entering the search keywords to run the command.
 
@@ -102,7 +102,7 @@ In the command box, press **Up** to recall earlier commands and **Down** to move
   For example, `help 123` is interpreted as `help`.
 
 - If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
-    </div>
+      </div>
 
 ### Viewing help: `help`
 
@@ -119,7 +119,7 @@ Adds a professional contact to InternTrack.
 Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER [w/WHERE_MET]`
 
 - All fields except `WHERE_MET` are required.
-- `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
+- `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' - ( )`, and must not exceed 100 characters.
 - `ROLE` is the role the person holds, such as `SWE Recruiter`. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 - `WHERE_MET` is optional and describes how or where you met the person. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 200 characters.
 - `NAME` may contain Unicode letters, digits, spaces, hyphens, and apostrophes. It must contain at least one letter or digit and be no longer than 100 characters. Leading and trailing whitespace is removed, and internal whitespace is reduced to one space.
@@ -143,7 +143,7 @@ Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`
 
 - `n/`, `c/`, `d/` and `dt/` are required; `s/` is optional. `dt/` records the date you applied, rather than an interview date or deadline.
 - `NAME` is the role or position title. It must not be blank, contain control characters, or exceed 100 characters.
-- `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
+- `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' - ( )`, and must not exceed 100 characters.
 - `DESCRIPTION` records relevant application details. It must not be blank or exceed 500 characters.
 - `DESCRIPTION` can contain short text that looks like a field, such as `n/a`, `s/o` or `c/o`. A prefix followed by a single letter is kept as part of the description, so to set a one-letter field, place it before `d/`.
 - `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format, from `2000-01-01` to `2099-12-31`. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
@@ -253,7 +253,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS
 - `ADDRESS` can be any non-blank text. `TAG` must contain only ASCII letters and digits, with no spaces, for example `recruiter` or `careerFair2026`.
 - Empty values are rejected except for `w/` and `t/`, as described below. Company, role, address, name, email and phone cannot be cleared with an empty prefix.
 - An edit cannot give a contact the same name and email as another contact, ignoring letter case.
-- A successful edit shows all contacts and clears any active search filter. Applications are unaffected.
+- A successful edit opens Contacts and preserves any active search filter. If the edited contact no longer matches the search keywords, it disappears from the filtered results. Run `list` to show all contacts. Applications are unaffected.
 - When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
 - To remove all of a person's tags, enter `t/` without a tag after it.
 - To remove a person's where-met detail, enter `w/` without a value after it.
@@ -366,7 +366,7 @@ Certain edits can also cause InternTrack to behave in unexpected ways (e.g., if 
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install Java 25 and download the appropriate JAR on the other computer. Follow [Backing up and restoring data](#backing-up-and-restoring-data) to copy the data into the new home folder, then launch from that folder.
+**A**: Follow [Quick start](#quick-start) to set up the course-required JDK and download `addressbook.jar` on the other computer. Follow [Backing up and restoring data](#backing-up-and-restoring-data) to copy the data into the new home folder, then launch from that folder.
 
 **Q**: Why is an application missing from Calendar?<br>
 **A**: Calendar shows only the selected week, using the application's recorded application date. Run `listapp` to check its date, then return to Calendar and navigate to that week.

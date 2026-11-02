@@ -60,6 +60,7 @@ public class ApplicationCalendarPanel extends VBox {
         header.setAlignment(Pos.CENTER);
 
         weekColumns.setFillHeight(true);
+        weekColumns.setMinHeight(USE_PREF_SIZE);
         ScrollPane weekScrollPane = new ScrollPane(weekColumns);
         weekScrollPane.getStyleClass().add("calendar-scroll-pane");
         weekScrollPane.setFitToHeight(true);
@@ -102,11 +103,13 @@ public class ApplicationCalendarPanel extends VBox {
                 + DAY_MONTH_FORMAT.format(date));
         dayHeading.getStyleClass().add("calendar-day-heading");
         dayHeading.setWrapText(true);
+        dayHeading.setMinHeight(USE_PREF_SIZE);
 
         VBox dayColumn = new VBox(8);
         dayColumn.getStyleClass().add("calendar-day-column");
         dayColumn.setPadding(new Insets(6));
         dayColumn.setMinWidth(0);
+        dayColumn.setMinHeight(USE_PREF_SIZE);
         dayColumn.setPrefWidth(Math.max(0, (weekColumns.getWidth() - 6 * weekColumns.getSpacing()) / 7));
         HBox.setHgrow(dayColumn, Priority.ALWAYS);
         if (date.equals(LocalDate.now())) {
@@ -148,6 +151,7 @@ public class ApplicationCalendarPanel extends VBox {
         VBox card = new VBox(4, role, company, status);
         card.getStyleClass().add("calendar-application-card");
         card.setPadding(new Insets(6));
+        card.setMinHeight(USE_PREF_SIZE);
         return card;
     }
 }

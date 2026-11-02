@@ -15,13 +15,15 @@ title: Developer Guide
 
 ## **Setting up, getting started**
 
-Refer to the guide [_Setting up and getting started_](SettingUp.md).
+Set up JDK `25` according to the [course's Java setup requirements](https://nus-cs2103-ay2627-s1.github.io/website/admin/programmingLanguages.html).
+**Mac users:** Follow the [course-recommended Mac installation guide](https://se-education.org/guides/tutorials/javaInstallationMac.html)
+and use the exact Azul JDK + JavaFX distribution it specifies. Having another Java `25` installation is not sufficient.
 
-For releases, build the standard JAR with `./gradlew shadowJar`. Build the Apple Silicon JAR with
-`./gradlew shadowJar -PmacJavaFxClassifier=mac-aarch64`; this produces
-`build/libs/addressbook-mac-arm64.jar`. Publish both JARs and run each with a Java 25 installation
-that does not bundle JavaFX on its target Mac architecture. A JavaFX-bundled JDK can mask an
-incorrect native library in the JAR, so verify the actual released artifacts with a clean JavaFX cache.
+For project setup and IDE configuration, refer to [_Setting up and getting started_](SettingUp.md).
+
+For releases, run `./gradlew shadowJar` to build `build/libs/addressbook.jar`.
+Verify the release JAR using the course-required JDK: run `java -version` in the terminal you will use,
+then launch the JAR from an empty, writable test folder with `java -jar "addressbook.jar"`.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +44,7 @@ The following provides a quick overview of the main components and their interac
 
 **Main components of the architecture**
 
-**`Main`** (consisting of classes [`Main`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
+**`Main`** (consisting of classes [`Main`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
 * At app launch, it initializes the other components in the correct sequence, and connects them up with each other.
 * At shut down, it shuts down the other components and invokes cleanup methods where necessary.
 
@@ -74,13 +76,13 @@ The sections below give more details of each component.
 
 ### UI component
 
-The **API** of this component is specified in [`Ui.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/Ui.java)
+The **API** of this component is specified in [`Ui.java`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/ui/Ui.java)
 
 ![Structure of the UI Component](images/UiClassDiagram.png)
 
 The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, and `StatusBarFooter`. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
 
-The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
+The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/ui/MainWindow.java).
 
 The sequence diagram below shows how the Cmd+F (macOS) or Ctrl+F (Windows/Linux) shortcut prepares the command field for a contact search. If the field is empty or contains only whitespace, `find ` is inserted; otherwise, the current text is preserved. The command field receives focus and the caret moves to the end. The shortcut does not execute the search; the user presses Enter to run the command.
 
@@ -99,7 +101,7 @@ The weekly application calendar is an `ApplicationCalendarPanel` that `MainWindo
 
 ### Logic component
 
-**API** : [`Logic.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/logic/Logic.java)
+**API** : [`Logic.java`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/logic/Logic.java)
 
 Here's a (partial) class diagram of the `Logic` component:
 
@@ -129,7 +131,7 @@ How the parsing works:
 * All `XYZCommandParser` classes, such as `AddCommandParser` and `DeleteCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
-**API** : [`Model.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/model/Model.java)
+**API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
 <img src="images/ModelClassDiagram.png" width="900" />
 
@@ -141,7 +143,7 @@ The `Model` component,
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
-Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
+Contact search updates the filtered list using `ContactContainsKeywordsPredicate`. It checks each keyword against every supplied contact field and keeps a contact if any field contains a case-insensitive, full-word match. Empty optional company, role, and where-met values and absent addresses are skipped. The `Person` model tracks whether an address is absent; older data without this flag treats the legacy `Not provided` value as absent. An explicitly supplied address with that value remains searchable. `FindCommand` includes its normalized search terms in `CommandResult`, and the contact panel keeps a `Filtered by` indicator visible while the predicate remains active and replaces its empty-list placeholder with a message suggesting `list`, so an empty search result is not mistaken for an empty contact list. `EditCommand` replaces the person without resetting the filtered list's predicate, so the filter is reapplied to the updated person and the indicator remains visible. Commands that reset the contact filter clear the indicator. The activity diagram summarizes the matching logic.
 
 <img src="images/ContactSearchActivityDiagram.png" width="650" />
 
@@ -154,7 +156,7 @@ Contact search updates the filtered list using `ContactContainsKeywordsPredicate
 
 ### Storage component
 
-**API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
+**API** : [`Storage.java`](https://github.com/AY2627S1-CS2103T-T12-3/tp/blob/master/src/main/java/seedu/address/storage/Storage.java)
 
 <img src="images/StorageClassDiagram.png" width="550" />
 
@@ -387,7 +389,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
+1.  Should work on a _mainstream OS_ with Java `25` configured according to the course's Java setup requirements.
+    macOS users must use the prescribed Azul JDK + JavaFX distribution.
 2.  Should be able to hold up to 1000 professional contacts and application records without noticeable sluggishness
     during typical usage.
 3.  A user with above average typing speed for regular English text should be able to add, edit, delete, and list
@@ -418,10 +421,11 @@ beyond the cases below.
 
 ### Test setup, launch and help
 
-1. Download the release JAR into a **new, empty, writable test folder**, separate from your real InternTrack data.
-   Follow [Quick start](UserGuide.md#quick-start) to select the JAR for your platform. In a terminal, change to this
-   test folder, run `java -version` and confirm Java 25, then launch with `java -jar "addressbook.jar"`
-   (substitute the actual downloaded filename, including `addressbook-mac-arm64.jar` where applicable).<br>
+1. Follow [Quick start](UserGuide.md#quick-start) to configure the course-required JDK, including the prescribed
+   Azul JDK + JavaFX distribution on macOS. Download `addressbook.jar` into a **new, empty, writable test folder**,
+   separate from your real InternTrack data. In a terminal, change to this folder, run `java -version` to verify
+   the active JDK, then launch with `java -jar "addressbook.jar"`
+   (substitute the actual downloaded filename if it differs).<br>
    **Expected:** Overview opens with six sample contacts and no applications. `preferences.json` is created in
    the test folder. The app must not load records from your normal home folder.
 2. Enter `help`, close the help window, then open it again using the top-right **Help** button and, separately,
@@ -476,7 +480,8 @@ beyond the cases below.
    and uses OR across keywords and contact fields.
 9. Enter `find Ad`, then `find nobodymatchesmanualtest`, then `list`.<br>
    **Expected:** Each search produces an empty list, because `Ad` is not the full word `Ada` and the other keyword
-   matches no field. `list` restores both contacts and removes the filter indicator.
+   matches no field. The empty list says that no contacts match the current search and suggests `list`, rather
+   than suggesting `add`. `list` restores both contacts and removes the filter indicator.
 
 ### Applications: creation, fields, status and validation
 
@@ -505,6 +510,11 @@ beyond the cases below.
 6. Enter `list`, then `editapp 2 d/Prepare interview notes`.<br>
    **Expected:** The command edits Graduate Engineer, even though Contacts was open, and switches to Applications.
    Its other fields and both contacts remain unchanged.
+7. Enter `addapp n/SWE Intern c/ACME (Singapore) d/Parentheses check dt/2026-11-04`, then
+   `addapp n/SWE Intern c/ACME [Singapore] d/Brackets check dt/2026-11-04`.<br>
+   **Expected:** The first application is added with the company `ACME (Singapore)`. The second is rejected because
+   square brackets are not permitted in company names. Delete the SWE Intern application with `deleteapp` and its
+   index so that two applications remain.
 
 ### Overview and sidebar quick commands
 

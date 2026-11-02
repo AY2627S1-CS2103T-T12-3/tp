@@ -548,13 +548,6 @@
     -fx-text-fill: #71829d;
 }
 
-.application-calendar {
-    -fx-background-color: white;
-    -fx-border-color: #dde6f1;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-}
-
 .calendar-range-label {
     -fx-font-family: "Segoe UI Semibold", Arial, sans-serif;
     -fx-font-size: 18px;

@@ -12,13 +12,13 @@ public class Company {
     public static final int MAX_LENGTH = 100;
 
     public static final String MESSAGE_CONSTRAINTS = "Company names should not be blank, may only contain letters, "
-            + "digits, spaces, and & . , ' -, and must not exceed " + MAX_LENGTH + " characters.";
+            + "digits, spaces, and & . , ' - ( ), and must not exceed " + MAX_LENGTH + " characters.";
 
     /*
      * The first character of the company must not be a whitespace,
      * otherwise " " (a blank string) becomes a valid input.
      */
-    public static final String VALIDATION_REGEX = "[\\p{L}\\p{N}&.,'-][\\p{L}\\p{N}&.,' -]*";
+    public static final String VALIDATION_REGEX = "[\\p{L}\\p{N}&.,'()-][\\p{L}\\p{N}&.,'() -]*";
 
     public final String value;
 
