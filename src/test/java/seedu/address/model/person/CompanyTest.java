@@ -55,6 +55,8 @@ public class CompanyTest {
         assertTrue(Company.isValidCompany("McDonald's")); // with apostrophe
         assertTrue(Company.isValidCompany("Rolls-Royce")); // with hyphen
         assertTrue(Company.isValidCompany("Société Générale")); // non-ASCII letters
+        assertTrue(Company.isValidCompany("ACME (Singapore)")); // with parentheses
+        assertTrue(Company.isValidCompany("(ACME) Pte. Ltd.")); // leading parenthesis
         assertTrue(Company.isValidCompany("a".repeat(Company.MAX_LENGTH))); // maximum length
     }
 
