@@ -21,7 +21,7 @@ Model ..> ReadOnlyAddressBook
 Model ..> ReadOnlyUserPrefs
 ModelManager *--> "1" AddressBook
 ModelManager *--> "1" UserPrefs
-ModelManager --> Person : filtered contacts
+ModelManager --> "0..*" Person : filtered contacts
 AddressBook *--> "1" UniquePersonList
 AddressBook *--> "1" UniqueApplicationList
 UniquePersonList --> "0..*" Person
