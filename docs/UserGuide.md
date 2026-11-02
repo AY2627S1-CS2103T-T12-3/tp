@@ -58,7 +58,7 @@ Use the left sidebar to switch between these views:
 
 The **COMMAND BOX** accepts one command at a time. Press **Enter** to run it; the message below reports success or explains what needs correcting. A failed command stays in the box so you can edit and retry it.
 
-Under **QUICK COMMANDS**, selecting **addapp** or **add** replaces the command-box text with `addapp ` or `add `. Complete the fields and press Enter; selecting the button alone does not create a record. **find** focuses the box and inserts `find ` only if it is blank; existing text is preserved. These buttons prepare commands without changing the current view.
+Under **QUICK COMMANDS**, selecting **addapp**, **add**, or **find** replaces the command-box text with `addapp `, `add `, or `find ` respectively. Complete the fields and press Enter; selecting a button alone does not create a record or change the current view.
 
 **Choose indexes from the correct list.** Contact commands (`edit`, `remark`, `delete`) use the current Contacts list, including its search filter, even while you are viewing another page. Application commands (`editapp`, `deleteapp`) use the Applications list. Overview numbers are not contact-command indexes, because Overview displays contacts in a different order. Open the appropriate list and check the record before changing or deleting it.
 
@@ -257,6 +257,7 @@ Format: `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/
 - At least one of the optional fields must be provided.
 - Supplied values replace existing values; omitted fields remain unchanged. Contact name, company, role, email, phone and where-met values follow the rules under [Adding a contact](#adding-a-contact-add).
 - `ADDRESS` can be any non-blank text. `TAG` must contain only ASCII letters and digits, with no spaces, for example `recruiter` or `careerFair2026`.
+- Names containing `/`, such as `a/l`, are not supported. Do not enter `edit 1 n/Tan a/l Lim`: InternTrack interprets `a/` as an address prefix, which can replace the contact’s address with `l Lim` and set the name to `Tan`. Use a name without `/`, for example `Tan al Lim`, and check the displayed contact after editing.
 - Empty values are rejected except for `w/` and `t/`, as described below. Company, role, address, name, email and phone cannot be cleared with an empty prefix.
 - To set or replace an address, use `edit INDEX a/ADDRESS`, for example `edit 1 a/NUS Computing`. Omitting `a/` preserves the existing address. There is no command to remove a supplied address: `edit 1 a/` is rejected, and `edit 1 a/Not provided` stores the literal text `Not provided` as an address rather than clearing it. That explicitly supplied text can be found with `find Not` or `find provided`.
 - An edit cannot give a contact the same name and email as another contact, ignoring letter case.
