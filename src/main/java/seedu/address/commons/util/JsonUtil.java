@@ -1,9 +1,10 @@
 package seedu.address.commons.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import java.util.logging.Logger;
 

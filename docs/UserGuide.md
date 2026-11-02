@@ -64,13 +64,11 @@ Under **QUICK COMMANDS**, selecting **addapp**, **add**, or **find** replaces th
 
 ## Keyboard shortcuts
 
-Choose **Contact** or **Application** with the arrow keys, then press Enter. Enter each requested field and press Enter or choose **Next** to continue. Use **Back** to correct an earlier answer. For application status, use Up/Down to choose one of the listed statuses and press Enter. Choose **Add** to submit through the same validation as the normal `add` or `addapp` command. **Cancel** or Esc closes the guide without adding anything.
-
 Press `Cmd+F` on macOS or `Ctrl+F` on Windows/Linux to focus the command box. If it is empty, InternTrack prepares `find ` for you; existing text is preserved and the caret moves to the end. Press Enter after entering the search keywords to run the command.
 
 Press **F1**, select **Help** at the top right, or enter `help` to open the help window.
 
-In the command box, press **Up** to recall earlier commands and **Down** to move toward newer ones. Moving past the newest command restores the text you were typing. History lasts for the current app session and includes commands that returned an error, so you can edit and retry them.
+In the command box, press **Up** to recall earlier commands and **Down** to move toward newer ones. Moving past the newest command restores the text you were typing. History retains the most recent 100 commands in the current app session, including commands that returned an error, so you can edit and retry them. Older commands are discarded when this limit is exceeded.
 
 ---
 
@@ -97,6 +95,7 @@ In the command box, press **Up** to recall earlier commands and **Down** to move
 
 - Prefixed fields can be in any order. For commands that use `INDEX`, keep the index immediately after the command word and before the fields.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
+  For `addapp` and `editapp`, place `d/DESCRIPTION` last to avoid the description-text exception explained under [Adding an application](#adding-an-application-addapp).
 
 - Extraneous parameters for commands that take no parameters, such as `help`, `list`, `listapp`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
@@ -118,15 +117,15 @@ Adds a professional contact to InternTrack.
 
 Format: `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER [w/WHERE_MET]`
 
-- All fields except `WHERE_MET` are required.
+- `NAME`, `COMPANY`, `ROLE`, `EMAIL` and `PHONE_NUMBER` are required. `WHERE_MET` may be omitted.
 - `COMPANY` is the company the person works at. It may only contain letters, digits, spaces and `& . , ' - ( )`, and must not exceed 100 characters.
 - `ROLE` is the role the person holds, such as `SWE Recruiter`. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 100 characters.
 - `WHERE_MET` is optional and describes how or where you met the person. It may only contain letters, digits, spaces and `& . , ' -`, and must not exceed 200 characters.
 - `NAME` may contain Unicode letters, digits, spaces, hyphens, and apostrophes. It must contain at least one letter or digit and be no longer than 100 characters. Leading and trailing whitespace is removed, and internal whitespace is reduced to one space.
-- `EMAIL` must have the form `local-part@domain`, such as `john@example.com`. The local part accepts ASCII letters, digits and `+ _ . -`, with letters or digits at both ends and no consecutive special characters. Domain labels use ASCII letters and digits, separated by single hyphens if needed; labels are separated by dots and the final label has at least two characters. Invalid input produces a detailed error message.
+- `EMAIL` must have the form `local-part@domain`, such as `john@example.com`. The local part accepts ASCII letters, digits and `+ _ . -`, with letters or digits at both ends and no consecutive special characters. Domain labels use ASCII letters and digits, separated by single hyphens if needed; each label must start and end with a letter or digit. Labels are separated by dots. The final label must contain at least two consecutive letters or digits: `john@ab-c` is accepted, but `john@a-b` is rejected. Invalid input produces a detailed error message.
 - `PHONE_NUMBER` must contain 7 to 15 digits, with an optional leading `+`. Spaces and hyphens can separate digits; they are removed when the phone number is stored.
 - Two contacts with the same name and email address are considered duplicates, ignoring letter case.
-- New contacts start with address `Not provided`, no remark and no tags. The `add` command does not accept address or tag fields. After adding a contact, use `edit INDEX a/ADDRESS` or `edit INDEX t/TAG` to set them, and `remark INDEX r/REMARK` to add a note.
+- New contacts have no supplied address, remark or tags. Their cards display `Address: Not provided` until an address is set. The `add` command does not accept address or tag fields. After adding a contact, use `edit INDEX a/ADDRESS` or `edit INDEX t/TAG` to set them, and `remark INDEX r/REMARK` to add a note.
 - After a contact is added, InternTrack shows all contacts and clears any active search filter.
 
 Examples:
@@ -139,13 +138,14 @@ Examples:
 
 Adds an internship or graduate-role application to InternTrack.
 
-Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`
+Format: `addapp n/NAME c/COMPANY dt/YYYY-MM-DD [s/STATUS] d/DESCRIPTION`
 
 - `n/`, `c/`, `d/` and `dt/` are required; `s/` is optional. `dt/` records the date you applied, rather than an interview date or deadline.
 - `NAME` is the role or position title. It must not be blank, contain control characters, or exceed 100 characters.
 - `COMPANY` is standalone text; it is not linked to an existing contact. It may only contain letters, digits, spaces and `& . , ' - ( )`, and must not exceed 100 characters.
 - `DESCRIPTION` records relevant application details. It must not be blank or exceed 500 characters.
-- `DESCRIPTION` can contain short text that looks like a field, such as `n/a`, `s/o` or `c/o`. A prefix followed by a single letter is kept as part of the description, so to set a one-letter field, place it before `d/`.
+- `DESCRIPTION` can contain short text that looks like a field, such as `n/a`, `s/o` or `c/o`. Within the description, a recognised prefix immediately followed by one letter and then a non-letter/digit character (such as a space or punctuation), or the end of the command, is kept as description text. This also affects longer values beginning with a one-letter word.
+- Place `d/DESCRIPTION` last to avoid that ambiguity. For example, `editapp 1 d/Updated n/A Engineer` changes the description to `Updated n/A Engineer` and leaves the application name unchanged. Use `editapp 1 n/A Engineer d/Updated` to update both fields.
 - `DATE` must be a valid calendar date in the **`YYYY-MM-DD`** format, from `2000-01-01` to `2099-12-31`. For example, use `2026-10-07`, not `07-10-2026` or `2026-02-30`.
 - `STATUS` is optional. If omitted, the application is created with the `APPLIED` status.
 - The accepted status values are `APPLIED`, `INTERVIEWING`, `OFFERED`, `REJECTED`, and `WITHDRAWN`. Status values are case-insensitive.
@@ -153,8 +153,8 @@ Format: `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`
 
 Examples:
 
-- `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07`
-- `addapp c/Example Pte Ltd d/Referred by a university alumnus. dt/2026-11-15 s/INTERVIEWING n/Product Manager Intern`
+- `addapp n/Software Engineer Intern c/Tech Corp dt/2026-10-07 d/Applied through the company careers page.`
+- `addapp c/Example Pte Ltd dt/2026-11-15 s/INTERVIEWING n/Product Manager Intern d/Referred by a university alumnus.`
 
 After an application is added, InternTrack switches to the application list, unless you are already viewing Calendar. In Calendar, the current week stays visible and updates; the new application appears only if its date is in that week. Run `listapp` to see all applications.
 
@@ -162,7 +162,7 @@ After an application is added, InternTrack switches to the application list, unl
 
 Edits an existing internship or graduate-role application.
 
-Format: `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD] [s/STATUS]`
+Format: `editapp INDEX [n/NAME] [c/COMPANY] [dt/YYYY-MM-DD] [s/STATUS] [d/DESCRIPTION]`
 
 - Run `listapp` to see the application indexes. `INDEX` must be a positive integer referring to an existing application.
 - At least one field must be provided. Fields may appear in any order, but each prefix may appear only once.
@@ -224,6 +224,8 @@ The calendar uses the `dt/` date recorded by `addapp` or `editapp`; it does not 
 
 Choose **Contacts** or **Applications** in the sidebar to return to either list. Updating or deleting an application while viewing Calendar refreshes the current week without leaving the calendar.
 
+The screenshot below illustrates a week with example applications. Your records and selected week may differ.
+
 <p align="center" style="text-align: center; margin: 0 0 12px;"><img src="images/applicationCalendar.png" alt="Weekly application calendar showing navigation controls, application cards and empty days" width="900" style="max-width: 100%;"></p>
 
 ### Listing all contacts: `list`
@@ -233,7 +235,8 @@ Shows all contacts in InternTrack, clearing any filter applied by a previous `fi
 Format: `list`
 
 - Each contact card shows its index, name, tags, company, role, email, phone number, where you met, address and remark, where available. Empty remarks are hidden.
-- Optional fields that have not been filled in, such as company, role or where met, are hidden from the card.
+- Where-met details and remarks are hidden when absent. Contacts loaded from older data may also lack company or role details; those fields are hidden, although both are required when creating a contact with `add`.
+- The address is always displayed. If none has been supplied, the card shows `Address: Not provided`.
 - The result box shows how many contacts are listed.
 - If you have no contacts, InternTrack tells you so and suggests using `add` to add one.
 
@@ -245,23 +248,24 @@ Examples:
 
 Edits an existing professional contact.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS] [w/WHERE_MET] [t/TAG]…`
+Format: `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [c/COMPANY] [r/ROLE] [a/ADDRESS] [w/WHERE_MET] [t/TAG]…`
 
-- Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …
+- Edits the contact at the specified `INDEX` in the current Contacts list, including any active search filter. The index **must be a positive integer** 1, 2, 3, …
 - At least one of the optional fields must be provided.
 - Supplied values replace existing values; omitted fields remain unchanged. Contact name, company, role, email, phone and where-met values follow the rules under [Adding a contact](#adding-a-contact-add).
 - `ADDRESS` can be any non-blank text. `TAG` must contain only ASCII letters and digits, with no spaces, for example `recruiter` or `careerFair2026`.
 - Empty values are rejected except for `w/` and `t/`, as described below. Company, role, address, name, email and phone cannot be cleared with an empty prefix.
+- To set or replace an address, use `edit INDEX a/ADDRESS`, for example `edit 1 a/NUS Computing`. Omitting `a/` preserves the existing address. There is no command to remove a supplied address: `edit 1 a/` is rejected, and `edit 1 a/Not provided` stores the literal text `Not provided` as an address rather than clearing it. That explicitly supplied text can be found with `find Not` or `find provided`.
 - An edit cannot give a contact the same name and email as another contact, ignoring letter case.
 - A successful edit opens Contacts and preserves any active search filter. If the edited contact no longer matches the search keywords, it disappears from the filtered results. Run `list` to show all contacts. Applications are unaffected.
-- When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
-- To remove all of a person's tags, enter `t/` without a tag after it.
-- To remove a person's where-met detail, enter `w/` without a value after it.
+- When editing tags, all of the contact's existing tags are replaced; adding tags is not cumulative.
+- To remove all of a contact's tags, enter `t/` without a tag after it.
+- To remove a contact's where-met detail, enter `w/` without a value after it.
 
 Examples:
 
-- `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-- `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+- `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st contact to be `91234567` and `johndoe@example.com` respectively.
+- `edit 2 n/Betsy Crower t/` Edits the name of the 2nd contact to be `Betsy Crower` and clears all existing tags.
 - `edit 3 c/Meta, Inc. r/Software Engineer w/LinkedIn` Updates the third contact's company, role and where-met detail.
 - `edit 1 a/NUS Computing t/recruiter t/alumni` Sets the first contact's address and replaces their tags with `recruiter` and `alumni`.
 
@@ -293,7 +297,7 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 - Only full words match; for example, `Han` does not match `Hans`.
 - Punctuation at the start or end of a word is ignored; for example, `Google` matches the company `Google, Inc.`.
 - Contacts matching at least one keyword are returned (an `OR` search); for example, `Google Recruiter` returns contacts whose company contains `Google` or whose role contains `Recruiter`.
-- Contacts without optional company, role, or where-met details can still be found using their other fields.
+- Fields without supplied values are skipped during search. Contacts can still be found using their other fields; the default `Not provided` address placeholder is not searched.
 - The contact list shows `Filtered by: KEYWORDS` above the results. This indicator stays visible when you navigate away from Contacts and return. Editing a contact keeps the filter active; if the edited details no longer match, that contact disappears from the results. The filter clears when `list`, `add`, or `remark` resets it.
 
 Examples:
@@ -317,12 +321,12 @@ Format: `delete INDEX`
 
 - Deletes the contact at the specified `INDEX`. Applications are unaffected.
 - On success, Contacts is shown, the remaining results are renumbered, and any active search filter remains in effect.
-- The index refers to the index number shown in the displayed person list.
+- The index refers to the index number shown in the current Contacts list, including any active search filter.
 - The index **must be a positive integer** 1, 2, 3, …
 
 Examples:
 
-- `list` followed by `delete 2` deletes the 2nd person in the address book.
+- `list` followed by `delete 2` deletes the 2nd contact in the full Contacts list.
 - `find Bernice` followed by `delete 1` deletes the first matching contact, if one exists. Check the search results before deleting.
 
 ### Clearing all entries: `clear`
@@ -341,7 +345,9 @@ Format: `exit`
 
 InternTrack automatically saves changes to contacts and applications. You do not need to save manually. Commands that only display information do not rewrite the data file.
 
-If saving fails, the result message explains the problem and the record changes from that command are rolled back. Ensure that the home folder and data file are writable, then retry the command. Do not assume a change was saved when an error is shown.
+If saving fails, the result message explains the problem and the command's contact and application changes are rolled back in memory. The current contact filter is not restored; after a failed `add` or `remark`, the list may show all contacts while the previous `Filtered by:` indicator remains. Run `list` to reset the contact list and its indicator, check the records, then retry after resolving the reported problem. For a permission error, ensure that the home folder and data file are writable. Do not assume a change was saved when an error is shown.
+
+The rollback does not restore the data file itself. If a write fails partway through, the file may be incomplete. Keep regular backups; if the file no longer loads after a failed save, preserve it and follow [Backing up and restoring data](#backing-up-and-restoring-data) to restore a known-good backup.
 
 The default data file is `data/addressbook.json`, relative to the folder from which you launch InternTrack. Under the Quick start instructions, this is your home folder. The path is shown at the bottom of the window. Launching the same JAR from another folder can load a different set of records.
 
@@ -392,8 +398,8 @@ Certain edits can also cause InternTrack to behave in unexpected ways (e.g., if 
 | Action                 | Format, Examples                                                                                                                                                                               |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Add contact**        | `add n/NAME c/COMPANY r/ROLE e/EMAIL p/PHONE_NUMBER [w/WHERE_MET]` <br> e.g., `add n/James Ho c/Google r/SWE Recruiter e/jamesho@example.com p/22224444 w/Career fair`                         |
-| **Add application**    | `addapp n/NAME c/COMPANY d/DESCRIPTION dt/YYYY-MM-DD [s/STATUS]`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp d/Applied through the company careers page. dt/2026-10-07 s/APPLIED` |
-| **Edit application**   | `editapp INDEX [n/NAME] [c/COMPANY] [d/DESCRIPTION] [dt/YYYY-MM-DD] [s/STATUS]`<br> e.g., `editapp 1 s/INTERVIEWING`                                                                           |
+| **Add application**    | `addapp n/NAME c/COMPANY dt/YYYY-MM-DD [s/STATUS] d/DESCRIPTION`<br> e.g., `addapp n/Software Engineer Intern c/Tech Corp dt/2026-10-07 s/APPLIED d/Applied through the company careers page.` |
+| **Edit application**   | `editapp INDEX [n/NAME] [c/COMPANY] [dt/YYYY-MM-DD] [s/STATUS] [d/DESCRIPTION]`<br> e.g., `editapp 1 s/INTERVIEWING`                                                                           |
 | **Delete application** | `deleteapp INDEX`<br> e.g., `deleteapp 2`                                                                                                                                                      |
 | **Clear**              | `clear`                                                                                                                                                                                        |
 | **Delete contact**     | `delete INDEX`<br> e.g., `delete 3`                                                                                                                                                            |
