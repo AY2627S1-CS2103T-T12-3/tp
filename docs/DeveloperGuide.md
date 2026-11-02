@@ -11,6 +11,7 @@ title: Developer Guide
 
 * Based on [AddressBook-Level3](https://se-education.org/addressbook-level3/) by the [SE-EDU initiative](https://se-education.org).
 * Libraries used: [JavaFX](https://openjfx.io/), [Jackson](https://github.com/FasterXML/jackson), [JUnit5](https://github.com/junit-team/junit5).
+* The weekly application calendar view takes its inspiration from the timetable view of [NUSMods](https://nusmods.com/), whose clean weekly layout we admired and adapted for tracking application dates. No NUSMods code was reused.
 * **Use of AI tools:** Our team used AI assistants as pair-programming and review partners, mainly OpenAI Codex and also Claude Code. Every design decision, requirement and merge was made by us, and each member read, tested and edited what they committed. Individuals are responsible for the correctness of their own contributions. Notable uses of AI:
   * **Investigating and fixing bugs:** we reproduced defects in the released JARs ourselves, then used AI to help trace the cause through the parser and UI code and to propose fixes. For example, the contact view switching and duplicate `r/` prefix fixes (PR #120) and the null-tag and null-entry recovery in saved data. We checked each fix against regression tests that failed before the change.
   * **Writing and extending tests:** AI helped suggest edge cases for parsers, validation and storage, which we then reviewed and kept or discarded. Tests were run with `./gradlew clean test checkstyleMain checkstyleTest` before merging.
