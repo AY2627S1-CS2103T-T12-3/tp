@@ -5,8 +5,8 @@ title: User Guide
 
 InternTrack helps **university Computing students track internship and graduate-role applications alongside their professional contacts on one computer**. Keep application progress, recruiters, alumni and referrers together without switching between separate lists. It combines a graphical user interface (GUI) with a command line interface (CLI) for users who prefer entering and finding records by typing commands. InternTrack stores your records locally; you remain responsible for submitting applications and contacting employers.
 
-- Table of Contents
-  {:toc}
+* Table of Contents
+{:toc}
 
 ---
 
