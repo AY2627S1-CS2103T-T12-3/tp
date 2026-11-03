@@ -31,7 +31,10 @@ and use the exact Azul JDK + JavaFX distribution it specifies. Having another Ja
 
 For project setup and IDE configuration, refer to [_Setting up and getting started_](SettingUp.md).
 
-For releases, run `./gradlew shadowJar` to build `build/libs/addressbook.jar`.
+For releases, run `./gradlew check coverage releaseJar` on macOS with Xcode Command Line Tools installed to build
+`build/libs/addressbook.jar`. The `releaseJar` task combines the JavaFX Intel and ARM macOS native libraries into
+universal binaries, then packages them with the Windows and Linux libraries in one JAR. The intermediate
+`addressbook-base.jar` produced by `shadowJar` is not the release artifact.
 Verify the release JAR using the course-required JDK: run `java -version` in the terminal you will use,
 then launch the JAR from an empty, writable test folder with `java -jar "addressbook.jar"`.
 

@@ -6,6 +6,10 @@ plugins {
     id 'jacoco'
 }
 
+import java.util.zip.ZipFile
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+
 application {
     mainClass = 'seedu.address.Main'
 }
@@ -22,6 +26,11 @@ java {
 repositories {
     mavenCentral()
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+configurations {
+    macIntelGraphics { transitive = false }
+    macArmGraphics { transitive = false }
 }
 
 checkstyle {
@@ -70,6 +79,9 @@ dependencies {
     implementation "org.openjfx:javafx-graphics:${javaFxVersion}:${macJavaFxClassifier}"
     implementation "org.openjfx:javafx-graphics:${javaFxVersion}:linux"
 
+    macIntelGraphics "org.openjfx:javafx-graphics:${javaFxVersion}:mac"
+    macArmGraphics "org.openjfx:javafx-graphics:${javaFxVersion}:mac-aarch64"
+
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.4'
 
@@ -80,8 +92,78 @@ dependencies {
 }
 
 shadowJar {
-    archiveFileName = providers.gradleProperty('macJavaFxClassifier').orElse('mac').get() == 'mac-aarch64'
-            ? 'addressbook-mac-arm64.jar' : 'addressbook.jar'
+    archiveFileName = 'addressbook-base.jar'
+}
+
+// JavaFX 17 gives both macOS architectures the same native-library names. A
+// Shadow JAR can retain only one copy, so combine the native code into Mach-O
+// universal binaries before producing the single cross-platform release JAR.
+tasks.register('releaseJar') {
+    dependsOn shadowJar
+    inputs.file(tasks.named('shadowJar').flatMap { it.archiveFile })
+    inputs.files(configurations.macIntelGraphics, configurations.macArmGraphics)
+    outputs.file(layout.buildDirectory.file('libs/addressbook.jar'))
+
+    doLast {
+        if (!System.getProperty('os.name').toLowerCase().contains('mac')) {
+            throw new GradleException('releaseJar requires macOS and Xcode Command Line Tools (lipo)')
+        }
+        File nativeDir = layout.buildDirectory.dir('universal-mac-natives').get().asFile
+        nativeDir.mkdirs()
+        File intelJar = configurations.macIntelGraphics.singleFile
+        File armJar = configurations.macArmGraphics.singleFile
+        def nativeNames = [
+                'libjavafx_iio.dylib', 'libglass.dylib', 'libjavafx_font.dylib',
+                'libprism_common.dylib', 'libprism_es2.dylib',
+                'libdecora_sse.dylib', 'libprism_sw.dylib'
+        ]
+        [intel: intelJar, arm: armJar].each { arch, jarFile ->
+            new ZipFile(jarFile).withCloseable { zip ->
+                nativeNames.each { name ->
+                    def entry = zip.getEntry(name)
+                    if (entry == null) {
+                        throw new GradleException("Missing ${name} in ${jarFile}")
+                    }
+                    File target = new File(nativeDir, "${arch}-${name}")
+                    target.withOutputStream { out -> zip.getInputStream(entry).withCloseable { it.transferTo(out) } }
+                }
+            }
+        }
+        nativeNames.each { name ->
+            File output = new File(nativeDir, name)
+            def command = ['xcrun', 'lipo', '-create',
+                           new File(nativeDir, "intel-${name}").absolutePath,
+                           new File(nativeDir, "arm-${name}").absolutePath,
+                           '-output', output.absolutePath]
+            int status = new ProcessBuilder(command).inheritIO().start().waitFor()
+            if (status != 0) {
+                throw new GradleException("lipo failed for ${name} (exit ${status})")
+            }
+        }
+
+        File inputJar = tasks.named('shadowJar').get().archiveFile.get().asFile
+        File outputJar = layout.buildDirectory.file('libs/addressbook.jar').get().asFile
+        new ZipFile(inputJar).withCloseable { zip ->
+            new ZipOutputStream(new FileOutputStream(outputJar)).withCloseable { out ->
+                def found = [] as Set
+                zip.entries().each { entry ->
+                    ZipEntry copy = new ZipEntry(entry.name)
+                    copy.time = entry.time
+                    out.putNextEntry(copy)
+                    if (nativeNames.contains(entry.name)) {
+                        found.add(entry.name)
+                        out.write(new File(nativeDir, entry.name).bytes)
+                    } else if (!entry.directory) {
+                        zip.getInputStream(entry).withCloseable { it.transferTo(out) }
+                    }
+                    out.closeEntry()
+                }
+                if (found.size() != nativeNames.size()) {
+                    throw new GradleException("Release JAR missing macOS libraries: ${nativeNames - found}")
+                }
+            }
+        }
+    }
 }
 
 defaultTasks 'clean', 'test'
